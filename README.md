@@ -85,7 +85,8 @@ It is an application that resides outside of your Kafka cluster and handles the 
       - Usually its a good programming practice to leverage both synchronous and asynchronous commits, sample code snippet below. 
     - One can also do Manual commit for specific offsets. 
 
-[Kafka commit strategies _al](https://quarkus.io/blog/kafka-commit-strategies/), [Kafka commit types _al](https://medium.com/@rramiz.rraza/kafka-programming-different-ways-to-commit-offsets-7bcd179b225a)
+[Kafka commit strategies _al](https://quarkus.io/blog/kafka-commit-strategies/), [Kafka commit types _al](https://medium.com/@rramiz.rraza/kafka-programming-different-ways-to-commit-offsets-7bcd179b225a), 
+[Kafka in nutshell _al](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)
 
 ### Airflow
 Apache Airflow is an open-source workflow management platform for data engineering pipelines. It is used for the scheduling and orchestration of data pipelines or workflows. Orchestration of data pipelines refers to the sequencing, coordination, scheduling, and managing complex data pipelines from diverse sources. Airflow installation generally consists of the following components:
@@ -1385,6 +1386,25 @@ Facebook and Google are two OAuth providers that you might use to log into other
 
 [Java Int vs int _al](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/int-vs-Integer-java-difference-comparison-primitive-object-types)
 
+#### [Java virtual threads](https://medium.com/@RamLakshmanan/java-virtual-threads-easy-introduction-44d96b8270f8)
+Java virtual threads is a new feature introduced in JDK 19. It has potential to improve an applications availability, throughput and code quality on top of reducing memory consumption.
+Let’s walkthrough a typical lifecycle of a thread:
+
+1. Thread is created in a thread pool
+2. Thread waits in the pool for a new request to come
+3. Once the new request comes, the thread picks up the request and it makes a backend Database call to service this request.
+4. Thread waits for response from the backend Database
+5. Once response comes back from the Database, the thread processes it, and sends back the response to customer
+6. Thread is returned back to the thread pool
+
+Step #2 to #6 will repeat until the application is shutdown. If you notice, the thread is actually doing real work only in step #3 and #5. In all other steps(i.e., step #1, step #2, step #4, step #6), it is basically waiting(or doing nothing). In most applications, a significant number of threads predominantly waits during most of its lifetime.
+
+In the previous release of JVM(Java Virtual Machine), there was only one type of thread. It’s called as ‘classic’ or ‘platform’ thread. Whenever a platform thread is created, an operating system thread is allocated to it. Only when the platform thread exits(i.e., dies) the JVM, this operating system thread is free to do other tasks. Until then, it cannot do any other tasks. Basically, there is a 1:1 mapping between a platform thread and an operating system thread.
+
+According to this architecture, OS thread will be unnecessarily locked down in step #1, step #2, step #4, step #6 of the thread’s life cycle, even though it’s not doing anything during these steps. Since OS threads are precious and finite resources, it’s time is extensively wasted in this platform threads architecture.
+
+In order to efficiently use underlying operating system threads, virtual threads have been introduced in JDK 19. In this new architecture, a virtual thread will be assigned to a platform thread (aka carrier thread) only when it executes real work. As per the above-described thread’s life cycle, only during step #3 and step #5 virtual thread will be assigned to the platform thread(which in turn uses OS thread) for execution. In all other steps, virtual thread will be residing as objects in the Java heap memory region just like any of your application objects. Thus, they are lightweight and more efficient.
+
 ### HTTP 1.1 vs HTTP 2.0
 
 - HTTP stands for hypertext transfer protocol, and it is the basis for almost all web applications. More specifically, HTTP is the method computers and servers use to request and send information. For instance, when someone navigates to cloudflare.com on their laptop, their web browser sends an HTTP request to the Cloudflare servers for the content that appears on the page. Then, Cloudflare servers send HTTP responses with the text, images, and formatting that the browser displays to the user.
@@ -1468,6 +1488,12 @@ print(response.elapsed.total_seconds())
 - Event reactor pattern: The reactor software design pattern is an event handling strategy that can respond to many potential service requests concurrently. The pattern's key component is an event loop, running in a single thread or process, which demultiplexes incoming requests and dispatches them to the correct request handler.
 - [Aqua trivy _al](https://github.com/aquasecurity/trivy) is a useful tool to find vulnerabilities.
 - [Pydantic validators _al](https://www.apptension.com/blog-posts/pydantic)
+- A language is:
+  - **statically typed** if the type of a variable is known at compile time, eg: int a = 5. For some languages this means that you as the programmer must specify what type each variable is; other languages (e.g.: Java, C, C++) offer some form of type inference, the capability of the type system to deduce the type of a variable (e.g.: OCaml, Haskell, Scala, Kotlin). Examples: C, C++, Java, Rust, Go, Scala
+  - **dynamically typed** if the type is associated with run-time values, and not named variables/fields/etc. This means that you as a programmer can write a little quicker because you do not have to specify types every time (unless using a statically-typed language with type inference). Examples: Perl, Ruby, Python, PHP, JavaScript, Erlang
+
+
+
 
 ------------------
 
