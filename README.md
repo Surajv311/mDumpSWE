@@ -1,12 +1,13 @@
 # mDumpSWE
 
-Collection of interesting articles/newsletters/blogs/videos - related to software engineering, I've surfed online and learned about. Thank you internet. Creating a repo for my memory dump. I've tried to add as many references from where I read the articles about, but may have missed few. 
+Collection of interesting articles/newsletters/blogs/videos - related to software engineering, I've surfed online and learned about. Thank you internet and chatgpt. Creating a repo for my memory dump. I've tried to add as many references from where I read the articles about, but may have missed few. 
 
 Abbrevations in doc hyperlinked: 
 - `_vl`: video reference link
 - `_al`: article/page reference link
 
 Table of contents (rough overview): 
+- Understand & read again later then summarise
 - Kafka
 - Airflow
 - Dask 
@@ -25,11 +26,11 @@ Table of contents (rough overview):
 - Python: aiohttp, asyncio, ThreadPoolExecutor, Basic DS, Context manager, GIL, etc. 
 - AWS Services and misc infos: EC2, Redshift, Spectrum, Glue, RDS, Aurora, ECS, ECR, etc. 
 - Database internals: Table, Schema, Engine, Indexing, 
-- Linux internals, commands: Table, Schema, Engine, Indexing, 
-- JIT Compiler 
+- Linux internals, commands: Table, Schema, Engine, Indexing,  
 - Webhooks, APIs, Websockets 
 - SQL Functions 
 - HTTP Request 
+- Docker
 - TCP vs UDP  
 - gRPC and REST
 - Serialization & Non-serialization 
@@ -39,10 +40,71 @@ Table of contents (rough overview):
 - Bastion Hosts 
 - Data transformation infos using libraries 
 - SAML 
-- Java 
+- Java: Enum, JIT compiler 
 - HTTP 1.1 vs HTTP 2.0 
 - Info & Miscellaneous
 - Opensource Github repos knowledge extraction 
+
+--------------------------
+
+### Understand & read again later then summarise
+
+https://www.linkedin.com/posts/hnaser_in-the-beginning-for-the-os-to-write-to-activity-7163388923916861441-t1vw?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_the-big-win-of-using-threads-instead-of-processes-activity-7161147178546069506-yehp?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_fragmentation-is-a-very-interesting-topic-activity-7156142414989037568-6C96?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_today-i-learned-how-the-linux-option-netipv4-activity-7150555792662740992-w8fL?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_i-just-learned-that-in-addition-to-the-mapping-activity-7148454941404110848-8m4D?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_i-am-fascinated-by-gos-compiler-escape-analysis-activity-7144747978224746496-z-YZ?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_glad-mongo-fixed-this-in-62-so-prior-to-activity-7135553971066175489-nwm7?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_why-does-it-take-time-for-dns-to-resolve-activity-7134793549526528001-xjL0?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_a-connection-pool-is-always-a-good-idea-especially-activity-7134109245909725184-qaUE?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_graphql-was-invented-by-facebook-mainly-because-activity-7127490321701056513-DSxX?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_the-recent-cloudflare-api-outage-on-november-activity-7126989541537677312-upGW?utm_source=share&utm_medium=member_desktop
+https://www.linkedin.com/posts/hnaser_http3-is-taking-over-the-world-but-consider-activity-7116186211039285248-Bae7?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_i-got-asked-how-vpn-works-on-x-so-here-is-activity-7110641803984322560--ONA?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_fun-networking-fact-http-related-pglocks-activity-7108275178979160064-gAVu?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_its-fascinating-to-know-how-jit-just-in-activity-7101992901496229888-_777?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_postgres-has-weak-locks-those-are-table-activity-7078250396678303744-p6WU?utm_source=share&utm_medium=member_desktop
+
+https://www.linkedin.com/posts/hnaser_normally-when-you-write-to-disk-the-writes-activity-7067253338395852800-r2JY?utm_source=share&utm_medium=member_desktop
+
+https://bugs.mysql.com/bug.php?id=109595
+
+https://www.youtube.com/watch?v=lCb5BkJOOVI&list=PLQnljOFTspQU0ICDe-cL1EwXC4GDSayKY&index=43
+
+https://medium.com/@hnasr/the-journey-of-a-request-to-the-backend-c3de704de223
+
+https://blog.jcole.us/2014/04/16/the-basics-of-the-innodb-undo-logging-and-history-system/
+
+https://medium.com/@hnasr/how-slow-is-select-8d4308ca1f0c
+
+https://medium.com/@hnasr/what-happens-when-databases-crash-74540fd97ea9
+
+https://www.linkedin.com/pulse/how-troubleshoot-long-postgres-startup-nikolay-samokhvalov/
+
+https://keefmck.blogspot.com/2023/04/why-ssds-lie-about-flush.html?m=1
+
+https://tontinton.com/posts/scheduling-internals/
+
+https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free
+
+https://blog.allegro.tech/2024/03/kafka-performance-analysis.html
+
+https://www.youtube.com/watch?v=d86ws7mQYIg
 
 
 --------------------------
@@ -88,6 +150,8 @@ It is an application that resides outside of your Kafka cluster and handles the 
 [Kafka commit strategies _al](https://quarkus.io/blog/kafka-commit-strategies/), [Kafka commit types _al](https://medium.com/@rramiz.rraza/kafka-programming-different-ways-to-commit-offsets-7bcd179b225a), 
 [Kafka in nutshell _al](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)
 
+------------------------------
+
 ### Airflow
 Apache Airflow is an open-source workflow management platform for data engineering pipelines. It is used for the scheduling and orchestration of data pipelines or workflows. Orchestration of data pipelines refers to the sequencing, coordination, scheduling, and managing complex data pipelines from diverse sources. Airflow installation generally consists of the following components:
 
@@ -115,6 +179,7 @@ HttpOperator: It is used to trigger an HTTP endpoint, etc.
 
 - Note: Kafka Streams API functions as an embeddable library, negating the necessity to construct clusters whereas **Apache Flink** operates as a data processing framework utilizing a cluster model. The two major streaming platforms are Apache Flink and Kafka. [flink vs kafka _al](https://medium.com/@BitrockIT/apache-flink-and-kafka-stream-a-comparative-analysis-f8cb5b946ec3). Kafka Stream manages windowing based on event time and processing time. Apache Flink manages flexible windowing based on event time, processing time, and ingestion time. Apache Flink is a fully-stateful framework that can store the state of the data during processing, making it ideal for applications that require complex calculations or data consistency. Kafka Streams is a partially-stateful framework and it is ideal for applications that require low latency or to process large amounts of data.
 
+------------------------------
 
 ### Dask
 
@@ -157,6 +222,8 @@ distributed.Client.get: a distributed scheduler for executing graphs on multiple
 - In dask this function: map_partitions(func, *args[, meta, ...]) Apply Python function on each DataFrame partition.
 - [Dask df best practices _al](https://docs.dask.org/en/latest/dataframe-best-practices.html), in short: Reduce and then use pandas, Use the Index, Avoid Full-Data Shuffling, Persist Intelligently, Repartition to Reduce Overhead, Joins, Use Parquet format data. 
 - [Strategy to partition dask df _al](https://stackoverflow.com/questions/44657631/strategy-for-partitioning-dask-dataframes-efficiently)
+
+------------------------------
 
 ### Spark 
 
@@ -258,6 +325,8 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
 
 - The `createOrReplaceTempView()` is used to create a temporary view/table from the Spark DataFrame or Dataset objects. It is part of Spark 2.0. In Spark 1.0 `registerTempTable()` was used. 
 
+------------------------------
+
 ### Hadoop 
 
 Hadoop architecture comprises four key components: 
@@ -267,9 +336,13 @@ The **NameNode** serves as the master in a Hadoop cluster, overseeing the **Data
 - **MapReduce** (for distributed processing): MapReduce process involves a client that submits a job to the Hadoop MapReduce Manager. The job is then divided into job parts (smaller tasks) by the Hadoop MapReduce Master. Input data is processed through Map() and Reduce() functions, resulting in output data. The Map function breaks down data into key-value pairs, which are then further processed by the Reduce function. Multiple clients can continuously submit jobs for processing. The map reduce functions are idempotent, i.e: output remains constant irrespective of multiple runs. [Map Reduce function _vl](https://www.youtube.com/watch?v=cHGaQz0E7AU)
 - **YARN** (Yet Another Resource Negotiator): YARN, or Yet Another Resource Negotiator, is a vital component in the Hadoop framework, overseeing resource management and job scheduling. It separates these functions, employing a global Resource Manager and ApplicationMasters for individual applications. The NodeManager monitors container resource usage, providing data for efficient allocation of CPU, memory, disk, and connectivity by the ResourceManager. Features: multi-tenancy, scalability, cluster-utilization, etc. [Hadoop architecture _al](https://www.interviewbit.com/blog/hadoop-architecture/)
 
+------------------------------
+
 ### Sqoop
 
 Sqoop is a tool designed for efficiently transferring bulk data between Apache Hadoop and structured datastores such as relational databases. Sqoop has two main functions: importing and exporting. Importing transfers structured data into HDFS; exporting moves this data from Hadoop to external databases in the cloud or on-premises. Importing involves Sqoop assessing the external database’s metadata before mapping it to Hadoop. Sqoop undergoes a similar process when exporting data; it parses the metadata before moving the actual data to the repository. [Sqoop basics _al](https://www.guru99.com/introduction-to-flume-and-sqoop.html)
+
+------------------------------
 
 ### Databricks
 
@@ -289,6 +362,8 @@ Databricks runs one executor per worker node. Therefore, the terms executor and 
 
 **Query Federation in Databricks**: Query federation allows Databricks to execute queries against data served by other Databricks metastores as well as many third-party database management systems (DBMS) such as PostgreSQL, mySQL, AWS Redshift and Snowflake. To query data from another system you must: Create a foreign connection., etc. Simply put, from databricks UI itself you can run queries over external/third-party db post necessary connections are set up. 
 
+------------------------------
+
 ### Snowflake 
 
 Snowflake is a cloud data warehouse that can store and analyze all your data records in one place. It can automatically scale up/down its compute resources to load, integrate, and analyze data. Snowflake supports both transformation during (ETL) or after loading (ELT).
@@ -300,8 +375,12 @@ Snowflake uses OLAP (Online Analytical Processing) as a foundational part of its
   - In **snowflake schema**, The fact tables, dimension tables as well as sub dimension tables are contained. It's design is complex & has more foreign keys but less data redundancy. To simply put, Snowflake schema is a more detailed & branched out version of star schema. 
   - **One big table** is a concept in which data is stored in a single table rather than being partitioned across multiple tables. This approach can offer several advantages, including simpler data management, faster query performance, and easier scalability. [Star vs Snowflake schema _vl](https://www.youtube.com/watch?v=hQvCOBv_-LE&ab_channel=codebasics) 
 
+------------------------------
+
 ### Pinot 
 It is a column-oriented, open-source, distributed data store written in Java. Pinot is designed to execute OLAP (online analytical processing) queries with low latency.
+
+------------------------------
 
 ### Multi Threading, Synchronous, Asynchronous Programming
 
@@ -335,6 +414,8 @@ Consider below scenarios:
 
 In all these above scenarios, asynchronous code can provide benefits in terms of managing I/O-bound tasks, responsiveness, and simplifying concurrency handling. However, when it comes to fully utilizing multiple cores for CPU-bound tasks, asynchronous code in combination with multiple threads or processes is more effective. [Asynchronous and synchronous execution _al](https://stackoverflow.com/questions/748175/asynchronous-vs-synchronous-execution-what-is-the-difference)
 
+------------------------------
+
 ### CPU-Intensive vs IO Bound Processes
 
 - **CPU-intensive tasks** involve complex calculations, mathematical operations, data processing, or simulations that consume a substantial amount of CPU time. Examples include scientific simulations, data encryption/decryption, video/audio encoding/decoding, and certain data analysis tasks. In Python, CPU-intensive tasks can be challenging to parallelize effectively due to the Global Interpreter Lock (GIL) in CPython, which can limit the concurrency of CPU-bound operations when using threads. In such cases, you might consider using multiprocessing or other techniques for parallelism.
@@ -346,6 +427,8 @@ In all these above scenarios, asynchronous code can provide benefits in terms of
   - Responsiveness: In scenarios where responsiveness is crucial, such as in GUI applications or web servers, offloading I/O-bound tasks to separate threads can ensure that the main thread (responsible for user interaction) remains responsive.
   - However, it's important to note that while threads are suitable for managing I/O-bound tasks, they may not be the best choice for CPU-bound tasks due to potential Global Interpreter Lock (GIL) limitations in certain Python implementations (e.g., CPython). In such cases, you might consider using multiprocessing or other concurrency approaches.
 - In summary, CPU-intensive processes focus on tasks that demand significant computational resources, while thread-intensive processes deal with tasks that involve a lot of waiting for external resources.
+
+------------------------------
 
 ### Concurrency vs Parallelism 
 - **Concurrency** is when two or more tasks can start, run, and complete in overlapping time periods. It doesn't necessarily mean they'll ever both be running at the same instant. For example, multitasking on a single-core machine.
@@ -360,6 +443,8 @@ Example:
   - Eg: For example, getting data from a database could take time but we don't want to block our UI waiting for the data. The async call takes a call-back reference and returns execution back to your code as soon as the request has been placed with the remote system. Your UI can continue to respond to the user while the remote system does whatever processing is required, once it returns the data to your call-back method then that method can update the UI (or handoff that update) as appropriate. From the user perspective, it appears like multitasking but it may not be.
 
 [Concurrency & Parallellism _al](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism), [Concurrency, Parallellism, Asynchronous methods _al](https://stackoverflow.com/questions/4844637/what-is-the-difference-between-concurrency-parallelism-and-asynchronous-methods), [Concurrency, parallellism, threads, process, etc. _al](https://medium.com/swift-india/concurrency-parallelism-threads-processes-async-and-sync-related-39fd951bc61d)
+
+------------------------------
 
 ### Threads vs Process
 Process means any program is in execution. Thread means a segment of a process. The process takes more time to terminate. The thread takes less time to terminate. Process takes more time for creation. It takes less time for creation. 
@@ -383,12 +468,16 @@ It is generally faster to switch context  between threads than between processe
 Context switching is so costly there are other mechanisms to try to minimize it. Some examples are fibers and coroutines. These mechanisms trade complexity for even lower context-switching costs. In general, they are cooperatively scheduled, that is, they must yield control for others to run. In other words, the application itself handles task scheduling. It is the responsibility of the application to make sure a long-running task is broken up by yielding periodically. 
 [Process vs Thread _al](https://stackoverflow.com/questions/200469/what-is-the-difference-between-a-process-and-a-thread), [Process vs Thread _vl](https://www.youtube.com/watch?v=4rLW7zg21gI)
 
+------------------------------
+
 ### CPU Threads vs Cores
 - Core is an individual physical processing unit, while threads are virtual sequences of instructions. Think of threads as conveyor belts of products that are being sent to the worker (which is the core).
 - Hardware on the CPU is a physical core & a logical core is more like code it exists, i.e threads.
 - If a CPU has more threads than cores, say 4 cores, 8 threads so 2 threads per core, in such case, the core would be context switching between each thread to process the task. It cannot process both at the same time, some downtime will be there due to switching. This is also an example of what we call - concurrent execution.
 
 [Cores vs threads _vl](https://www.youtube.com/watch?v=hwTYDQ0zZOw), [Cores, threads difference in graphic design](https://www.youtube.com/watch?v=VCUvknmi5QA)
+
+------------------------------
 
 ### Generators, Iterables, Coroutines
 
@@ -425,6 +514,7 @@ if __name__ == "__main__":
 
 In summary, yield is used in generator functions to produce a sequence of values lazily, while await is used in asynchronous coroutines to pause the execution of the coroutine while waiting for an asynchronous operation to complete. generators for lazy iteration and coroutines for efficient asynchronous programming.
 
+------------------------------
 
 ### Python 
 
@@ -626,7 +716,7 @@ A with statement does not create a scope (like if, for and while do not create a
 - Else: If there is no exception then this block will be executed 
 - Finally: Finally block always gets executed either exception is generated or not
 
-### Python Global Interpreter Lock
+#### Python Global Interpreter Lock
 
 The GIL, is a mutex (or a lock) that allows only one thread to hold the control of the Python interpreter. 
 
@@ -651,9 +741,62 @@ Multiple threads within a ThreadPool are subject to the global interpreter lock 
 
 The GIL only affects threads within a single process. The multiprocessing module is in fact an alternative to threading that lets Python programs use multiple cores. [Python GIL _vl](https://www.youtube.com/watch?v=XVcRQ6T9RHo), [Does Py need GIL _vl](https://www.youtube.com/watch?v=EYgDP8cYlLo&ab_channel=CodePersist)
 
+#### Function annotations
+
+Python is a dynamically typed language instead of a statically typed language. This means that instead of defining data types beforehand, they are determined at runtime based on the values variables contain. Annotations are merely added as information for the one reading the code. Python does not inherently implement checks on annotations. Eg: 
+
+```
+def addition(num1: int, num2: float) -> float:
+    return num1 + num2
+
+def testing():
+    a: int = 78
+    b: float = 34.5
+    addition(a, b)
+
+if __name__ == "__main__":
+    testing()
+```
+
+[Annotations _al](https://www.educative.io/answers/how-annotations-are-used-in-python)
+
+#### Classmethod and Staticmethod 
+
+- In Python, classmethod and staticmethod are two types of methods that can be defined inside a class. They both have special behaviors and use cases compared to regular instance methods.
+- @classmethod: A class method is a method that is bound to the class itself rather than to any specific instance of the class. It takes the class (cls) as its first parameter instead of the instance (self). You denote a class method using the @classmethod decorator. The primary use case for class methods is to define methods that operate on the class itself, rather than on instances of the class. These methods can be used as alternative constructors or to access or modify class-level attributes. Example:
+
+```
+class MyClass:
+    class_attr = 0
+
+    @classmethod
+    def class_method(cls):
+        return cls.class_attr
+
+# Calling class method
+print(MyClass.class_method())  # Output: 0
+```
+
+- @staticmethod: A static method is a method that doesn't depend on the instance or the class. It behaves like a regular function but belongs to the class's namespace. It does not take either the instance (self) or the class (cls) as its first parameter. You denote a static method using the @staticmethod decorator. Static methods are typically used when a method does not need to access or modify any instance or class attributes. They are often used for utility functions that logically belong to the class but do not require access to any instance or class variables. Example:
+
+```
+class MyClass:
+    @staticmethod
+    def static_method(x, y):
+        return x + y
+
+# Calling static method
+print(MyClass.static_method(3, 4))  # Output: 7
+```
+
+- In summary: Use @classmethod when you want a method to operate on the class itself and have access to class-level attributes.
+Use @staticmethod when you want a method that does not depend on instance or class state and behaves like a regular function but belongs to the class's namespace.
+
 #### Others 
+
 - Use Pytest to test Python unit tests code: https://docs.pytest.org/en/7.1.x/how-to/usage.html
 - What does __name__ == "__main__" do?: It allows you to execute code when the file runs as a script. In other words, remember in C++ code we had main() function, when we ran the file, the default function used to execute. Similar analogy. [init main info _al](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
+- [Python logging causing latencies? _al](https://stackoverflow.com/questions/24791395/python-logging-causing-latencies)
 - Inner functions: A function which is defined inside another function is known as inner function or nested function. Nested functions are able to access variables of the enclosing scope. Inner functions are used so that they can be protected from everything happening outside the function. [Inner functions _al](https://www.geeksforgeeks.org/python-inner-functions/)
 - init function, self object, constructor: Self represents the instance of the class. By using the **self**  we can access the attributes and methods of the class in Python. **Constructors** are used to initializing the object’s state. The task of constructors is to initialize(assign values) to the data members of the class when an object of the class is created. The Default **__init__** Constructor used in Python. [Python init tutorial _vl](https://www.youtube.com/watch?v=WIP3-woodlU&ab_channel=Telusko)
 
@@ -695,25 +838,6 @@ def intro(**data):
 intro(Firstname="Sita", Lastname="Sharma", Age=22, Phone=1234567890)
 intro(Firstname="John", Lastname="Wood", Email="johnwood@nomail.com", Country="Wakanda", Age=25, Phone=9876543210)
 ```
-
-#### Function annotations
-
-Python is a dynamically typed language instead of a statically typed language. This means that instead of defining data types beforehand, they are determined at runtime based on the values variables contain. Annotations are merely added as information for the one reading the code. Python does not inherently implement checks on annotations. Eg: 
-
-```
-def addition(num1: int, num2: float) -> float:
-    return num1 + num2
-
-def testing():
-    a: int = 78
-    b: float = 34.5
-    addition(a, b)
-
-if __name__ == "__main__":
-    testing()
-```
-
-[Annotations _al](https://www.educative.io/answers/how-annotations-are-used-in-python)
 
 - StringIO Module in Python is an in-memory file-like object. This object can be used as input or output to the most function that would expect a standard file object. Eg: 
 
@@ -763,38 +887,7 @@ Python caches integers in the range [-5, 256], so integers in that range are usu
 
 - `'wb'` in Python code: The wb indicates that the file is opened for writing in binary mode. When writing in binary mode, Python makes no changes to data as it is written to the file. In text mode (when the b is excluded as in just w or when you specify text mode with wt), however, Python will encode the text based on the default text encoding. Additionally, Python will convert line endings (\n) to whatever the platform-specific line ending is, which would corrupt a binary file like an exe or png file. Text mode should therefore be used when writing text files (whether using plain text or a text-based format like CSV), while binary mode must be used when writing non-text files like images. [wb in python _al](https://stackoverflow.com/questions/2665866/what-does-wb-mean-in-this-code-using-python)
 
-#### Classmethod and Staticmethod 
-
-- In Python, classmethod and staticmethod are two types of methods that can be defined inside a class. They both have special behaviors and use cases compared to regular instance methods.
-- @classmethod: A class method is a method that is bound to the class itself rather than to any specific instance of the class. It takes the class (cls) as its first parameter instead of the instance (self). You denote a class method using the @classmethod decorator. The primary use case for class methods is to define methods that operate on the class itself, rather than on instances of the class. These methods can be used as alternative constructors or to access or modify class-level attributes. Example:
-
-```
-class MyClass:
-    class_attr = 0
-
-    @classmethod
-    def class_method(cls):
-        return cls.class_attr
-
-# Calling class method
-print(MyClass.class_method())  # Output: 0
-```
-
-- @staticmethod: A static method is a method that doesn't depend on the instance or the class. It behaves like a regular function but belongs to the class's namespace. It does not take either the instance (self) or the class (cls) as its first parameter. You denote a static method using the @staticmethod decorator. Static methods are typically used when a method does not need to access or modify any instance or class attributes. They are often used for utility functions that logically belong to the class but do not require access to any instance or class variables. Example:
-
-```
-class MyClass:
-    @staticmethod
-    def static_method(x, y):
-        return x + y
-
-# Calling static method
-print(MyClass.static_method(3, 4))  # Output: 7
-```
-
-- In summary: Use @classmethod when you want a method to operate on the class itself and have access to class-level attributes.
-Use @staticmethod when you want a method that does not depend on instance or class state and behaves like a regular function but belongs to the class's namespace.
-
+------------------------------
 
 ### AWS Services and misc infos 
 
@@ -847,6 +940,7 @@ You choose Aurora MySQL or Aurora PostgreSQL as the DB engine option when settin
 - ExportTaskAlreadyExistsFault error comes in RDS when you trigger export of snapshot data of an RDS instance (having db's, tables) multiple times. 
 
 #### AWS ECS Task, Task Definition & Service
+
 - ECS task definition is: The task definition is a text file, in JSON format, that describes one or more containers, that form your application. It can be thought of as a blueprint for your application. The Task definition allows you to specify which Docker image to use, which ports to expose, how much CPU and memory to allot, how to collect logs, and define environment variables. 
 - A Task is created when you run a Task directly, which launches container(s) (defined in the task definition) until they are stopped or exit on their own, at which point they are not replaced automatically. Running Tasks directly is ideal for short-running jobs, perhaps as an example of things that were accomplished via CRON.
 - A Service is used to guarantee that you always have some number of Tasks running at all times. If a Task's container exits due to an error, or the underlying EC2 instance fails and is replaced, the ECS Service will replace the failed Task. This is why we create clusters so that the service has plenty of resources in terms of CPU, memory and network ports to use. To us it doesn't really matter which instance Tasks run on so long as they run. A Service configuration references a Task definition. A Service is responsible for creating Tasks.
@@ -960,6 +1054,7 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 
 - **Clustered & Non clustered Index**: With a clustered index the rows are stored physically (physically as in the actual bits stored on the disk) on the disk in the same order as the index. Therefore, there can be only one clustered index. With a non clustered index there is a second list that has pointers to the physical rows. You can have many non clustered indices, although each new index will increase the time it takes to write new records. It is generally faster to read from a clustered index if you want to get back all the columns. You do not have to go first to the index and then to the table. Writing to a table with a clustered index can be slower, if there is a need to rearrange the data. [Clustered  & Non clustered indexing _al](https://stackoverflow.com/questions/1251636/what-do-clustered-and-non-clustered-index-actually-mean)
 
+------------------------------
 
 ### Linux internals, commands
 
@@ -1011,22 +1106,15 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
 
-### JIT Compiler 
-Bytecode is one of the most important features of java that aids in cross-platform execution. The way of converting bytecode to native machine language for execution has a huge impact on its speed of it. 
-
-These bytecodes have to be interpreted or compiled to proper machine instructions depending on the instruction set architecture. Moreover, these can be directly executed if the instruction architecture is bytecode based. Interpreting the bytecode affects the speed of execution. 
-
-In order to improve performance, JIT compilers interact with the Java Virtual Machine (JVM) at run time and compile suitable bytecode sequences into native machine code. While using a JIT compiler, the hardware is able to execute the native code, as compared to having the JVM interpret the same sequence of bytecode repeatedly and incurring overhead for the translation process. This subsequently leads to performance gains in the execution speed, unless the compiled methods are executed less frequently. 
-
-The JIT compiler is able to perform certain simple optimizations while compiling a series of bytecode to native machine language. Some of these optimizations performed by JIT compilers are data analysis, reduction of memory accesses by register allocation, translation from stack operations to register operations, elimination of common sub-expressions, etc. 
-
-The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
+------------------------------
 
 ### Webhooks, APIs, Websockets 
 
 - An **API** is a messenger that delivers your request to the provider you're requesting it from and then responds to you. ​​APIs are request-based, meaning that they operate when requests come from 3rd party apps.
 - **Webhook**, also called reverse API, web callback, or an HTTP push API, is a way for an app to provide other applications with real-time information. It delivers data as an event happens or almost immediately. Webhooks are event-based, meaning they will run when a specific event occurs in the source app. ​​To use a real-world analogy, APIs would be likened to you repeatedly calling a retailer to ask if they've stocked up on a brand of shoes you like. Webhooks would then ask the retailer to contact you whenever they have the shoes in stock, which frees up time on both sides. 
 - **Websockets** are different, it is an open connection. With WebSockets, a persistent connection (means, continuous polling) is established between the client and server, enabling real-time data transfer in both directions. This is particularly useful for applications that require continuous, low-latency communication, such as online games or chat applications.
+
+------------------------------
 
 ### SQL Functions
 
@@ -1168,6 +1256,8 @@ FROM cte_quantity;
 
 - Order of execution of ORDER BY and LIMIT in a MySQL query: A SQL LIMIT will in all databases always work on the result of a query, so it will first run the query with the ORDER BY and that result will then be limited.
 
+------------------------------
+
 ### HTTP Request
 
 HTTP is a method for encoding and transporting data between a client and a server. It is a request/response protocol: clients issue requests and servers issue responses with relevant content and completion status info about the request. HTTP is self-contained, allowing requests and responses to flow through many intermediate routers and servers that perform load balancing, caching, encryption, and compression.
@@ -1207,6 +1297,14 @@ Content-Type: text/html; charset=UTF-8
 <!doctype html><html …
 ```
 
+------------------------------
+
+### Docker 
+
+- Docker runs on a client-server that is meditated by the daemon that leverages REST APIs to request to perform container-related operations. Podman, on the other hand, does not require a daemon. It uses Pods to manage containers, which helps users to run rootless containers.
+
+------------------------------
+
 ### TCP vs UDP 
 
 (From Opensource Github repos knowledge extraction section | system-design-primer):
@@ -1228,6 +1326,8 @@ Use UDP over TCP when:
 - Late data is worse than loss of data
 - You want to implement your own error correction
 
+------------------------------
+
 ### gRPC and REST
 
 gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file) (It can use other formats like JSON as well). In an RPC, a client causes a procedure to execute on a different address space, usually a remote server. The procedure is coded as if it were a local procedure call, abstracting away the details of how to communicate with the server from the client program. Remote calls are usually slower and less reliable than local calls so it is helpful to distinguish RPC calls from local calls. Popular RPC frameworks include Protobuf, Thrift, and Avro.
@@ -1242,9 +1342,13 @@ REST is an architectural style enforcing a client/server model where the client 
 [gRPC over REST _al](https://medium.com/@sankar.p/how-grpc-convinced-me-to-chose-it-over-rest-30408bf42794),
 [RPC vs REST _al](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#rpc-and-rest-calls-comparison)
 
+------------------------------
+
 ### Serialization & Non-serialization
 
 Serialization is the process of converting the state of an object into a form that can be persisted or transported. The complement of serialization is deserialization, which converts a stream into an object. Together, these processes allow data to be stored and transferred.
+
+------------------------------
 
 ### JSON vs Protobuf
 
@@ -1256,6 +1360,8 @@ Serialization is the process of converting the state of an object into a form th
 
 [JSON vs protobuf _al](https://stackoverflow.com/questions/52409579/protocol-buffer-vs-json-when-to-choose-one-over-another)
 
+------------------------------
+
 ### Git 
 
 Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. Under the hood, it's all about pointers. 
@@ -1266,6 +1372,8 @@ Useful links:
 - [Get changes from master into branch in Git _al](https://stackoverflow.com/questions/5340724/get-changes-from-master-into-branch-in-git)
 - [Git branches work _al](https://stackoverflow.blog/2021/04/05/a-look-under-the-hood-how-branches-work-in-git/)
 - [Where do git files live _al](https://jvns.ca/blog/2023/09/14/in-a-git-repository--where-do-your-files-live-/)
+
+------------------------------
 
 ### cURL 
 
@@ -1280,9 +1388,13 @@ We often see cURL commands to hit API endpoints in technical docs of any softwar
 - Example of using curl to make a GET request: `curl -X POST -H "Content-Type: application/json" -d '{"key": "value"}' https://api.example.com/endpoint`
 - Note: To convert cURL to Python request, follow this link: [Execute curl command _al](https://stackoverflow.com/questions/25491090/how-to-use-python-to-execute-a-curl-command)
 
+------------------------------
+
 ### Bastion Hosts 
 
 A bastion host is a publicly facing server that acts as an entry-point to the system which is protected from the high-end firewall or located in a private server. These servers can only be accessible from the bastion hosts so this would reduce the attack surface area from the outside world. [Private server bastion host _al](https://towardsaws.com/ssh-into-the-private-server-through-bastion-host-f637aa5f5c17), [SSH Proxy bastion _al](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
+
+------------------------------
 
 ### Data transformation infos using libraries 
 
@@ -1361,8 +1473,10 @@ You can do this using `df.reset_index(drop=True, inplace=True)` as shown in the 
 0   2    Bob    789 Oak St      Chicago
 As you can see, the old index column (0, 1, etc.) is retained as a new column in the DataFrame. This can sometimes lead to confusion, especially if you want to work with a clean DataFrame that starts with an index of 0 and increments sequentially.
 ```
+------------------------------
 
 ### SAML  
+
 A SAML (Security Assertion Markup Language) provider is a system that helps a user access a service they need. There are two primary types of SAML providers, service provider, and identity provider.
 - A service provider needs authentication from the identity provider to grant authorization to the user.
 - An identity provider performs the authentication that the end user is who they say they are and sends that data to the service provider along with the user’s access rights for the service.
@@ -1376,6 +1490,8 @@ OAuth is a slightly newer standard that was co-developed by Google and Twitter t
 Facebook and Google are two OAuth providers that you might use to log into other internet sites.
 
 [What is saml _al](https://www.varonis.com/blog/what-is-saml)
+
+------------------------------
 
 ### Java 
 
@@ -1404,6 +1520,35 @@ In the previous release of JVM(Java Virtual Machine), there was only one type of
 According to this architecture, OS thread will be unnecessarily locked down in step #1, step #2, step #4, step #6 of the thread’s life cycle, even though it’s not doing anything during these steps. Since OS threads are precious and finite resources, it’s time is extensively wasted in this platform threads architecture.
 
 In order to efficiently use underlying operating system threads, virtual threads have been introduced in JDK 19. In this new architecture, a virtual thread will be assigned to a platform thread (aka carrier thread) only when it executes real work. As per the above-described thread’s life cycle, only during step #3 and step #5 virtual thread will be assigned to the platform thread(which in turn uses OS thread) for execution. In all other steps, virtual thread will be residing as objects in the Java heap memory region just like any of your application objects. Thus, they are lightweight and more efficient.
+
+#### Java enum
+
+The Enum in Java is a data type which contains a fixed set of constants. Eg: 
+
+```
+class EnumExample1{  
+//defining the enum inside the class  
+public enum Season { WINTER, SPRING, SUMMER, FALL }  
+//main method  
+public static void main(String[] args) {  
+//traversing the enum  
+for (Season s : Season.values())  
+System.out.println(s);  
+}}  
+```
+
+#### JIT Compiler 
+Bytecode is one of the most important features of java that aids in cross-platform execution. The way of converting bytecode to native machine language for execution has a huge impact on its speed of it. 
+
+These bytecodes have to be interpreted or compiled to proper machine instructions depending on the instruction set architecture. Moreover, these can be directly executed if the instruction architecture is bytecode based. Interpreting the bytecode affects the speed of execution. 
+
+In order to improve performance, JIT compilers interact with the Java Virtual Machine (JVM) at run time and compile suitable bytecode sequences into native machine code. While using a JIT compiler, the hardware is able to execute the native code, as compared to having the JVM interpret the same sequence of bytecode repeatedly and incurring overhead for the translation process. This subsequently leads to performance gains in the execution speed, unless the compiled methods are executed less frequently. 
+
+The JIT compiler is able to perform certain simple optimizations while compiling a series of bytecode to native machine language. Some of these optimizations performed by JIT compilers are data analysis, reduction of memory accesses by register allocation, translation from stack operations to register operations, elimination of common sub-expressions, etc. 
+
+The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
+
+------------------------------
 
 ### HTTP 1.1 vs HTTP 2.0
 
@@ -1491,9 +1636,10 @@ print(response.elapsed.total_seconds())
 - A language is:
   - **statically typed** if the type of a variable is known at compile time, eg: int a = 5. For some languages this means that you as the programmer must specify what type each variable is; other languages (e.g.: Java, C, C++) offer some form of type inference, the capability of the type system to deduce the type of a variable (e.g.: OCaml, Haskell, Scala, Kotlin). Examples: C, C++, Java, Rust, Go, Scala
   - **dynamically typed** if the type is associated with run-time values, and not named variables/fields/etc. This means that you as a programmer can write a little quicker because you do not have to specify types every time (unless using a statically-typed language with type inference). Examples: Perl, Ruby, Python, PHP, JavaScript, Erlang
-
-
-
+- TIL that if a function has a lot of arguments it takes a small hit on the call because the stack is used for the arguments instead of CPU registers. Depending on the OS (specifically 64 bit for some reason) anything > 4 goes into the stack. else it goes into the R registers.
+- You know I used to think that 99.99% CPU at times or 98% RAM indicate bottlenecks and starved processes but that is not always the case. Your might have a multi-threaded or multi-process backend app that use 98% CPU of all cores at times but all processes are served equally and without any blocking or minimum blocking. You simply crafted the number of processes or threads in your CPU-bound backend workload so it runs efficient, which is what you want. So CPU usage alone isn’t enough to indicate pressure or stalling or blocking. I don’t know about Windows but in Linux, The psi (pressure stall information) is a metric I recently learned that tells you whether “some” or “full” pressure is being experienced, that is processes are being stalled for CPU or RAM. This even applies to RAM, some relational and in-memory databases pre-allocates large memory even though they are not using it showing large RAM usage but it doesn’t indicate that you necessarily need more RAM. SQL Server and memcachd comes to mind. So just because your memory usage is 98% doesn’t mean you necessarily need more RAM.
+- What is the Torn Page in SQL Server? It is the inability of the server to fetch a particular data during a transaction. It is caused when an Input/Output header tries to access a page that was written incorrectly to the disk. It reports a message saying 'I/O error (torn page) detected during read'.
+- [Backend for frontend pattern _al](https://medium.com/mobilepeople/backend-for-frontend-pattern-why-you-need-to-know-it-46f94ce420b0): You need to think of the user-facing application as being two components — a client-side application living outside your perimeter and a server-side component (BFF) inside your perimeter. BFF is a variant of the API Gateway pattern, but it also provides an additional layer between microservices and each client type separately. Instead of a single point of entry, it introduces multiple gateways. Because of that, you can have a tailored API that targets the needs of each client (mobile, web, desktop, voice assistant, etc.), and remove a lot of the bloat caused by keeping it all in one place. 
 
 ------------------
 
@@ -1586,3 +1732,4 @@ print(response.elapsed.total_seconds())
 
 
 ------------------
+
