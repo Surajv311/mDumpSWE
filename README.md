@@ -1,10 +1,10 @@
 # mDumpSWE
+
 Collection of interesting articles/newsletters/blogs/videos - related to software engineering, I've surfed online and learned about. Thank you internet. Creating a repo for my memory dump. I've tried to add as many references from where I read the articles about, but may have missed few. 
 
 Abbrevations in doc hyperlinked: 
-- _vl - video reference link
-- _al - article reference link
-
+- `_vl`: video reference link
+- `_al`: article/page reference link
 
 Table of contents (rough overview): 
 - Kafka
@@ -30,8 +30,8 @@ Table of contents (rough overview):
 - Webhooks, APIs, Websockets 
 - SQL Functions 
 - HTTP Request 
-- OLAP vs OLTP Databases  
-- gRPC 
+- TCP vs UDP  
+- gRPC and REST
 - Serialization & Non-serialization 
 - JSON vs Protobuf 
 - Git 
@@ -41,7 +41,8 @@ Table of contents (rough overview):
 - SAML 
 - Java 
 - HTTP 1.1 vs HTTP 2.0 
-- Quick questions and Info
+- Info & Miscellaneous
+- Opensource Github repos knowledge extraction 
 
 
 --------------------------
@@ -58,6 +59,33 @@ The basic architecture of Kafka is organised around a few key terms: topics, pro
 - Kafka topics are divided into a number of **partitions**. Each partition can be placed on a separate machine to allow for multiple consumers to read from a topic in parallel. 
 - Each message within a partition has an identifier called its **offset**. The offset the ordering of messages as an immutable sequence. Kafdrop can be used to view the Kafka brokers/ topics/ consumers, etc. AWS has a service called MSK which can be used for Kafka service.   
 - In Kafka, a **consumer group** is a group of one or more consumers that work together to consume messages from one or more partitions of a topic. When multiple consumers are part of a consumer group, Kafka automatically assigns partitions to each consumer within the group, ensuring that each partition is consumed by only one consumer at a time. This allows for horizontal scaling of consumers and high availability of data processing.
+- Kafka batch size vs buffer memory: 
+  - batch.size: The maximum amount of data that can be sent in a single request. If batch.size is (32*1024) that means 32 KB can be sent out in a single request.
+  - buffer.memory: if Kafka Producer is not able to send messages(batches) to Kafka broker (Say broker is down). It starts accumulating the message batches in the buffer memory (default 32 MB). Once the buffer is full, It will wait for "max.block.ms" (default 60,000ms) so that buffer can be cleared out. Then it's throw exception.
+
+[Kafka internals _al](https://engineering.cred.club/kafka-internals-47e594e3f006)
+
+**Schema registry in Kafka**: Kafka, at its core, only transfers data in byte format. There is no data verification that’s being done at the Kafka cluster level. In fact, Kafka doesn’t even know what kind of data it is sending or receiving; whether it is a string or integer. 
+
+Due to the decoupled nature of Kafka, producers and consumers do not communicate with each other directly, but rather information transfer happens via Kafka topic. At the same time, the consumer still needs to know the type of data the producer is sending in order to deserialize it. 
+
+Imagine if the producer starts sending bad data to Kafka or if the data type of your data gets changed. Your downstream consumers will start breaking. We need a way to have a common data type that must be agreed upon. That’s where Schema Registry comes into the picture. 
+
+It is an application that resides outside of your Kafka cluster and handles the distribution of schemas to the producer and consumer by storing a copy of schema in its local cache. With the schema registry in place, the producer, before sending the data to Kafka, talks to the schema registry first and checks if the schema is available. If it doesn’t find the schema then it registers and caches it in the schema registry. Once the producer gets the schema, it will serialize the data with the schema and send it to Kafka in binary format prepended with a unique schema ID. When the consumer processes this message, it will communicate with the schema registry using the schema ID it got from the producer and deserialize it using the same schema. If there is a schema mismatch, the schema registry will throw an error letting the producer know that it’s breaking the schema agreement.
+
+[Schema registry Kafka _al](https://medium.com/slalom-technology/introduction-to-schema-registry-in-kafka-915ccf06b902)
+
+**Kafka consumer commits**: 
+  - A kafka offset is a unique identifier for each message within a kafka partition. It helps consumers keep track of their progress like how many messages each consumer has already consumed from a partition so far and where to start next from. Please note, offset is unique only within a partition, not across partitions.
+  - A consumer can either chose to automatically commit offsets periodically or chose to commit it manually for special use cases. Different ways to commit: 
+    - Auto commit is the simplest way to commit offsets by just setting enable.auto.commit property to true. In this case, kafka consumer client will auto commit the largest offset returned by the poll() method every 5 seconds. We can set auto.commit.interval.ms property to change this default 5 seconds interval.
+      - Caution with auto commit : With auto commit enabled, kafka consumer client will always commit the last offset returned by the poll method even if they were not processed. For example, if poll returned messages with offsets 0 to 1000, and the consumer could process only up to 500 of them and crashed after auto commit interval. Next time when it resumes, it will see last commit offset as 1000, and will start from 1001. This way it ended up losing message offsets from 501 till 1000. Hence with auto commit, it is critical to make sure we process all offsets returned by the last poll method before calling it again. Sometimes auto commit could also lead to duplicate processing of messages in case consumer crashes before the next auto commit interval. Hence kafka consumer provides APIs for developers to take control in their hand when to commit offsets rather than relying on auto commit by setting enable.auto.commit to false which we will discuss next. 
+    - Manual synchronous commit: One downside of this synchronous commit is that it may have an impact on the application throughput as the application gets blocked until the broker responds to the commit request. 
+    - Manual asynchronous commit: With asynchronous commit API, we just send the commit request and carry on. Here the application is not blocked due to asynchronous call nature. One more way asynchronous commit differs from synchronous commit is that synchronous keep on retrying as long as there is no fatal error, while asynchronous does not retry even if it fails otherwise it could lead to duplicate processing. In case of failures, asynchronous relies on the next commit to cover for it.
+      - Usually its a good programming practice to leverage both synchronous and asynchronous commits, sample code snippet below. 
+    - One can also do Manual commit for specific offsets. 
+
+[Kafka commit strategies _al](https://quarkus.io/blog/kafka-commit-strategies/), [Kafka commit types _al](https://medium.com/@rramiz.rraza/kafka-programming-different-ways-to-commit-offsets-7bcd179b225a)
 
 ### Airflow
 Apache Airflow is an open-source workflow management platform for data engineering pipelines. It is used for the scheduling and orchestration of data pipelines or workflows. Orchestration of data pipelines refers to the sequencing, coordination, scheduling, and managing complex data pipelines from diverse sources. Airflow installation generally consists of the following components:
@@ -217,13 +245,15 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
 
 - **Salting** is a technique used in Apache Spark to evenly distribute data across partitions. It involves adding a random or unique identifier (called a "salt") to each record before performing operations like grouping or joining. This helps avoid data skew and improves parallelism in data processing.
 
+- Spark uses two engines to optimize and run the queries - Catalyst and Tungsten, in that order. Catalyst basically generates an optimized physical query plan from the logical query plan by applying a series of transformations like predicate pushdown, column pruning, and constant folding on the logical plan. This optimized query plan is then used by Tungsten to generate optimized code, that resembles hand written code, by making use of Whole-stage Codegen functionality introduced in Spark 2.0. This functionality has improved Spark's efficiency by a huge margin from Spark 1.6, which used the traditional Volcano Iterator Model. [Spark engine _al](https://www.linkedin.com/pulse/catalyst-tungsten-apache-sparks-speeding-engine-deepak-rajak/)
 
 - In **PySpark** (PySpark is the Python API for Apache Spark. It enables you to perform real-time, large-scale data processing in a distributed environment using Python), Python and JVM codes live in separate OS processes. 
   - PySpark uses Py4J, which is a framework that facilitates interoperation between the two languages, to exchange data between the Python and the JVM processes. When you launch a PySpark job, it starts as a Python process, which then spawns a JVM instance and runs some PySpark specific code in it. It then instantiates a Spark session in that JVM, which becomes the driver program that Spark sees. That driver program connects to the Spark master or spawns an in-proc one, depending on how the session is configured.
   - When you create RDDs or Dataframes, those are stored in the memory of the Spark cluster just as RDDs and Dataframes created by Scala or Java applications. Transformations and actions on them work just as they do in JVM, with one notable difference: anything, which involves passing the data through Python code, runs outside the JVM. So, if you create a Dataframe, and do something like: `df.select("foo", "bar").where(df["foo"] > 100).count()`, this runs entirely in the JVM as there is no Python code that the data must pass through. 
   - On the other side, if you do: `a = t.reduce(add)`, since the add operator is a Python one, the RDD gets serialised, then sent to one or more Python processes where the reduction is performed, then the result is serialised again and returned to the JVM, and finally transferred over to the Python driver process for the final reduction.
 
-[Pyspark code run in jvm or python subprocess _al](https://stackoverflow.com/questions/61816236/does-pyspark-code-run-in-jvm-or-python-subprocess)
+[Pyspark code run in jvm or python subprocess _al](https://stackoverflow.com/questions/61816236/does-pyspark-code-run-in-jvm-or-python-subprocess), 
+[Pyspark internals _al](https://cwiki.apache.org/confluence/display/SPARK/PySpark+Internals)
 
 - The `createOrReplaceTempView()` is used to create a temporary view/table from the Spark DataFrame or Dataset objects. It is part of Spark 2.0. In Spark 1.0 `registerTempTable()` was used. 
 
@@ -862,6 +892,40 @@ Amazon Elastic Container Registry (Amazon ECR) is an AWS managed container image
     - Indexes on specific columns for performance optimization
   - In summary, the key difference is that the "database schema" encompasses the entire structure of the database, including multiple tables, views, and other database objects, while the "table schema" focuses specifically on the structure and attributes of an individual table within the database.
 
+- OLAP & OLTP databases: 
+  - Purpose of online analytical processing (OLAP) is to analyze aggregated data.
+  - Purpose of online transaction processing (OLTP) is to process database transactions. 
+  - You use OLAP systems to generate reports, perform complex data analysis, and identify trends or reporting. In contrast, you use OLTP systems to process orders, update inventory, transactional processing and real-time updates, and manage customer accounts. [Olap, Oltp _al](https://aws.amazon.com/compare/the-difference-between-olap-and-oltp/)
+
+- (From Opensource Github repos knowledge extraction section | system-design-primer): 
+  - **ACID** is a set of properties of relational database transactions.
+    - Atomicity - Each transaction is all or nothing
+    - Consistency - Any transaction will bring the database from one valid state to another
+    - Isolation - Executing transactions concurrently has the same results as if the transactions were executed serially
+    - Durability - Once a transaction has been committed, it will remain so
+  - There are many techniques to scale a relational database: **master-slave replication**, **master-master replication**, **federation**, **sharding**, **denormalization**, and **SQL tuning**.
+  - Replication (we have covered it in last section specially the master-slave, master-master)
+  - Federation: Federation (or functional partitioning) splits up databases by function. For example, instead of a single, monolithic database, you could have three databases: forums, users, and products, resulting in less read and write traffic to each database and therefore less replication lag. Smaller databases result in more data that can fit in memory, which in turn results in more cache hits due to improved cache locality. With no single central master serializing writes you can write in parallel, increasing throughput.
+    - (Disadvantages): Federation is not effective if your schema requires huge functions or tables. You'll need to update your application logic to determine which database to read and write. Joining data from two databases is more complex with a server link. Federation adds more hardware and additional complexity.
+  - Sharding: Sharding distributes data across different databases such that each database can only manage a subset of the data. Taking a users database as an example, as the number of users increases, more shards are added to the cluster. Similar to the advantages of federation, sharding results in less read and write traffic, less replication, and more cache hits. Index size is also reduced, which generally improves performance with faster queries. If one shard goes down, the other shards are still operational, although you'll want to add some form of replication to avoid data loss. Like federation, there is no single central master serializing writes, allowing you to write in parallel with increased throughput. Common ways to shard a table of users is either through the user's last name initial or the user's geographic location.
+    - (Disadvantage): You'll need to update your application logic to work with shards, which could result in complex SQL queries. Data distribution can become lopsided in a shard.Joining data from multiple shards is more complex. Sharding adds more hardware and additional complexity.
+  - Denormalization: Denormalization attempts to improve read performance at the expense of some write performance. Redundant copies of the data are written in multiple tables to avoid expensive joins. Some RDBMS such as PostgreSQL and Oracle support materialized views which handle the work of storing redundant information and keeping redundant copies consistent. In most systems, reads can heavily outnumber writes 100:1 or even 1000:1. A read resulting in a complex database join can be very expensive, spending a significant amount of time on disk operations.
+    - (Disadvantage): Data is duplicated. Constraints can help redundant copies of information stay in sync, which increases complexity of the database design. A denormalized database under heavy write load might perform worse than its normalized counterpart.
+  - SQL Tuning: [Refer the link](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#sql-tuning)
+    - Tighten up the schema, Use good indices, Avoid expensive joins, Partition tables, Tune the query cache
+  - NoSQL is a collection of data items represented in a key-value store, document store, wide column store, or a graph database. Data is denormalized, and joins are generally done in the application code. Most NoSQL stores lack true ACID transactions and favor eventual consistency.
+    - BASE is often used to describe the properties of NoSQL databases. In comparison with the CAP Theorem, BASE chooses availability over consistency.
+      - Basically available - the system guarantees availability.
+      - Soft state - the state of the system may change over time, even without input.
+      - Eventual consistency - the system will become consistent over a period of time, given that the system doesn't receive input during that period.
+    - In addition to choosing between SQL or NoSQL, it is helpful to understand which type of NoSQL database best fits your use case(s). 
+      - A key-value store generally allows for O(1) reads and writes and is often backed by memory or SSD. Data stores can maintain keys in lexicographic order, allowing efficient retrieval of key ranges. Key-value stores can allow for storing of metadata with a value. Key-value stores provide high performance and are often used for simple data models or for rapidly-changing data, such as an in-memory cache layer. Since they offer only a limited set of operations, complexity is shifted to the application layer if additional operations are needed. A key-value store is the basis for more complex systems such as a document store, and in some cases, a graph database.
+      - A document store is centered around documents (XML, JSON, binary, etc), where a document stores all information for a given object. Document stores provide APIs or a query language to query based on the internal structure of the document itself. Note, many key-value stores include features for working with a value's metadata, blurring the lines between these two storage types. Based on the underlying implementation, documents are organized by collections, tags, metadata, or directories. Although documents can be organized or grouped together, documents may have fields that are completely different from each other. Some document stores like MongoDB and CouchDB also provide a SQL-like language to perform complex queries. DynamoDB supports both key-values and documents. Document stores provide high flexibility and are often used for working with occasionally changing data.
+      - A wide column store's basic unit of data is a column (name/value pair). A column can be grouped in column families (analogous to a SQL table). Super column families further group column families. You can access each column independently with a row key, and columns with the same row key form a row. Each value contains a timestamp for versioning and for conflict resolution. Google introduced Bigtable as the first wide column store, which influenced the open-source HBase often-used in the Hadoop ecosystem, and Cassandra from Facebook. Stores such as BigTable, HBase, and Cassandra maintain keys in lexicographic order, allowing efficient retrieval of selective key ranges. Wide column stores offer high availability and high scalability. They are often used for very large data sets.
+      - In a graph database, each node is a record and each arc is a relationship between two nodes. Graph databases are optimized to represent complex relationships with many foreign keys or many-to-many relationships. Graphs databases offer high performance for data models with complex relationships, such as a social network. They are relatively new and are not yet widely-used; it might be more difficult to find development tools and resources. Many graphs can only be accessed with REST APIs.
+    - Reasons for choosing SQL db: Structured data; Strict schema; Relational data; Need for complex joins; Transactions; Clear patterns for scaling; More established: developers, community, code, tools, etc; Lookups by index are very fast
+    - Reasons for NoSQL db: Semi-structured data; Dynamic or flexible schema; Non-relational data; No need for complex joins; Store many TB (or PB) of data; Very data intensive workload; Very high throughput for IOPS
+
 - **Database Indexing**: 
   - An index is just a data structure that makes the searching faster for a specific column in a database. This structure is usually a b-tree or a hash table but it can be any other logic structure. Another definition: Indexing is a way of sorting a number of records on multiple fields. Creating an index on a field in a table creates another data structure which holds the field value, and a pointer to the record it relates to. This index structure is then sorted, allowing Binary Searches to be performed on it. The downside to indexing is that these indices require additional space on the disk since the indices are stored together in a table using the MyISAM engine, this file can quickly reach the size limits of the underlying file system if many fields within the same table are indexed.
   - B-tree is a special type of self-balancing search tree in which each node can contain more than one key and can have more than two children. It is a generalized form of the binary search tree. It is also known as a height-balanced m-way tree. Time complexity for insert, delete, update operations is O(n). 
@@ -943,6 +1007,8 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 - `rm /path/to/directory/*`: To remove all non-hidden files* in a directory 
 - `rm -r /path/to/directory/*`: To remove all non-hidden files and sub-directories (along with all of their contents) in a directory
 - `rm -rf "/path/to the/directory/"*`: Force removal of files
+
+Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
 
 ### JIT Compiler 
 Bytecode is one of the most important features of java that aids in cross-platform execution. The way of converting bytecode to native machine language for execution has a huge impact on its speed of it. 
@@ -1099,7 +1165,13 @@ SELECT
 FROM cte_quantity;
 ```
 
+- Order of execution of ORDER BY and LIMIT in a MySQL query: A SQL LIMIT will in all databases always work on the result of a query, so it will first run the query with the ORDER BY and that result will then be limited.
+
 ### HTTP Request
+
+HTTP is a method for encoding and transporting data between a client and a server. It is a request/response protocol: clients issue requests and servers issue responses with relevant content and completion status info about the request. HTTP is self-contained, allowing requests and responses to flow through many intermediate routers and servers that perform load balancing, caching, encryption, and compression.
+
+HTTP is an application layer protocol relying on lower-level protocols such as TCP and UDP.
 
 In general, an HTTP request is divided into 3 parts: 
 - A request line: We place the HTTP method to be used, the URI of the request and the HTTP protocol to be used. HTTP methods indicate what kind of action our client wants to perform, whether he wants to read a resource, or if he wants to send information to the API, etc. The URI refers to the address where the resource is located. And the HTTP protocol refers to which HTTP protocol will be used, this is because there are several versions of the HTTP protocol, at the time of writing this post, the most common protocol is HTTP/1.1, however, there are other more recent revisions , like the HTTP/2.0 revision. Eg: `GET /api/authors HTTP/1.1` - means we are requesting a resource from endpoint. 
@@ -1134,23 +1206,40 @@ Content-Type: text/html; charset=UTF-8
 <!doctype html><html …
 ```
 
-### OLAP vs OLTP Databases 
+### TCP vs UDP 
 
-- Purpose of online analytical processing (OLAP) is to analyze aggregated data.
-- Purpose of online transaction processing (OLTP) is to process database transactions. 
-- You use OLAP systems to generate reports, perform complex data analysis, and identify trends or reporting. In contrast, you use OLTP systems to process orders, update inventory, transactional processing and real-time updates, and manage customer accounts. [Olap, Oltp _al](https://aws.amazon.com/compare/the-difference-between-olap-and-oltp/)
+(From Opensource Github repos knowledge extraction section | system-design-primer):
 
-### gRPC
+TCP is a connection-oriented protocol over an IP network. Connection is established and terminated using a handshake. All packets sent are guaranteed to reach the destination in the original order and without corruption through:
+- Sequence numbers and checksum fields for each packet
+- Acknowledgement packets and automatic retransmission
+If the sender does not receive a correct response, it will resend the packets. If there are multiple timeouts, the connection is dropped. TCP also implements flow control and congestion control. These guarantees cause delays and generally result in less efficient transmission than UDP.
+To ensure high throughput, web servers can keep a large number of TCP connections open, resulting in high memory usage. It can be expensive to have a large number of open connections between web server threads and say, a memcached server. Connection pooling can help in addition to switching to UDP where applicable.
+TCP is useful for applications that require high reliability but are less time critical. Some examples include web servers, database info, SMTP, FTP, and SSH.
+Use TCP over UDP when:
+- You need all of the data to arrive intact
+- You want to automatically make a best estimate use of the network throughput
 
-- gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file) (It can use other formats like JSON as well).
-- Protocol buffers are Google's language-agnostic, platform-neutral, extensible mechanism for serializing structured data. 
-gRPC uses HTTP2. 
-- Benefits of using HTTP/2 (than HTTP) include improved website loading speeds, reduced bandwidth usage, and enhanced website security. It also supports advanced features like server push and multiplexing.
+UDP is connectionless. Datagrams (analogous to packets) are guaranteed only at the datagram level. Datagrams might reach their destination out of order or not at all. UDP does not support congestion control. Without the guarantees that TCP support, UDP is generally more efficient. UDP can broadcast, sending datagrams to all devices on the subnet. This is useful with DHCP because the client has not yet received an IP address, thus preventing a way for TCP to stream without the IP address.
+UDP is less reliable but works well in real time use cases such as VoIP, video chat, streaming, and realtime multiplayer games.
+Use UDP over TCP when:
+- You need the lowest latency
+- Late data is worse than loss of data
+- You want to implement your own error correction
+
+### gRPC and REST
+
+gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file) (It can use other formats like JSON as well). In an RPC, a client causes a procedure to execute on a different address space, usually a remote server. The procedure is coded as if it were a local procedure call, abstracting away the details of how to communicate with the server from the client program. Remote calls are usually slower and less reliable than local calls so it is helpful to distinguish RPC calls from local calls. Popular RPC frameworks include Protobuf, Thrift, and Avro.
+- Protocol buffers are Google's language-agnostic, platform-neutral, extensible mechanism for serializing structured data. gRPC uses HTTP2. 
 - Also, in other words, **LPC (Local Procedure Call)** vs **RPC (Remote Procedure Call)**: 
   - Host machine invokes a function call in itself, executes & gets the output - LPC
   - Host machine invokes a function call on another machine, executes & gets the output - RPC
 - In RPC, there can be issues like: RPC is slower than LPC since it uses the network to invoke the method. Failures can happen, etc. 
-- [gRPC over REST _al](https://medium.com/@sankar.p/how-grpc-convinced-me-to-chose-it-over-rest-30408bf42794)
+
+REST is an architectural style enforcing a client/server model where the client acts on a set of resources managed by the server. The server provides a representation of resources and actions that can either manipulate or get a new representation of resources. All communication must be stateless and cacheable.
+
+[gRPC over REST _al](https://medium.com/@sankar.p/how-grpc-convinced-me-to-chose-it-over-rest-30408bf42794),
+[RPC vs REST _al](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#rpc-and-rest-calls-comparison)
 
 ### Serialization & Non-serialization
 
@@ -1310,7 +1399,7 @@ Facebook and Google are two OAuth providers that you might use to log into other
 
 ------------------
 
-### Quick questions and Info
+### Info & Miscellaneous
 
 - **Deduplication** refers to a method of eliminating a dataset's redundant data.
 - A **race condition** is an undesirable situation that occurs when a device or system attempts to perform two or more operations at the same time, but because of the nature of the device or system, the operations must be done in the proper sequence to be done correctly.
@@ -1374,5 +1463,100 @@ print(response.elapsed.total_seconds())
 - Time-to-live (TTL) is a value for the period of time that a packet, or data, should exist on a computer or network before being discarded.
 - Lazy loading is the practice of delaying load or initialization of resources or objects until they’re actually needed to improve performance and save system resources. For example, if a web page has an image that the user has to scroll down to see, you can display a placeholder and lazy load the full image only when the user arrives to its location -  with this you can reduce load time, conserve resources, etc. 
 - TOAST in postgres: TOAST (The Oversized-Attribute Storage Technique) is a mechanism in Postgres which stores large column values in multiple physical rows, circumventing the page size limit of 8 KB.
+- DRY Principal in programming: Do not repeat yourself 
+- [Opensearch shard indexing backpressure](https://opensearch.org/blog/shard-indexing-backpressure-in-opensearch)
+- Event reactor pattern: The reactor software design pattern is an event handling strategy that can respond to many potential service requests concurrently. The pattern's key component is an event loop, running in a single thread or process, which demultiplexes incoming requests and dispatches them to the correct request handler.
+- [Aqua trivy _al](https://github.com/aquasecurity/trivy) is a useful tool to find vulnerabilities.
+- [Pydantic validators _al](https://www.apptension.com/blog-posts/pydantic)
+
+------------------
+
+### Opensource Github repos knowledge extraction 
+
+#### [donnemartin/system-design-primer _al](https://github.com/donnemartin/system-design-primer)
+
+- A service is scalable if it results in increased performance in a manner proportional to resources added. Generally, increasing performance means serving more units of work, but it can also be to handle larger units of work, such as when datasets grow. Another way to look at performance vs scalability: If you have a performance problem, your system is slow for a single user. If you have a scalability problem, your system is fast for a single user but slow under heavy load.
+
+- Latency is the time to perform some action or to produce some result. Throughput is the number of such actions or results per unit of time. Generally, you should aim for maximal throughput with acceptable latency.
+
+- CAP Theorem: Also note that in a distributed computer system, you can only support two of the following guarantees:
+  - Consistency - Every read receives the most recent write or an error
+  - Availability - Every request receives a response, without guarantee that it contains the most recent version of the information
+  - Partition Tolerance - The system continues to operate despite arbitrary partitioning due to network failures
+
+- With multiple copies of the same data, we are faced with options on how to synchronize them so clients have a consistent view of the data. Consistency: Weak (After a write, reads may or may not see it), Eventual (After a write, reads will eventually see it (typically within milliseconds); Data is replicated asynchronously), Strong (After a write, reads will see it; Data is replicated synchronously) 
+
+- There are two complementary patterns to support high availability: 
+  - fail-over:
+    - In active-passive fail-over, heartbeats are sent between the active and the passive server on standby. If the heartbeat is interrupted, the passive server takes over the active's IP address and resumes service. The length of downtime is determined by whether the passive server is already running in 'hot' standby or whether it needs to start up from 'cold' standby. Only the active server handles traffic. Active-passive failover can also be referred to as master-slave failover.
+    - In active-active fail-over, both servers are managing traffic, spreading the load between them. If the servers are public-facing, the DNS would need to know about the public IPs of both servers. If the servers are internal-facing, application logic would need to know about both servers. Active-active failover can also be referred to as master-master failover.
+  - replication:
+    - In master-slave, master serves reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate to additional slaves in a tree-like fashion. If the master goes offline, the system can continue to operate in read-only mode until a slave is promoted to a master or a new master is provisioned. 
+    - In master-master, both masters serve reads and writes and coordinate with each other on writes. If either master goes down, the system can continue to operate with both reads and writes.
+  - All of above have their own set of advantages/disadvantages.  
+
+- Availability is often quantified by uptime (or downtime) as a percentage of time the service is available. 99.9% availability qualifies to having acceptable downtime of 43m 49.7s/month. In case of 99.99%, acceptable downtime is 4m 23s/month. 
+  - If a service consists of multiple components prone to failure, the service's overall availability depends on whether the components are in sequence or in parallel.
+    - In sequence: `Availability (Total) = Availability (Foo) * Availability (Bar)`
+    - In parallel: `Availability (Total) = 1 - (1 - Availability (Foo)) * (1 - Availability (Bar))`
+
+- Domain Name System (DNS) translates a domain name such as www.example.com to an IP address. DNS is hierarchical, with a few authoritative servers at the top level. Your router or ISP provides information about which DNS server(s) to contact when doing a lookup. Lower level DNS servers cache mappings, which could become stale due to DNS propagation delays. DNS results can also be cached by your browser or OS for a certain period of time, determined by the time to live (TTL).
+    - NS record (name server) - Specifies the DNS servers for your domain/subdomain.
+    - MX record (mail exchange) - Specifies the mail servers for accepting messages.
+    - A record (address) - Points a name to an IP address.
+    - CNAME (canonical) - Points a name to another name or CNAME (example.com to www.example.com) or to an A record.
+  - Services such as CloudFlare and Route 53 provide managed DNS services. Some DNS services can route traffic through various methods: Weighted round robin, Latency-based, Geolocation-based
+  - (Disadvantages): Accessing a DNS server introduces a slight delay, although mitigated by caching described above. And DNS server management could be complex. Also, DNS services have recently come under DDoS attack, preventing users from accessing websites such as Twitter without knowing Twitter's IP address(es).
+
+- Content Delivery Network (CDN) is a globally distributed network of proxy servers, serving content from locations closer to the user. Generally, static files such as HTML/CSS/JS, photos, and videos are served from CDN, although some CDNs such as Amazon's CloudFront support dynamic content. The site's DNS resolution will tell clients which server to contact. Serving content from CDNs can significantly improve performance in two ways:
+    - Users receive content from data centers close to them
+    - Your servers do not have to serve requests that the CDN fulfills
+  - Push CDNs receive new content whenever changes occur on your server. You take full responsibility for providing content, uploading directly to the CDN and rewriting URLs to point to the CDN. You can configure when content expires and when it is updated. Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage. Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs. Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
+  - Pull CDNs grab new content from your server when the first user requests the content. You leave the content on your server and rewrite URLs to point to the CDN. This results in a slower request until the content is cached on the CDN. A time-to-live (TTL) determines how long content is cached. Pull CDNs minimize storage space on the CDN, but can create redundant traffic if files expire and are pulled before they have actually changed. Sites with heavy traffic work well with pull CDNs, as traffic is spread out more evenly with only recently-requested content remaining on the CDN.
+  - (Disadvantages): CDN costs could be significant depending on traffic, although this should be weighed with additional costs you would incur not using a CDN. Content might be stale if it is updated before the TTL expires it. CDNs require changing URLs for static content to point to the CDN.
+
+- Load balancers distribute incoming client requests to computing resources such as application servers and databases. In each case, the load balancer returns the response from the computing resource to the appropriate client. Load balancers are effective at:
+    - Preventing requests from going to unhealthy servers
+    - Preventing overloading resources
+    - Helping to eliminate a single point of failure
+    - Load balancers can be implemented with hardware (expensive) or with software such as HAProxy.
+  - Additional benefits include:
+    - SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations
+    - Session persistence - Issue cookies and route a specific client's requests to same instance if the web apps do not keep track of sessions. Note that to protect against failures, it's common to set up multiple load balancers, either in active-passive or active-active mode.
+  - Load balancers can route traffic based on various metrics, including: Random, Least loaded, Session/cookies, Round robin or weighted round robin, Layer 4, Layer 7. 
+  - Layer 4 load balancers look at info at the transport layer to decide how to distribute requests. Generally, this involves the source, destination IP addresses, and ports in the header, but not the contents of the packet. Layer 4 load balancers forward network packets to and from the upstream server, performing Network Address Translation (NAT).
+  - Layer 7 load balancers look at the application layer to decide how to distribute requests. This can involve contents of the header, message, and cookies. Layer 7 load balancers terminate network traffic, reads the message, makes a load-balancing decision, then opens a connection to the selected server. For example, a layer 7 load balancer can direct video traffic to servers that host videos while directing more sensitive user billing traffic to security-hardened servers.
+  - Load balancers can also help with horizontal scaling, improving performance and availability. But disadvantages for horizontal scaling is: It introduces complexity and involves cloning servers - hence servers should be stateless: they should not contain any user-related data like sessions or profile pictures and sessions can be stored in a centralized data store such as a database (SQL, NoSQL) or a persistent cache (Redis, Memcached); Downstream servers such as caches and databases need to handle more simultaneous connections as upstream servers scale out
+  - (Disadvantages): The load balancer can become a performance bottleneck if it does not have enough resources or if it is not configured properly. Introducing a load balancer to help eliminate a single point of failure results in increased complexity. A single load balancer is a single point of failure, configuring multiple load balancers further increases complexity.
+
+- Reverse Proxy: It is a web server that centralizes internal services and provides unified interfaces to the public. Requests from clients are forwarded to a server that can fulfill it before the reverse proxy returns the server's response to the client.
+  - (Benefits): Increased security - Hide information about backend servers, blacklist IPs, limit number of connections per client; Increased scalability and flexibility - Clients only see the reverse proxy's IP, allowing you to scale servers or change their configuration; SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations; Compression - Compress server responses; Caching - Return the response for cached requests Static content - Serve static content directly like html/css, photos, videos. 
+  - Deploying a load balancer is useful when you have multiple servers. Often, load balancers route traffic to a set of servers serving the same function. Reverse proxies can be useful even with just one web server or application server, opening up the benefits described in the previous section. Solutions such as NGINX and HAProxy can support both layer 7 reverse proxying and load balancing.
+
+- Microservices: Can be described as a suite of independently deployable, small, modular services. Each service runs a unique process and communicates through a well-defined, lightweight mechanism to serve a business goal. Pinterest, for example, could have the following microservices: user profile, follower, feed, search, photo upload microservices, etc.
+
+- Caching improves page load times and can reduce the load on your servers and databases. In this model, the dispatcher will first lookup if the request has been made before and try to find the previous result to return, in order to save the actual execution. Databases often benefit from a uniform distribution of reads and writes across its partitions. Popular items can skew the distribution, causing bottlenecks. Putting a cache in front of a database can help absorb uneven loads and spikes in traffic.
+  - We can have caching at: Client, Web server, Database, CDN, Application, Database query level, Object level caching.
+  - When to update the cache: 
+    - Cache-aside: The application is responsible for reading and writing from storage. The cache does not interact with storage directly. In short: Look for entry in cache -> resulting in a cache miss -> Load entry from the database -> Add entry to cache -> Return entry. Cache-aside is also referred to as lazy loading. Only requested data is cached, which avoids filling up the cache with data that isn't requested.
+    - Write-through: The application uses the cache as the main data store, reading and writing data to it, while the cache is responsible for reading and writing to the database. In short: Application adds/updates entry in cache -> Cache synchronously writes entry to data store -> Return
+    - Write-behind (write-back): In write-behind, the application does the following, In short: Add/update entry in cache -> Asynchronously write entry to the data store -> thereby improving write performance
+    - Refresh-ahead: You can configure the cache to automatically refresh any recently accessed cache entry prior to its expiration. Refresh-ahead can result in reduced latency vs read-through if the cache can accurately predict which items are likely to be needed in the future.
+    - All have their own set of advantages, disadvantages. 
+
+- Asynchronism
+  - Message queues receive, hold, and deliver messages. If an operation is too slow to perform inline, you can use a message queue with the following workflow:
+      - An application publishes a job to the queue, then notifies the user of job status
+      - A worker picks up the job from the queue, processes it, then signals the job is complete
+    - The user is not blocked and the job is processed in the background. During this time, the client might optionally do a small amount of processing to make it seem like the task has completed. For example, if posting a tweet, the tweet could be instantly posted to your timeline, but it could take some time before your tweet is actually delivered to all of your followers.
+    - Eg: Redis is useful as a simple message broker but messages can be lost. RabbitMQ is popular but requires you to adapt to the 'AMQP' protocol and manage your own nodes. Amazon SQS is hosted but can have high latency and has the possibility of messages being delivered twice.
+  - Tasks queues receive tasks and their related data, runs them, then delivers their results. They can support scheduling and can be used to run computationally-intensive jobs in the background. Celery has support for scheduling and primarily has python support.
+  - Back pressure: If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance. Back pressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. Once the queue fills up, clients get a server busy or HTTP 503 status code to try again later. Clients can retry the request at a later time, perhaps with exponential backoff.
+
+
+#### [surajv311/myCS-NOTES _al](https://github.com/Surajv311/myCS-NOTES)
+
+- Has my CS related notes. 
+
 
 ------------------
