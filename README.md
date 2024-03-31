@@ -7,7 +7,7 @@ Abbrevations in doc hyperlinked:
 - `_al`: article/page reference link
 
 Table of contents (rough overview): 
-- [Understand, read again, summarise](#Understand, read again, summarise)
+- [Understand_read_again_summarise](#Understand_read_again_summarise)
 - [Kafka](#Kafka)
 - [Airflow](#Airflow)
 - [Dask](#Dask)
@@ -17,38 +17,37 @@ Table of contents (rough overview):
 - [Databricks](#Databricks)
 - [Snowflake](#Snowflake)
 - [Pinot](#Pinot)
-- [Multi Threading, Synchronous, Asynchronous Programming](#Multi Threading, Synchronous, Asynchronous Programming)
-- [CPU-Intensive vs IO Bound Processes](#CPU-Intensive vs IO Bound Processes)
-- [Concurrency vs Parallelism](#Concurrency vs Parallelism) 
-- [Threads vs Process](#Threads vs Process) 
-- [CPU Threads vs Cores](#CPU Threads vs Cores)
-- [Generators, Iterables, Coroutines](#Generators, Iterables, Coroutines)
-- [Python: aiohttp, asyncio, ThreadPoolExecutor, Basic DS, Context manager, GIL, etc.](#Python)
-- [AWS Services: EC2, Redshift, Spectrum, Glue, RDS, Aurora, ECS, ECR, etc.](#AWS Services )
-- [Database internals: Table, Schema, Engine, Indexing](#Database internals)
-- [Linux internals, commands](#Linux internals, commands)
-- [Webhooks, APIs, Websockets](#Webhooks, APIs, Websockets)
-- [SQL Functions](#SQL Functions)
-- [HTTP Request](#HTTP Request)
+- [MultiThreading_Synchronous_Asynchronous_Programming](#MultiThreading_Synchronous_Asynchronous_Programming)
+- [CPU_Intensive_vs_IO_Bound_Processes](#CPU_Intensive_vs_IO_Bound_Processes)
+- [Concurrency_vs_Parallelism](#Concurrency_vs_Parallelism) 
+- [Threads_vs_Process](#Threads_vs_Process) 
+- [CPU_Threads_vs_Cores](#CPU_Threads_vs_Cores)
+- [Generators_Iterables_Coroutines](#Generators_Iterables_Coroutines)
+- [Python](#Python)
+- [Java](#Java)
+- [AWS_Services](#AWS_Services)
+- [Database_internals](#Database_internals)
+- [SQL Functions](#SQL-Functions)
+- [Linux_internals_and_commands](#Linux_internals_and_commands)
+- [Webhooks_APIs_Websockets](#Webhooks_APIs_Websockets)
+- [HTTP Request](#HTTP-Request)
+- [HTTP_1_vs_HTTP_2](#HTTP_1_vs_HTTP_2)
 - [Docker](#Docker)
-- [TCP vs UDP](#TCP vs UDP)
-- [gRPC, REST, GraphQL](#gRPC, REST, GraphQL)
-- [JSON vs Protobuf](#JSON vs Protobuf)
+- [TCP vs UDP](#TCP-vs-UDP)
+- [gRPC_REST_GraphQL](#gRPC_REST_GraphQL)
+- [JSON vs Protobuf](#JSON-vs-Protobuf)
 - [Git](#Git)
 - [cURL](#cURL)
-- [Bastion Hosts](#Bastion Hosts)
-- [Data transformation infos using libraries](#Data transformation infos using libraries)
+- [Data_transformation_info](#Data_transformation_info)
 - [SAML](#SAML)
-- [Java: Enum, JIT compiler](#Java)
-- [HTTP 1.1 vs HTTP 2.0](#HTTP 1.1 vs HTTP 2.0)
-- [Opensource Github repos knowledge extraction](#Opensource Github repos knowledge extraction)
-- [Info & Miscellaneous](#Info & Miscellaneous)
+- [Opensource_Github_repos_knowledge_extraction](#Opensource_Github_repos_knowledge_extraction)
+- [Info_Miscellaneous](#Info_Miscellaneous)
 
 
 --------------------------
 
 
-### Understand, read again, summarise
+### Understand_read_again_summarise
 
 https://www.linkedin.com/posts/hnaser_in-the-beginning-for-the-os-to-write-to-activity-7163388923916861441-t1vw?utm_source=share&utm_medium=member_desktop
 
@@ -383,7 +382,7 @@ It is a column-oriented, open-source, distributed data store written in Java. Pi
 
 ------------------------------
 
-### Multi Threading, Synchronous, Asynchronous Programming
+### MultiThreading_Synchronous_Asynchronous_Programming
 
 ```
 An analogy usually helps. You are cooking in a restaurant. An order comes in for eggs and toast.
@@ -417,7 +416,7 @@ In all these above scenarios, asynchronous code can provide benefits in terms of
 
 ------------------------------
 
-### CPU-Intensive vs IO Bound Processes
+### CPU_Intensive_vs_IO_Bound_Processes
 
 - **CPU-intensive tasks** involve complex calculations, mathematical operations, data processing, or simulations that consume a substantial amount of CPU time. Examples include scientific simulations, data encryption/decryption, video/audio encoding/decoding, and certain data analysis tasks. In Python, CPU-intensive tasks can be challenging to parallelize effectively due to the Global Interpreter Lock (GIL) in CPython, which can limit the concurrency of CPU-bound operations when using threads. In such cases, you might consider using multiprocessing or other techniques for parallelism.
 - **Thread-Intensive (I/O-Bound)** processes are characterized by tasks that spend a significant amount of time waiting for I/O operations to complete, such as reading/writing to files, making network requests, or interacting with databases. Thread-intensive tasks are often I/O-bound, meaning that the program spends more time waiting for I/O operations than it does actively processing data. Using threads to manage I/O-bound tasks can improve concurrency and overall system responsiveness by allowing other threads to continue execution while some are waiting for I/O. Examples include web servers handling multiple client connections simultaneously, data retrieval from multiple remote sources, and GUI applications that need to remain responsive while performing background tasks. I/O-bound operations are often considered more thread-intensive due to their characteristics and the way they interact with the system resources. Reasons:
@@ -431,7 +430,7 @@ In all these above scenarios, asynchronous code can provide benefits in terms of
 
 ------------------------------
 
-### Concurrency vs Parallelism 
+### Concurrency_vs_Parallelism
 - **Concurrency** is when two or more tasks can start, run, and complete in overlapping time periods. It doesn't necessarily mean they'll ever both be running at the same instant. For example, multitasking on a single-core machine.
 - **Parallelism** is when tasks literally run at the same time, e.g., on a multicore processor.
 - Concurrent and parallel are effectively the same principle, both are related to tasks being executed simultaneously although we can say that parallel tasks should be truly multitasking, executed "at the same time" (multiple threads of execution executing simultaneously) whereas concurrent could mean that the tasks are sharing the execution thread while still appearing to be executing in parallel (managing multiple threads of execution).
@@ -447,7 +446,7 @@ Example:
 
 ------------------------------
 
-### Threads vs Process
+### Threads_vs_Process
 Process means any program is in execution. Thread means a segment of a process. The process takes more time to terminate. The thread takes less time to terminate. Process takes more time for creation. It takes less time for creation. 
 
 Processes and threads can be considered similar, but a big difference is that a process is much larger than a thread. For that reason, it is not good to have switching between processes. There is too much information in a process that would have to be saved and reloaded each time the CPU decides to switch processes. A thread on the other hand is smaller and so it is better for switching. A process may have multiple threads that run concurrently, meaning not at the same exact time, but run together and switch between them. The context switching here is better because a thread won't have as much information to store/reload.
@@ -471,7 +470,7 @@ Context switching is so costly there are other mechanisms to try to minimize it
 
 ------------------------------
 
-### CPU Threads vs Cores
+### CPU_Threads_vs_Cores
 - Core is an individual physical processing unit, while threads are virtual sequences of instructions. Think of threads as conveyor belts of products that are being sent to the worker (which is the core).
 - Hardware on the CPU is a physical core & a logical core is more like code it exists, i.e threads.
 - If a CPU has more threads than cores, say 4 cores, 8 threads so 2 threads per core, in such case, the core would be context switching between each thread to process the task. It cannot process both at the same time, some downtime will be there due to switching. This is also an example of what we call - concurrent execution.
@@ -480,7 +479,7 @@ Context switching is so costly there are other mechanisms to try to minimize it
 
 ------------------------------
 
-### Generators, Iterables, Coroutines
+### Generators_Iterables_Coroutines
 
 - A **generator** function is a type of function that uses the **yield** keyword to create an **iterator**. It generates values lazily one at a time, allowing you to iterate over a potentially infinite sequence without storing the entire sequence in memory. Generators are memory-efficient and useful when you need to produce a stream of values on-the-fly. Generators are run with normal iteration (e.g., using for loops) and produce values one by one. 
   - **Iterable** is anything like a list or set or range or dict-view, with a built-in protocol for visiting each element inside the list/ set in a certain order. If the compiler detects the yield keyword anywhere inside a function, that function no longer returns via the return statement. Instead, it immediately returns a lazy 'pending list' 'object' called a generator. 
@@ -890,7 +889,70 @@ Python caches integers in the range [-5, 256], so integers in that range are usu
 
 ------------------------------
 
-### AWS Services 
+### Java 
+
+#### Java Int vs int 
+- The key difference between the Java int and Integer types is that an int simply represents a whole number, while an Integer has additional properties and methods. 
+- The Integer class is an Object while an int is a primitive type. The Integer class allows conversion to float, double, long and short, while the int doesn’t.
+- The Integer is compared with .equals while the int uses two equal signs, == .
+
+[Java Int vs int _al](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/int-vs-Integer-java-difference-comparison-primitive-object-types)
+
+#### [Java virtual threads](https://medium.com/@RamLakshmanan/java-virtual-threads-easy-introduction-44d96b8270f8)
+Java virtual threads is a new feature introduced in JDK 19. It has potential to improve an applications availability, throughput and code quality on top of reducing memory consumption.
+Let’s walkthrough a typical lifecycle of a thread:
+
+1. Thread is created in a thread pool
+2. Thread waits in the pool for a new request to come
+3. Once the new request comes, the thread picks up the request and it makes a backend Database call to service this request.
+4. Thread waits for response from the backend Database
+5. Once response comes back from the Database, the thread processes it, and sends back the response to customer
+6. Thread is returned back to the thread pool
+
+Step #2 to #6 will repeat until the application is shutdown. If you notice, the thread is actually doing real work only in step #3 and #5. In all other steps(i.e., step #1, step #2, step #4, step #6), it is basically waiting(or doing nothing). In most applications, a significant number of threads predominantly waits during most of its lifetime.
+
+In the previous release of JVM(Java Virtual Machine), there was only one type of thread. It’s called as ‘classic’ or ‘platform’ thread. Whenever a platform thread is created, an operating system thread is allocated to it. Only when the platform thread exits(i.e., dies) the JVM, this operating system thread is free to do other tasks. Until then, it cannot do any other tasks. Basically, there is a 1:1 mapping between a platform thread and an operating system thread.
+
+According to this architecture, OS thread will be unnecessarily locked down in step #1, step #2, step #4, step #6 of the thread’s life cycle, even though it’s not doing anything during these steps. Since OS threads are precious and finite resources, it’s time is extensively wasted in this platform threads architecture.
+
+In order to efficiently use underlying operating system threads, virtual threads have been introduced in JDK 19. In this new architecture, a virtual thread will be assigned to a platform thread (aka carrier thread) only when it executes real work. As per the above-described thread’s life cycle, only during step #3 and step #5 virtual thread will be assigned to the platform thread(which in turn uses OS thread) for execution. In all other steps, virtual thread will be residing as objects in the Java heap memory region just like any of your application objects. Thus, they are lightweight and more efficient.
+
+#### Java enum
+
+The Enum in Java is a data type which contains a fixed set of constants. Eg: 
+
+```
+class EnumExample1{  
+//defining the enum inside the class  
+public enum Season { WINTER, SPRING, SUMMER, FALL }  
+//main method  
+public static void main(String[] args) {  
+//traversing the enum  
+for (Season s : Season.values())  
+System.out.println(s);  
+}}  
+```
+
+#### JIT Compiler 
+Bytecode is one of the most important features of java that aids in cross-platform execution. The way of converting bytecode to native machine language for execution has a huge impact on its speed of it. 
+
+These bytecodes have to be interpreted or compiled to proper machine instructions depending on the instruction set architecture. Moreover, these can be directly executed if the instruction architecture is bytecode based. Interpreting the bytecode affects the speed of execution. 
+
+In order to improve performance, JIT compilers interact with the Java Virtual Machine (JVM) at run time and compile suitable bytecode sequences into native machine code. While using a JIT compiler, the hardware is able to execute the native code, as compared to having the JVM interpret the same sequence of bytecode repeatedly and incurring overhead for the translation process. This subsequently leads to performance gains in the execution speed, unless the compiled methods are executed less frequently. 
+
+The JIT compiler is able to perform certain simple optimizations while compiling a series of bytecode to native machine language. Some of these optimizations performed by JIT compilers are data analysis, reduction of memory accesses by register allocation, translation from stack operations to register operations, elimination of common sub-expressions, etc. 
+
+The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
+
+#### Others
+
+- Jackson Object Mapper method can be used to serialize any Java value as a byte array.
+- The Java Persistence API (JPA) is used to persist data between Java object and relational database. 
+- Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, updating, deleting etc.
+
+------------------------------
+
+### AWS_Services
 
 #### EC2 Spot Instances
 
@@ -963,8 +1025,9 @@ Amazon Elastic Container Registry (Amazon ECR) is an AWS managed container image
   - boto3.resource interface provides a higher-level, object-oriented API. It abstracts away many of the low-level details and provides a more Pythonic and object-oriented way to work with AWS services.
   - Session stores configuration information (primarily credentials and selected region) & allows you to create service clients and resources
 
+------------------------
 
-### Database internals 
+### Database_internals
 
 - **Tables**:
   - Thay are simply a general-purpose data structure which can be used to represent relations. 
@@ -992,6 +1055,23 @@ Amazon Elastic Container Registry (Amazon ECR) is an AWS managed container image
   - Purpose of online analytical processing (OLAP) is to analyze aggregated data.
   - Purpose of online transaction processing (OLTP) is to process database transactions. 
   - You use OLAP systems to generate reports, perform complex data analysis, and identify trends or reporting. In contrast, you use OLTP systems to process orders, update inventory, transactional processing and real-time updates, and manage customer accounts. [Olap, Oltp _al](https://aws.amazon.com/compare/the-difference-between-olap-and-oltp/)
+
+- Normalization: The main purpose of database normalization is to avoid complexities, eliminate duplicates, and organize data in a consistent way. In normalization, the data is divided into several tables linked together with relationships. 1NF, 2NF, and 3NF are the first three types of database normalization. They stand for first normal form, second NF, and third NF, respectively. There are also 4NF, 5NF, 6NF - not commonly used.
+  - 1 NF:
+    - a single cell must not hold more than one value (atomicity)
+    - there must be a primary key for identification
+    - no duplicated rows or columns
+    - each column must have only one value for each row in the table
+  - 2 NF: 
+    - it’s already in 1NF 
+    - has no partial dependency. That is, all non-key attributes are fully dependent on a primary key
+  - 3NF: 
+    - be in 2NF 
+    - have no transitive partial dependency
+
+[Normalization in tables 1,2,3 nf](https://www.freecodecamp.org/news/database-normalization-1nf-2nf-3nf-table-examples/)
+
+- Cardinality: Simply put, it refers to uniqueness of data contained in a column. Say, a column has lot of duplicated data (eg: "true" or "false"), it has low cardinality. Similarly, say having "id" of employees, would mean having high cardinality in id column. Cardinality can have effect on query performance. 
 
 - (From Opensource Github repos knowledge extraction section | system-design-primer): 
   - **ACID** is a set of properties of relational database transactions.
@@ -1064,72 +1144,17 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
   - The main difference between views and materialized views is that views are dynamic and materialized views are static. This means that views always reflect the latest data from the underlying tables or views, while materialized views only show the data from the last refresh. Therefore, views are more suitable for queries that need real-time data, while materialized views are more suitable for queries that need precomputed data. Another difference is that views are more lightweight and flexible, while materialized views are more resource-intensive and rigid. This means that views do not take up any storage space or require any maintenance, while materialized views do. However, views also depend on the availability and performance of the underlying tables or views, while materialized views do not. Therefore, views are more convenient for creating temporary or ad hoc queries, while materialized views are more reliable for creating permanent or recurring queries.
   - Both views and materialized views can improve query performance by simplifying them and reducing the amount of data to process. For instance, you can filter out irrelevant or sensitive data, join multiple tables into one virtual table, aggregate or calculate data, or rename or reformat columns or values. By using views or materialized views, you can avoid repeating complex or lengthy queries every time you need the same data; instead, you can use a simple query on the view or materialized view. However, the performance benefits of views and materialized views depend on several factors such as the size and frequency of the underlying data, the complexity and frequency of queries, and the configuration and optimization of the database. [Materialized Views _al](https://www.linkedin.com/advice/3/what-materialized-view-how-does-differ-from-dpgbc)
 
-------------------------------
+#### Timeseries DB
 
-### Linux internals, commands
+- A time series database (TSDB) is a database optimized for time-stamped or time series data. Time series data is often a continuous flow of data like measurements from sensors and intraday stock prices. A time-series database lets you store large volumes of timestamped data in a format that allows fast insertion and fast retrieval to support complex analysis on that data.
+- TSDBs work by capturing a set of fixed values along with a set of dynamic values. As a simple example, in an oil well where many metrics of the rig are captured, one set of data points might have the label “Oil Pressure Rig #1” and the associated dynamic values would be the pressure measurement along with the timestamp. This example time series data is useful for tracking trends in the oil pressure which, when analyzed along with other metrics, could lead to predictions on maintenance needs as well as decisions on the abandonment of the well. These records are written to a storage medium in a format that allows fast time-based reads and writes.
+- The time series data is typically sent in batches or streams over a network protocol such as TCP or UDP. Upon receiving the data, the TSDB performs data validation, parsing, and tagging to ensure that the data is in the correct format and can be efficiently indexed and queried.
+- The data model of a TSDB is typically columnar, meaning that each column represents a time series or a metric. Once the data is validated and parsed, the TSDB stores it in a compressed, columnar format optimized for storage and retrieval efficiency.
+- The storage engine typically uses a combination of in-memory and disk-based storage to balance performance and storage efficiency. Some TSDBs also use compression techniques such as delta encoding or run-length encoding to further optimize storage.
+- To enable efficient querying of large datasets, the TSDB uses indexing mechanisms to organize the data by timestamp and tags. 
+- TSDBs are designed to store time-series data for long periods of time. To optimize storage, the TSDB supports data retention policies that allow you to configure how long data is stored before it is deleted or archived. Some TSDBs also support data compression and downsampling techniques to optimize storage for longer retention periods.
 
-- `grep -i "UNix" geekfile.txt`: Case insensitive search
-- `grep -c "unix" geekfile.txt`: Displaying the count of number of matches
-- `grep -l "unix" *` (or) `grep -l "unix" f1.txt f2.txt f3.xt f4.txt`: Display the file names that matches the pattern
-- `grep -w "unix" geekfile.txt`: Checking for the whole words in a file
-- `cat <file_name>`: View file content
-- `:q!`: Exit vim terminal 
-- `:wq!`: Save and exit vim terminal 
-- `:%d`: Clear all contents of a file 
-- `:set nu`: Will put index numbers in file opened via vim
-- `vi ~/.bash_profile`: Opens the .bash_profile file in the vi text editor. This file typically contains settings and configurations for the Bash shell.
-- `vi .bash_history`: Opens the .bash_history file in the vi text editor. This file contains a history of commands that have been executed in the current user's Bash shell.
-- `top`: The top command displays real-time information about system processes. It provides a dynamic view of system resource usage, including CPU and memory usage, as well as information about running processes. Users can monitor the processes, their resource consumption, and manage them interactively.
-- `fdisk -l`: The fdisk command is used for disk partitioning and disk management on Unix-like systems. The -l option lists information about all available disks and their partitions. This command is typically used to view the current disk layout and partitioning scheme of the system.
-- `ps -ef`: The ps command is used to display information about running processes on Unix-like systems. The -ef options stand for "everyone" (-e) and "full-format" (-f), which together instruct ps to display information about all processes in a detailed format. This includes information such as the process ID (PID), the terminal associated with the process, the user running the process, CPU and memory usage, and the command being executed.
-- `ls -l <dir path else it lists current path files>`: Lists files and directories in the specified directory (or the current directory if none is specified) with detailed information, including permissions, ownership, size, and modification date.
-- `ls -lrt`: Lists files and directories in the current directory in long format (-l) sorted by modification time in reverse order (-r for reverse, -t for time).
-- `pwd`: Prints the current working directory.
-- `ls -la`: Lists all files (including hidden files) and directories in the current directory in long format, showing detailed information, including hidden files (-a for all).
-- `su``: Allows switching to another user account. If no username is specified, it defaults to the superuser (root) account.
-- `su root`: Switches to the root user account.
-- `whoami`: Displays the username of the current user.
-- `which python`: Displays path where executable file of python is located.
-- `top`: Displays real-time information about system processes, including CPU and memory usage.
-- `set | grep AWS_KEY`: Displays environment variables (set) and filters the output to show lines containing AWS_KEY using grep.
-- `screen -ls`: Lists currently running screen sessions.
-- `screen -S vikas`: Starts a new screen session with the name vikas.
-- `find ~ -name aws_credentials`: Searches for files named aws_credentials in the user's home directory (~).
-- `grep -iR AWS_KEY *`: Searches recursively (-R) for occurrences of AWS_KEY in files in the current directory and its subdirectories (*).
-- `exit`: Exits the current shell or session.
-- `grep -iR access <path>`: Searches recursively for occurrences of access in files within the specified path.
-- `echo $ec2`: Prints the value of the environment variable ec2.
-- `pip install -U s3fs=0.4.0`: Installs or upgrades the s3fs Python package to version 0.4.0 using pip.
-- `cd ./venvs`: Changes the current directory to venvs, which is located in the current directory (.).
-- `df -h`: The df command is used to display disk space usage on Unix-like systems. The -h option stands for "human-readable" and formats the output in a more easily understandable way, showing sizes in kilobytes, megabytes, gigabytes, etc., rather than in raw bytes.
-- `du psycopg2-2.9.3.tar.gz`: Displays the disk usage of the psycopg2-2.9.3.tar.gz file.
-- `du -sh psycopg2-2.9.3.tar.gz`: Displays the disk usage of the psycopg2-2.9.3.tar.gz file in a human-readable format (-h) and summarizes the total (-s).
-- `du -sh *`: Displays the disk usage of all files and directories in the current directory in a human-readable format and summarizes the total.
-- `du -sh * | sort -h`: Displays the disk usage of all files and directories in the current directory in a human-readable format, summarizes the total, and sorts the output numerically and in a human-readable way (-h).
-- `conda list`: Lists installed packages and their versions using Conda, a package manager for Python.
-- `echo $PATH`: It prints out the value of the PATH environment variable. 
-- `sudo -su user`: It is short for sudo -s -u user. The -s option means to run the shell specified in the environment variable SHELL if this has been set, or else the user's login shell. The -u user option means to run the command as the specified user rather than root. 
-- `sudo su user`: It will use sudo to run the command su user as the root user. The su command will then invoke the login shell of the specified username. The su user command could be run without the use of sudo, but by running it as root it will not require the password of the target user.
-- `rm /path/to/directory/*`: To remove all non-hidden files* in a directory 
-- `rm -r /path/to/directory/*`: To remove all non-hidden files and sub-directories (along with all of their contents) in a directory
-- `rm -rf "/path/to the/directory/"*`: Force removal of files
-
-Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
-
-- [How a Linux system boots up, from the power button being pressed to the operating system being loaded _vl](https://www.youtube.com/watch?v=XpFsMB6FoOs): 
-  - The boot process starts with the BIOS or UEFI, which prepares the computer’s hardware for action.
-  - UEFI offers faster boot times and better security features compared to BIOS.
-  - The power-on self-test (POST) checks the hardware before fully turning on the system.
-  - The boot loader locates the operating system kernel, loads it into memory, and starts running it.
-  - Systemd is the parent of all other processes on Linux and handles various tasks to get the system booted and ready to use.
-
-------------------------------
-
-### Webhooks, APIs, Websockets 
-
-- An **API** is a messenger that delivers your request to the provider you're requesting it from and then responds to you. ​​APIs are request-based, meaning that they operate when requests come from 3rd party apps.
-- **Webhook**, also called reverse API, web callback, or an HTTP push API, is a way for an app to provide other applications with real-time information. It delivers data as an event happens or almost immediately. Webhooks are event-based, meaning they will run when a specific event occurs in the source app. ​​To use a real-world analogy, APIs would be likened to you repeatedly calling a retailer to ask if they've stocked up on a brand of shoes you like. Webhooks would then ask the retailer to contact you whenever they have the shoes in stock, which frees up time on both sides. 
-- **Websockets** are different, it is an open connection. With WebSockets, a persistent connection (means, continuous polling) is established between the client and server, enabling real-time data transfer in both directions. This is particularly useful for applications that require continuous, low-latency communication, such as online games or chat applications.
+[TSDB internals _al](https://medium.com/@vinciabhinav7/whats-tsdb-part-2-concepts-and-example-ce12a4c8be9f)
 
 ------------------------------
 
@@ -1274,6 +1299,73 @@ FROM cte_quantity;
 
 ------------------------------
 
+### Linux_internals_and_commands
+
+- `grep -i "UNix" geekfile.txt`: Case insensitive search
+- `grep -c "unix" geekfile.txt`: Displaying the count of number of matches
+- `grep -l "unix" *` (or) `grep -l "unix" f1.txt f2.txt f3.xt f4.txt`: Display the file names that matches the pattern
+- `grep -w "unix" geekfile.txt`: Checking for the whole words in a file
+- `cat <file_name>`: View file content
+- `:q!`: Exit vim terminal 
+- `:wq!`: Save and exit vim terminal 
+- `:%d`: Clear all contents of a file 
+- `:set nu`: Will put index numbers in file opened via vim
+- `vi ~/.bash_profile`: Opens the .bash_profile file in the vi text editor. This file typically contains settings and configurations for the Bash shell.
+- `vi .bash_history`: Opens the .bash_history file in the vi text editor. This file contains a history of commands that have been executed in the current user's Bash shell.
+- `top`: The top command displays real-time information about system processes. It provides a dynamic view of system resource usage, including CPU and memory usage, as well as information about running processes. Users can monitor the processes, their resource consumption, and manage them interactively.
+- `fdisk -l`: The fdisk command is used for disk partitioning and disk management on Unix-like systems. The -l option lists information about all available disks and their partitions. This command is typically used to view the current disk layout and partitioning scheme of the system.
+- `ps -ef`: The ps command is used to display information about running processes on Unix-like systems. The -ef options stand for "everyone" (-e) and "full-format" (-f), which together instruct ps to display information about all processes in a detailed format. This includes information such as the process ID (PID), the terminal associated with the process, the user running the process, CPU and memory usage, and the command being executed.
+- `ls -l <dir path else it lists current path files>`: Lists files and directories in the specified directory (or the current directory if none is specified) with detailed information, including permissions, ownership, size, and modification date.
+- `ls -lrt`: Lists files and directories in the current directory in long format (-l) sorted by modification time in reverse order (-r for reverse, -t for time).
+- `pwd`: Prints the current working directory.
+- `ls -la`: Lists all files (including hidden files) and directories in the current directory in long format, showing detailed information, including hidden files (-a for all).
+- `su``: Allows switching to another user account. If no username is specified, it defaults to the superuser (root) account.
+- `su root`: Switches to the root user account.
+- `whoami`: Displays the username of the current user.
+- `which python`: Displays path where executable file of python is located.
+- `top`: Displays real-time information about system processes, including CPU and memory usage.
+- `set | grep AWS_KEY`: Displays environment variables (set) and filters the output to show lines containing AWS_KEY using grep.
+- `screen -ls`: Lists currently running screen sessions.
+- `screen -S vikas`: Starts a new screen session with the name vikas.
+- `find ~ -name aws_credentials`: Searches for files named aws_credentials in the user's home directory (~).
+- `grep -iR AWS_KEY *`: Searches recursively (-R) for occurrences of AWS_KEY in files in the current directory and its subdirectories (*).
+- `exit`: Exits the current shell or session.
+- `grep -iR access <path>`: Searches recursively for occurrences of access in files within the specified path.
+- `echo $ec2`: Prints the value of the environment variable ec2.
+- `pip install -U s3fs=0.4.0`: Installs or upgrades the s3fs Python package to version 0.4.0 using pip.
+- `cd ./venvs`: Changes the current directory to venvs, which is located in the current directory (.).
+- `df -h`: The df command is used to display disk space usage on Unix-like systems. The -h option stands for "human-readable" and formats the output in a more easily understandable way, showing sizes in kilobytes, megabytes, gigabytes, etc., rather than in raw bytes.
+- `du psycopg2-2.9.3.tar.gz`: Displays the disk usage of the psycopg2-2.9.3.tar.gz file.
+- `du -sh psycopg2-2.9.3.tar.gz`: Displays the disk usage of the psycopg2-2.9.3.tar.gz file in a human-readable format (-h) and summarizes the total (-s).
+- `du -sh *`: Displays the disk usage of all files and directories in the current directory in a human-readable format and summarizes the total.
+- `du -sh * | sort -h`: Displays the disk usage of all files and directories in the current directory in a human-readable format, summarizes the total, and sorts the output numerically and in a human-readable way (-h).
+- `conda list`: Lists installed packages and their versions using Conda, a package manager for Python.
+- `echo $PATH`: It prints out the value of the PATH environment variable. 
+- `sudo -su user`: It is short for sudo -s -u user. The -s option means to run the shell specified in the environment variable SHELL if this has been set, or else the user's login shell. The -u user option means to run the command as the specified user rather than root. 
+- `sudo su user`: It will use sudo to run the command su user as the root user. The su command will then invoke the login shell of the specified username. The su user command could be run without the use of sudo, but by running it as root it will not require the password of the target user.
+- `rm /path/to/directory/*`: To remove all non-hidden files* in a directory 
+- `rm -r /path/to/directory/*`: To remove all non-hidden files and sub-directories (along with all of their contents) in a directory
+- `rm -rf "/path/to the/directory/"*`: Force removal of files
+
+Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
+
+- [How a Linux system boots up, from the power button being pressed to the operating system being loaded _vl](https://www.youtube.com/watch?v=XpFsMB6FoOs): 
+  - The boot process starts with the BIOS or UEFI, which prepares the computer’s hardware for action.
+  - UEFI offers faster boot times and better security features compared to BIOS.
+  - The power-on self-test (POST) checks the hardware before fully turning on the system.
+  - The boot loader locates the operating system kernel, loads it into memory, and starts running it.
+  - Systemd is the parent of all other processes on Linux and handles various tasks to get the system booted and ready to use.
+
+------------------------------
+
+### Webhooks_APIs_Websockets 
+
+- An **API** is a messenger that delivers your request to the provider you're requesting it from and then responds to you. ​​APIs are request-based, meaning that they operate when requests come from 3rd party apps.
+- **Webhook**, also called reverse API, web callback, or an HTTP push API, is a way for an app to provide other applications with real-time information. It delivers data as an event happens or almost immediately. Webhooks are event-based, meaning they will run when a specific event occurs in the source app. ​​To use a real-world analogy, APIs would be likened to you repeatedly calling a retailer to ask if they've stocked up on a brand of shoes you like. Webhooks would then ask the retailer to contact you whenever they have the shoes in stock, which frees up time on both sides. 
+- **Websockets** are different, it is an open connection. With WebSockets, a persistent connection (means, continuous polling) is established between the client and server, enabling real-time data transfer in both directions. This is particularly useful for applications that require continuous, low-latency communication, such as online games or chat applications.
+
+------------------------------
+
 ### HTTP Request
 
 HTTP is a method for encoding and transporting data between a client and a server. It is a request/response protocol: clients issue requests and servers issue responses with relevant content and completion status info about the request. HTTP is self-contained, allowing requests and responses to flow through many intermediate routers and servers that perform load balancing, caching, encryption, and compression.
@@ -1315,6 +1407,20 @@ Content-Type: text/html; charset=UTF-8
 
 ------------------------------
 
+### HTTP_1_vs_HTTP_2
+
+- HTTP stands for hypertext transfer protocol, and it is the basis for almost all web applications. More specifically, HTTP is the method computers and servers use to request and send information. For instance, when someone navigates to cloudflare.com on their laptop, their web browser sends an HTTP request to the Cloudflare servers for the content that appears on the page. Then, Cloudflare servers send HTTP responses with the text, images, and formatting that the browser displays to the user.
+- The first usable version of HTTP was created in 1997. Because it went through several stages of development, this first version of HTTP was called HTTP/1.1. This version is still in use on the web. In 2015, a new version of HTTP called HTTP/2 was created. In particular, HTTP/2 is much faster and more efficient than HTTP/1.1. One of the ways in which HTTP/2 is faster is in how it prioritizes content during the loading process.
+- In the context of web performance, prioritization refers to the order in which pieces of content are loaded. Suppose a user visits a news website and navigates to an article. Should the photo at the top of the article load first? Should the text of the article load first? Should the banner ads load first? Prioritization affects a webpage's load time. For example, certain resources, like large JavaScript files, may block the rest of the page from loading if they have to load first. More of the page can load at once if these render-blocking resources load last. In HTTP/2, developers have hands-on, detailed control over prioritization. This allows them to maximize perceived and actual page load speed to a degree that was not possible in HTTP/1.1. HTTP/2 offers a feature called weighted prioritization. This allows developers to decide which page resources will load first, every time. In HTTP/2, when a client makes a request for a webpage, the server sends several streams of data to the client at once, instead of sending one thing after another. This method of data delivery is known as multiplexing. Developers can assign each of these data streams a different weighted value, and the value tells the client which data stream to render first.
+- Other differences: 
+  - Multiplexing: HTTP/1.1 loads resources one after the other, so if one resource cannot be loaded, it blocks all the other resources behind it. In contrast, HTTP/2 is able to use a single TCP connection to send multiple streams of data at once so that no one resource blocks any other resource. HTTP/2 does this by splitting data into binary-code messages and numbering these messages so that the client knows which stream each binary message belongs to.
+  - Server push: Typically, a server only serves content to a client device if the client asks for it. However, this approach is not always practical for modern webpages, which often involve several dozen separate resources that the client must request. HTTP/2 solves this problem by allowing a server to "push" content to a client before the client asks for it. The server also sends a message letting the client know what pushed content to expect - eg: Table of contents.
+  - Header compression: Small files load more quickly than large ones. To speed up web performance, both HTTP/1.1 and HTTP/2 compress HTTP messages to make them smaller. However, HTTP/2 uses a more advanced compression method called **HPACK** that eliminates redundant information in HTTP header packets. This eliminates a few bytes from every HTTP packet. Given the volume of HTTP packets involved in loading even a single webpage, those bytes add up quickly, resulting in faster loading.
+- HTTP/3 is the next proposed version of the HTTP protocol. HTTP/3 does not have wide adoption on the web yet, but it is growing in usage. The key difference between HTTP/3 and previous versions of the protocol is that HTTP/3 runs over QUIC instead of TCP. QUIC is a faster and more secure transport layer protocol that is designed for the needs of the modern Internet.
+[http 1.1 and 2.0 _al](https://www.cloudflare.com/en-gb/learning/performance/http2-vs-http1.1/)
+
+------------------------------
+
 ### Docker 
 
 - Docker runs on a client-server that is meditated by the daemon that leverages REST APIs to request to perform container-related operations. Podman, on the other hand, does not require a daemon. It uses Pods to manage containers, which helps users to run rootless containers.
@@ -1342,9 +1448,11 @@ Use UDP over TCP when:
 - Late data is worse than loss of data
 - You want to implement your own error correction
 
+Note: There is always a layer above TCP. The question is really about how much overhead the stuff above TCP adds. HTTP is relatively chunky because each transmission requires a bunch of header cruft in both the request and the response. It also tends to be used in a stateless mode, whereby each request/response uses a separate TCP session. Keep-alives can ameliorate the session-per-request, but not the headers.
+
 ------------------------------
 
-### gRPC, REST, GraphQL
+### gRPC_REST_GraphQL
 
 gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file) (It can use other formats like JSON as well). In an RPC, a client causes a procedure to execute on a different address space, usually a remote server. The procedure is coded as if it were a local procedure call, abstracting away the details of how to communicate with the server from the client program. Remote calls are usually slower and less reliable than local calls so it is helpful to distinguish RPC calls from local calls. Popular RPC frameworks include Protobuf, Thrift, and Avro.
 - Protocol buffers are Google's language-agnostic, platform-neutral, extensible mechanism for serializing structured data. gRPC uses HTTP2. 
@@ -1405,13 +1513,7 @@ We often see cURL commands to hit API endpoints in technical docs of any softwar
 
 ------------------------------
 
-### Bastion Hosts 
-
-A bastion host is a publicly facing server that acts as an entry-point to the system which is protected from the high-end firewall or located in a private server. These servers can only be accessible from the bastion hosts so this would reduce the attack surface area from the outside world. [Private server bastion host _al](https://towardsaws.com/ssh-into-the-private-server-through-bastion-host-f637aa5f5c17), [SSH Proxy bastion _al](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
-
-------------------------------
-
-### Data transformation infos using libraries 
+### Data_transformation_info
 
 #### JSON explode vs JSON normalize  
 
@@ -1506,87 +1608,9 @@ Facebook and Google are two OAuth providers that you might use to log into other
 
 [What is saml _al](https://www.varonis.com/blog/what-is-saml)
 
-------------------------------
-
-### Java 
-
-#### Java Int vs int 
-- The key difference between the Java int and Integer types is that an int simply represents a whole number, while an Integer has additional properties and methods. 
-- The Integer class is an Object while an int is a primitive type. The Integer class allows conversion to float, double, long and short, while the int doesn’t.
-- The Integer is compared with .equals while the int uses two equal signs, == .
-
-[Java Int vs int _al](https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/int-vs-Integer-java-difference-comparison-primitive-object-types)
-
-#### [Java virtual threads](https://medium.com/@RamLakshmanan/java-virtual-threads-easy-introduction-44d96b8270f8)
-Java virtual threads is a new feature introduced in JDK 19. It has potential to improve an applications availability, throughput and code quality on top of reducing memory consumption.
-Let’s walkthrough a typical lifecycle of a thread:
-
-1. Thread is created in a thread pool
-2. Thread waits in the pool for a new request to come
-3. Once the new request comes, the thread picks up the request and it makes a backend Database call to service this request.
-4. Thread waits for response from the backend Database
-5. Once response comes back from the Database, the thread processes it, and sends back the response to customer
-6. Thread is returned back to the thread pool
-
-Step #2 to #6 will repeat until the application is shutdown. If you notice, the thread is actually doing real work only in step #3 and #5. In all other steps(i.e., step #1, step #2, step #4, step #6), it is basically waiting(or doing nothing). In most applications, a significant number of threads predominantly waits during most of its lifetime.
-
-In the previous release of JVM(Java Virtual Machine), there was only one type of thread. It’s called as ‘classic’ or ‘platform’ thread. Whenever a platform thread is created, an operating system thread is allocated to it. Only when the platform thread exits(i.e., dies) the JVM, this operating system thread is free to do other tasks. Until then, it cannot do any other tasks. Basically, there is a 1:1 mapping between a platform thread and an operating system thread.
-
-According to this architecture, OS thread will be unnecessarily locked down in step #1, step #2, step #4, step #6 of the thread’s life cycle, even though it’s not doing anything during these steps. Since OS threads are precious and finite resources, it’s time is extensively wasted in this platform threads architecture.
-
-In order to efficiently use underlying operating system threads, virtual threads have been introduced in JDK 19. In this new architecture, a virtual thread will be assigned to a platform thread (aka carrier thread) only when it executes real work. As per the above-described thread’s life cycle, only during step #3 and step #5 virtual thread will be assigned to the platform thread(which in turn uses OS thread) for execution. In all other steps, virtual thread will be residing as objects in the Java heap memory region just like any of your application objects. Thus, they are lightweight and more efficient.
-
-#### Java enum
-
-The Enum in Java is a data type which contains a fixed set of constants. Eg: 
-
-```
-class EnumExample1{  
-//defining the enum inside the class  
-public enum Season { WINTER, SPRING, SUMMER, FALL }  
-//main method  
-public static void main(String[] args) {  
-//traversing the enum  
-for (Season s : Season.values())  
-System.out.println(s);  
-}}  
-```
-
-#### JIT Compiler 
-Bytecode is one of the most important features of java that aids in cross-platform execution. The way of converting bytecode to native machine language for execution has a huge impact on its speed of it. 
-
-These bytecodes have to be interpreted or compiled to proper machine instructions depending on the instruction set architecture. Moreover, these can be directly executed if the instruction architecture is bytecode based. Interpreting the bytecode affects the speed of execution. 
-
-In order to improve performance, JIT compilers interact with the Java Virtual Machine (JVM) at run time and compile suitable bytecode sequences into native machine code. While using a JIT compiler, the hardware is able to execute the native code, as compared to having the JVM interpret the same sequence of bytecode repeatedly and incurring overhead for the translation process. This subsequently leads to performance gains in the execution speed, unless the compiled methods are executed less frequently. 
-
-The JIT compiler is able to perform certain simple optimizations while compiling a series of bytecode to native machine language. Some of these optimizations performed by JIT compilers are data analysis, reduction of memory accesses by register allocation, translation from stack operations to register operations, elimination of common sub-expressions, etc. 
-
-The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
-
-#### Others
-
-- Jackson Object Mapper method can be used to serialize any Java value as a byte array.
-- The Java Persistence API (JPA) is used to persist data between Java object and relational database. 
-- Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, updating, deleting etc.
-
-------------------------------
-
-### HTTP 1.1 vs HTTP 2.0
-
-- HTTP stands for hypertext transfer protocol, and it is the basis for almost all web applications. More specifically, HTTP is the method computers and servers use to request and send information. For instance, when someone navigates to cloudflare.com on their laptop, their web browser sends an HTTP request to the Cloudflare servers for the content that appears on the page. Then, Cloudflare servers send HTTP responses with the text, images, and formatting that the browser displays to the user.
-- The first usable version of HTTP was created in 1997. Because it went through several stages of development, this first version of HTTP was called HTTP/1.1. This version is still in use on the web. In 2015, a new version of HTTP called HTTP/2 was created. In particular, HTTP/2 is much faster and more efficient than HTTP/1.1. One of the ways in which HTTP/2 is faster is in how it prioritizes content during the loading process.
-- In the context of web performance, prioritization refers to the order in which pieces of content are loaded. Suppose a user visits a news website and navigates to an article. Should the photo at the top of the article load first? Should the text of the article load first? Should the banner ads load first? Prioritization affects a webpage's load time. For example, certain resources, like large JavaScript files, may block the rest of the page from loading if they have to load first. More of the page can load at once if these render-blocking resources load last. In HTTP/2, developers have hands-on, detailed control over prioritization. This allows them to maximize perceived and actual page load speed to a degree that was not possible in HTTP/1.1. HTTP/2 offers a feature called weighted prioritization. This allows developers to decide which page resources will load first, every time. In HTTP/2, when a client makes a request for a webpage, the server sends several streams of data to the client at once, instead of sending one thing after another. This method of data delivery is known as multiplexing. Developers can assign each of these data streams a different weighted value, and the value tells the client which data stream to render first.
-- Other differences: 
-  - Multiplexing: HTTP/1.1 loads resources one after the other, so if one resource cannot be loaded, it blocks all the other resources behind it. In contrast, HTTP/2 is able to use a single TCP connection to send multiple streams of data at once so that no one resource blocks any other resource. HTTP/2 does this by splitting data into binary-code messages and numbering these messages so that the client knows which stream each binary message belongs to.
-  - Server push: Typically, a server only serves content to a client device if the client asks for it. However, this approach is not always practical for modern webpages, which often involve several dozen separate resources that the client must request. HTTP/2 solves this problem by allowing a server to "push" content to a client before the client asks for it. The server also sends a message letting the client know what pushed content to expect - eg: Table of contents.
-  - Header compression: Small files load more quickly than large ones. To speed up web performance, both HTTP/1.1 and HTTP/2 compress HTTP messages to make them smaller. However, HTTP/2 uses a more advanced compression method called **HPACK** that eliminates redundant information in HTTP header packets. This eliminates a few bytes from every HTTP packet. Given the volume of HTTP packets involved in loading even a single webpage, those bytes add up quickly, resulting in faster loading.
-- HTTP/3 is the next proposed version of the HTTP protocol. HTTP/3 does not have wide adoption on the web yet, but it is growing in usage. The key difference between HTTP/3 and previous versions of the protocol is that HTTP/3 runs over QUIC instead of TCP. QUIC is a faster and more secure transport layer protocol that is designed for the needs of the modern Internet.
-[http 1.1 and 2.0 _al](https://www.cloudflare.com/en-gb/learning/performance/http2-vs-http1.1/)
-
-
 ------------------
 
-### Opensource Github repos knowledge extraction 
+### Opensource_Github_repos_knowledge_extraction 
 
 #### [donnemartin/system-design-primer _al](https://github.com/donnemartin/system-design-primer)
 
@@ -1676,7 +1700,7 @@ The greater the degree of optimization done, the more time a JIT compiler spends
 
 ------------------
 
-### Info & Miscellaneous
+### Info_Miscellaneous
 
 - **Deduplication** refers to a method of eliminating a dataset's redundant data.
 - A **race condition** is an undesirable situation that occurs when a device or system attempts to perform two or more operations at the same time, but because of the nature of the device or system, the operations must be done in the proper sequence to be done correctly.
@@ -1748,6 +1772,29 @@ print(response.elapsed.total_seconds())
 - A language is:
   - **statically typed** if the type of a variable is known at compile time, eg: int a = 5. For some languages this means that you as the programmer must specify what type each variable is; other languages (e.g.: Java, C, C++) offer some form of type inference, the capability of the type system to deduce the type of a variable (e.g.: OCaml, Haskell, Scala, Kotlin). Examples: C, C++, Java, Rust, Go, Scala
   - **dynamically typed** if the type is associated with run-time values, and not named variables/fields/etc. This means that you as a programmer can write a little quicker because you do not have to specify types every time (unless using a statically-typed language with type inference). Examples: Perl, Ruby, Python, PHP, JavaScript, Erlang
+- Declarative vs Imperative programming: 
+  - Declarative: You set the conditions that trigger the program execution to produce the desired results.
+
+```
+Eg: Declarative
+
+mylist = [1,2,3,4,5]
+total = sum(mylist)
+print(total) 
+```
+
+  - Imperative: You describe the step-by-step instructions for how an executed program achieves the desired results.
+
+```
+Eg: Imperative
+
+total = 0 
+myList = [1,2,3,4,5]
+for x in myList:
+     total += x
+print(total)
+```
+
 - TIL that if a function has a lot of arguments it takes a small hit on the call because the stack is used for the arguments instead of CPU registers. Depending on the OS (specifically 64 bit for some reason) anything > 4 goes into the stack. else it goes into the R registers.
 - You know I used to think that 99.99% CPU at times or 98% RAM indicate bottlenecks and starved processes but that is not always the case. Your might have a multi-threaded or multi-process backend app that use 98% CPU of all cores at times but all processes are served equally and without any blocking or minimum blocking. You simply crafted the number of processes or threads in your CPU-bound backend workload so it runs efficient, which is what you want. So CPU usage alone isn’t enough to indicate pressure or stalling or blocking. I don’t know about Windows but in Linux, The psi (pressure stall information) is a metric I recently learned that tells you whether “some” or “full” pressure is being experienced, that is processes are being stalled for CPU or RAM. This even applies to RAM, some relational and in-memory databases pre-allocates large memory even though they are not using it showing large RAM usage but it doesn’t indicate that you necessarily need more RAM. SQL Server and memcachd comes to mind. So just because your memory usage is 98% doesn’t mean you necessarily need more RAM.
 - What is the Torn Page in SQL Server? It is the inability of the server to fetch a particular data during a transaction. It is caused when an Input/Output header tries to access a page that was written incorrectly to the disk. It reports a message saying 'I/O error (torn page) detected during read'.
@@ -1755,6 +1802,11 @@ print(response.elapsed.total_seconds())
 - An API gateway manages incoming requests and routes them based on key factors such as request path, headers, and query parameters, among others. It allows for efficient distribution of traffic and ensures proper load balancing among target endpoints.
 - [Improve API performance _vl](https://www.youtube.com/watch?v=zvWKqUiovAM): Caching, Connection pool, Avoid N+1 Query Problem, Pagination, JSON Serializers, Payload Compression, Asynchronous logging
 - **Serialization** is the process of converting the state of an object into a form that can be persisted or transported. The complement of serialization is **deserialization**, which converts a stream into an object. Together, these processes allow data to be stored and transferred.
+- [Stateful vs Stateless _al](https://www.redhat.com/en/topics/cloud-native-apps/stateful-vs-stateless): 
+  - Stateful: Stateful applications and processes allow users to store, record, and return to already established information and processes over the internet. In stateful applications, the server keeps track of the state of each user session, and maintains information about the user's interactions and past requests. They can be returned to again and again, like online banking or email. They’re performed with the context of previous transactions and the current transaction may be affected by what happened during previous transactions. For these reasons, stateful apps use the same servers each time they process a request from a user. If a stateful transaction is interrupted, the context and history have been stored so you can more or less pick up where you left off. Stateful apps track things like window location, setting preferences, and recent activity. You can think of stateful transactions as an ongoing periodic conversation with the same person.
+  - A stateless process or application, however, does not retain information about the user's previous interactions. There is no stored knowledge of or reference to past transactions. Each transaction is made as if from scratch for the first time. Stateless applications provide one service or function and use a content delivery network (CDN), web, or print servers to process these short-term requests. An example of a stateless transaction would be doing a search online to answer a question you’ve thought of. You type your question into a search engine and hit enter. If your transaction is interrupted or closed accidentally, you just start a new one. Think of stateless transactions as a vending machine: a single request and a response.
+- Ephemeral storage, in the context of Kubernetes, is storage tied to the lifecycle of a pod, so when a pod finishes or is restarted, that storage is cleared out.
+- A bastion host is a publicly facing server that acts as an entry-point to the system which is protected from the high-end firewall or located in a private server. These servers can only be accessible from the bastion hosts so this would reduce the attack surface area from the outside world. [Private server bastion host _al](https://towardsaws.com/ssh-into-the-private-server-through-bastion-host-f637aa5f5c17), [SSH Proxy bastion _al](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
 
 --------------------------------
 
