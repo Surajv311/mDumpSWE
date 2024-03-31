@@ -7,47 +7,48 @@ Abbrevations in doc hyperlinked:
 - `_al`: article/page reference link
 
 Table of contents (rough overview): 
-- Understand & read again later then summarise
-- Kafka
-- Airflow
-- Dask 
-- Spark 
-- Hadoop 
-- Sqoop 
-- Databricks 
-- Snowflake 
-- Pinot 
-- Multi Threading, Synchronous, Asynchronous Programming
-- CPU-Intensive vs IO Bound Processes
-- Concurrency vs Parallelism 
-- Threads vs Process 
-- CPU Threads vs Cores 
-- Generators, Iterables, Coroutines 
-- Python: aiohttp, asyncio, ThreadPoolExecutor, Basic DS, Context manager, GIL, etc. 
-- AWS Services and misc infos: EC2, Redshift, Spectrum, Glue, RDS, Aurora, ECS, ECR, etc. 
-- Database internals: Table, Schema, Engine, Indexing, 
-- Linux internals, commands: Table, Schema, Engine, Indexing,  
-- Webhooks, APIs, Websockets 
-- SQL Functions 
-- HTTP Request 
-- Docker
-- TCP vs UDP  
-- gRPC and REST
-- Serialization & Non-serialization 
-- JSON vs Protobuf 
-- Git 
-- cURL 
-- Bastion Hosts 
-- Data transformation infos using libraries 
-- SAML 
-- Java: Enum, JIT compiler 
-- HTTP 1.1 vs HTTP 2.0 
-- Info & Miscellaneous
-- Opensource Github repos knowledge extraction 
+- [Understand, read again, summarise](#Understand, read again, summarise)
+- [Kafka](#Kafka)
+- [Airflow](#Airflow)
+- [Dask](#Dask)
+- [Spark](#Spark)
+- [Hadoop](#Hadoop)
+- [Sqoop](#Sqoop)
+- [Databricks](#Databricks)
+- [Snowflake](#Snowflake)
+- [Pinot](#Pinot)
+- [Multi Threading, Synchronous, Asynchronous Programming](#Multi Threading, Synchronous, Asynchronous Programming)
+- [CPU-Intensive vs IO Bound Processes](#CPU-Intensive vs IO Bound Processes)
+- [Concurrency vs Parallelism](#Concurrency vs Parallelism) 
+- [Threads vs Process](#Threads vs Process) 
+- [CPU Threads vs Cores](#CPU Threads vs Cores)
+- [Generators, Iterables, Coroutines](#Generators, Iterables, Coroutines)
+- [Python: aiohttp, asyncio, ThreadPoolExecutor, Basic DS, Context manager, GIL, etc.](#Python)
+- [AWS Services: EC2, Redshift, Spectrum, Glue, RDS, Aurora, ECS, ECR, etc.](#AWS Services )
+- [Database internals: Table, Schema, Engine, Indexing](#Database internals)
+- [Linux internals, commands](#Linux internals, commands)
+- [Webhooks, APIs, Websockets](#Webhooks, APIs, Websockets)
+- [SQL Functions](#SQL Functions)
+- [HTTP Request](#HTTP Request)
+- [Docker](#Docker)
+- [TCP vs UDP](#TCP vs UDP)
+- [gRPC, REST, GraphQL](#gRPC, REST, GraphQL)
+- [JSON vs Protobuf](#JSON vs Protobuf)
+- [Git](#Git)
+- [cURL](#cURL)
+- [Bastion Hosts](#Bastion Hosts)
+- [Data transformation infos using libraries](#Data transformation infos using libraries)
+- [SAML](#SAML)
+- [Java: Enum, JIT compiler](#Java)
+- [HTTP 1.1 vs HTTP 2.0](#HTTP 1.1 vs HTTP 2.0)
+- [Opensource Github repos knowledge extraction](#Opensource Github repos knowledge extraction)
+- [Info & Miscellaneous](#Info & Miscellaneous)
+
 
 --------------------------
 
-### Understand & read again later then summarise
+
+### Understand, read again, summarise
 
 https://www.linkedin.com/posts/hnaser_in-the-beginning-for-the-os-to-write-to-activity-7163388923916861441-t1vw?utm_source=share&utm_medium=member_desktop
 
@@ -889,7 +890,7 @@ Python caches integers in the range [-5, 256], so integers in that range are usu
 
 ------------------------------
 
-### AWS Services and misc infos 
+### AWS Services 
 
 #### EC2 Spot Instances
 
@@ -1054,6 +1055,15 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 
 - **Clustered & Non clustered Index**: With a clustered index the rows are stored physically (physically as in the actual bits stored on the disk) on the disk in the same order as the index. Therefore, there can be only one clustered index. With a non clustered index there is a second list that has pointers to the physical rows. You can have many non clustered indices, although each new index will increase the time it takes to write new records. It is generally faster to read from a clustered index if you want to get back all the columns. You do not have to go first to the index and then to the table. Writing to a table with a clustered index can be slower, if there is a need to rearrange the data. [Clustered  & Non clustered indexing _al](https://stackoverflow.com/questions/1251636/what-do-clustered-and-non-clustered-index-actually-mean)
 
+(Note: Details about SQL functions and constructs in another section)
+
+- [VIEW Tables _al](https://stackoverflow.com/questions/6015175/difference-between-view-and-table-in-sql): A view is a virtual table whose contents are defined by a query. Unless indexed, a view does not exist as a stored set of data values in a database. Instead of sending the complex query to the database all the time, you can save the query as a view and then SELECT * FROM view. You can think of a view as a "saved select statement" that you can repeat. It's not really a table; even though some databases allow to create views that have a real table beneath, it's really just a SELECT statement which returns results.
+  - You can think of a view as a virtual table that does not store any data, but only references the underlying tables or views. You can create a view using the CREATE VIEW statement, and then use it like a regular table in your queries.
+  - Eg: `CREATE or REPLACE VIEW table_views.employee_info AS SELECT employees_table.name::varchar(100), employees_table.salary::varchar(100) FROM employee_schema.employees_table;`. It is recommended to typecast datatypes to columns when creating view to avoid any mismatch. 
+  - Materialized VIEW: A materialized view in SQL is a special type of view that stores the result of a query in a physical table. Unlike a regular view, a materialized view does not update automatically when the underlying tables or views change. Instead, you have to refresh the materialized view manually or on a schedule using the REFRESH MATERIALIZED VIEW statement.
+  - The main difference between views and materialized views is that views are dynamic and materialized views are static. This means that views always reflect the latest data from the underlying tables or views, while materialized views only show the data from the last refresh. Therefore, views are more suitable for queries that need real-time data, while materialized views are more suitable for queries that need precomputed data. Another difference is that views are more lightweight and flexible, while materialized views are more resource-intensive and rigid. This means that views do not take up any storage space or require any maintenance, while materialized views do. However, views also depend on the availability and performance of the underlying tables or views, while materialized views do not. Therefore, views are more convenient for creating temporary or ad hoc queries, while materialized views are more reliable for creating permanent or recurring queries.
+  - Both views and materialized views can improve query performance by simplifying them and reducing the amount of data to process. For instance, you can filter out irrelevant or sensitive data, join multiple tables into one virtual table, aggregate or calculate data, or rename or reformat columns or values. By using views or materialized views, you can avoid repeating complex or lengthy queries every time you need the same data; instead, you can use a simple query on the view or materialized view. However, the performance benefits of views and materialized views depend on several factors such as the size and frequency of the underlying data, the complexity and frequency of queries, and the configuration and optimization of the database. [Materialized Views _al](https://www.linkedin.com/advice/3/what-materialized-view-how-does-differ-from-dpgbc)
+
 ------------------------------
 
 ### Linux internals, commands
@@ -1105,6 +1115,13 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 - `rm -rf "/path/to the/directory/"*`: Force removal of files
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
+
+- [How a Linux system boots up, from the power button being pressed to the operating system being loaded _vl](https://www.youtube.com/watch?v=XpFsMB6FoOs): 
+  - The boot process starts with the BIOS or UEFI, which prepares the computer’s hardware for action.
+  - UEFI offers faster boot times and better security features compared to BIOS.
+  - The power-on self-test (POST) checks the hardware before fully turning on the system.
+  - The boot loader locates the operating system kernel, loads it into memory, and starts running it.
+  - Systemd is the parent of all other processes on Linux and handles various tasks to get the system booted and ready to use.
 
 ------------------------------
 
@@ -1238,7 +1255,6 @@ order_id INT PRIMARY KEY, amount INT CHECK (amount > 0));
   - For more details, my notes: [cs_core_notes _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/DBMS/dbms%20(5).jpg)
 - `SELECT CURRENT_TIMESTAMP()` - Return the current date and time. 
 - The `TRUNCATE` statement removes all data from a table but leaves the table structure intact. The `DELETE` statement is used to remove rows from a table one by one. The `DROP` statement deletes the entire table, including all data and the table structure. [difference truncate, delete, drop _al](https://stackoverflow.com/questions/32499763/what-is-the-difference-between-truncate-drop-and-delete-of-tables-and-when-to)
-- [VIEW Table _al](https://stackoverflow.com/questions/6015175/difference-between-view-and-table-in-sql): A view is a virtual table whose contents are defined by a query. Unless indexed, a view does not exist as a stored set of data values in a database. Instead of sending the complex query to the database all the time, you can save the query as a view and then SELECT * FROM view. You can think of a view as a "saved select statement" that you can repeat. It's not really a table; even though some databases allow to create views that have a real table beneath, it's really just a SELECT statement which returns results.
 - LIKE Operator: We use the SQL LIKE operator with the WHERE clause to get a result set that matches the given string pattern. Eg: `SELECT * FROM Customers WHERE country LIKE 'UK';`
 - `WITH` Clause: A WITH clause defines a temporary data set whose output is available to be referenced in subsequent queries. Eg: 
 
@@ -1328,7 +1344,7 @@ Use UDP over TCP when:
 
 ------------------------------
 
-### gRPC and REST
+### gRPC, REST, GraphQL
 
 gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file) (It can use other formats like JSON as well). In an RPC, a client causes a procedure to execute on a different address space, usually a remote server. The procedure is coded as if it were a local procedure call, abstracting away the details of how to communicate with the server from the client program. Remote calls are usually slower and less reliable than local calls so it is helpful to distinguish RPC calls from local calls. Popular RPC frameworks include Protobuf, Thrift, and Avro.
 - Protocol buffers are Google's language-agnostic, platform-neutral, extensible mechanism for serializing structured data. gRPC uses HTTP2. 
@@ -1339,14 +1355,13 @@ gRPC (Remote Procedure Call) uses Protobufs to encode and send data (.proto file
 
 REST is an architectural style enforcing a client/server model where the client acts on a set of resources managed by the server. The server provides a representation of resources and actions that can either manipulate or get a new representation of resources. All communication must be stateless and cacheable.
 
+GraphQL is an open source query language that describes how a client should request information through an API.
+
+[gRPC vs REST vs. GraphQL _al](https://www.linkedin.com/pulse/rest-graphql-grpc-comparing-contrasting-modern-api-design-walpita/),
 [gRPC over REST _al](https://medium.com/@sankar.p/how-grpc-convinced-me-to-chose-it-over-rest-30408bf42794),
-[RPC vs REST _al](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#rpc-and-rest-calls-comparison)
-
-------------------------------
-
-### Serialization & Non-serialization
-
-Serialization is the process of converting the state of an object into a form that can be persisted or transported. The complement of serialization is deserialization, which converts a stream into an object. Together, these processes allow data to be stored and transferred.
+[RPC vs REST _al](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#rpc-and-rest-calls-comparison),
+[Graphql _al](https://www.youtube.com/watch?v=yWzKJPw_VzM),
+[gRPC _vl](https://www.youtube.com/watch?v=gnchfOojMk4)
 
 ------------------------------
 
@@ -1548,6 +1563,12 @@ The JIT compiler is able to perform certain simple optimizations while compiling
 
 The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
 
+#### Others
+
+- Jackson Object Mapper method can be used to serialize any Java value as a byte array.
+- The Java Persistence API (JPA) is used to persist data between Java object and relational database. 
+- Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, updating, deleting etc.
+
 ------------------------------
 
 ### HTTP 1.1 vs HTTP 2.0
@@ -1561,6 +1582,97 @@ The greater the degree of optimization done, the more time a JIT compiler spends
   - Header compression: Small files load more quickly than large ones. To speed up web performance, both HTTP/1.1 and HTTP/2 compress HTTP messages to make them smaller. However, HTTP/2 uses a more advanced compression method called **HPACK** that eliminates redundant information in HTTP header packets. This eliminates a few bytes from every HTTP packet. Given the volume of HTTP packets involved in loading even a single webpage, those bytes add up quickly, resulting in faster loading.
 - HTTP/3 is the next proposed version of the HTTP protocol. HTTP/3 does not have wide adoption on the web yet, but it is growing in usage. The key difference between HTTP/3 and previous versions of the protocol is that HTTP/3 runs over QUIC instead of TCP. QUIC is a faster and more secure transport layer protocol that is designed for the needs of the modern Internet.
 [http 1.1 and 2.0 _al](https://www.cloudflare.com/en-gb/learning/performance/http2-vs-http1.1/)
+
+
+------------------
+
+### Opensource Github repos knowledge extraction 
+
+#### [donnemartin/system-design-primer _al](https://github.com/donnemartin/system-design-primer)
+
+- A service is scalable if it results in increased performance in a manner proportional to resources added. Generally, increasing performance means serving more units of work, but it can also be to handle larger units of work, such as when datasets grow. Another way to look at performance vs scalability: If you have a performance problem, your system is slow for a single user. If you have a scalability problem, your system is fast for a single user but slow under heavy load.
+
+- Latency is the time to perform some action or to produce some result. Throughput is the number of such actions or results per unit of time. Generally, you should aim for maximal throughput with acceptable latency.
+
+- CAP Theorem: Also note that in a distributed computer system, you can only support two of the following guarantees:
+  - Consistency - Every read receives the most recent write or an error
+  - Availability - Every request receives a response, without guarantee that it contains the most recent version of the information
+  - Partition Tolerance - The system continues to operate despite arbitrary partitioning due to network failures
+
+- With multiple copies of the same data, we are faced with options on how to synchronize them so clients have a consistent view of the data. Consistency: Weak (After a write, reads may or may not see it), Eventual (After a write, reads will eventually see it (typically within milliseconds); Data is replicated asynchronously), Strong (After a write, reads will see it; Data is replicated synchronously) 
+
+- There are two complementary patterns to support high availability: 
+  - fail-over:
+    - In active-passive fail-over, heartbeats are sent between the active and the passive server on standby. If the heartbeat is interrupted, the passive server takes over the active's IP address and resumes service. The length of downtime is determined by whether the passive server is already running in 'hot' standby or whether it needs to start up from 'cold' standby. Only the active server handles traffic. Active-passive failover can also be referred to as master-slave failover.
+    - In active-active fail-over, both servers are managing traffic, spreading the load between them. If the servers are public-facing, the DNS would need to know about the public IPs of both servers. If the servers are internal-facing, application logic would need to know about both servers. Active-active failover can also be referred to as master-master failover.
+  - replication:
+    - In master-slave, master serves reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate to additional slaves in a tree-like fashion. If the master goes offline, the system can continue to operate in read-only mode until a slave is promoted to a master or a new master is provisioned. 
+    - In master-master, both masters serve reads and writes and coordinate with each other on writes. If either master goes down, the system can continue to operate with both reads and writes.
+  - All of above have their own set of advantages/disadvantages.  
+
+- Availability is often quantified by uptime (or downtime) as a percentage of time the service is available. 99.9% availability qualifies to having acceptable downtime of 43m 49.7s/month. In case of 99.99%, acceptable downtime is 4m 23s/month. 
+  - If a service consists of multiple components prone to failure, the service's overall availability depends on whether the components are in sequence or in parallel.
+    - In sequence: `Availability (Total) = Availability (Foo) * Availability (Bar)`
+    - In parallel: `Availability (Total) = 1 - (1 - Availability (Foo)) * (1 - Availability (Bar))`
+
+- Domain Name System (DNS) translates a domain name such as www.example.com to an IP address. DNS is hierarchical, with a few authoritative servers at the top level. Your router or ISP provides information about which DNS server(s) to contact when doing a lookup. Lower level DNS servers cache mappings, which could become stale due to DNS propagation delays. DNS results can also be cached by your browser or OS for a certain period of time, determined by the time to live (TTL).
+    - NS record (name server) - Specifies the DNS servers for your domain/subdomain.
+    - MX record (mail exchange) - Specifies the mail servers for accepting messages.
+    - A record (address) - Points a name to an IP address.
+    - CNAME (canonical) - Points a name to another name or CNAME (example.com to www.example.com) or to an A record.
+  - Services such as CloudFlare and Route 53 provide managed DNS services. Some DNS services can route traffic through various methods: Weighted round robin, Latency-based, Geolocation-based
+  - (Disadvantages): Accessing a DNS server introduces a slight delay, although mitigated by caching described above. And DNS server management could be complex. Also, DNS services have recently come under DDoS attack, preventing users from accessing websites such as Twitter without knowing Twitter's IP address(es).
+
+- Content Delivery Network (CDN) is a globally distributed network of proxy servers, serving content from locations closer to the user. Generally, static files such as HTML/CSS/JS, photos, and videos are served from CDN, although some CDNs such as Amazon's CloudFront support dynamic content. The site's DNS resolution will tell clients which server to contact. Serving content from CDNs can significantly improve performance in two ways:
+    - Users receive content from data centers close to them
+    - Your servers do not have to serve requests that the CDN fulfills
+  - Push CDNs receive new content whenever changes occur on your server. You take full responsibility for providing content, uploading directly to the CDN and rewriting URLs to point to the CDN. You can configure when content expires and when it is updated. Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage. Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs. Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
+  - Pull CDNs grab new content from your server when the first user requests the content. You leave the content on your server and rewrite URLs to point to the CDN. This results in a slower request until the content is cached on the CDN. A time-to-live (TTL) determines how long content is cached. Pull CDNs minimize storage space on the CDN, but can create redundant traffic if files expire and are pulled before they have actually changed. Sites with heavy traffic work well with pull CDNs, as traffic is spread out more evenly with only recently-requested content remaining on the CDN.
+  - (Disadvantages): CDN costs could be significant depending on traffic, although this should be weighed with additional costs you would incur not using a CDN. Content might be stale if it is updated before the TTL expires it. CDNs require changing URLs for static content to point to the CDN.
+
+- Load balancers distribute incoming client requests to computing resources such as application servers and databases. In each case, the load balancer returns the response from the computing resource to the appropriate client. Load balancers are effective at:
+    - Preventing requests from going to unhealthy servers
+    - Preventing overloading resources
+    - Helping to eliminate a single point of failure
+    - Load balancers can be implemented with hardware (expensive) or with software such as HAProxy.
+  - Additional benefits include:
+    - SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations
+    - Session persistence - Issue cookies and route a specific client's requests to same instance if the web apps do not keep track of sessions. Note that to protect against failures, it's common to set up multiple load balancers, either in active-passive or active-active mode.
+  - Load balancers can route traffic based on various metrics, including: Random, Least loaded, Session/cookies, Round robin or weighted round robin, Layer 4, Layer 7. 
+  - Layer 4 load balancers look at info at the transport layer to decide how to distribute requests. Generally, this involves the source, destination IP addresses, and ports in the header, but not the contents of the packet. Layer 4 load balancers forward network packets to and from the upstream server, performing Network Address Translation (NAT).
+  - Layer 7 load balancers look at the application layer to decide how to distribute requests. This can involve contents of the header, message, and cookies. Layer 7 load balancers terminate network traffic, reads the message, makes a load-balancing decision, then opens a connection to the selected server. For example, a layer 7 load balancer can direct video traffic to servers that host videos while directing more sensitive user billing traffic to security-hardened servers.
+  - Load balancers can also help with horizontal scaling, improving performance and availability. But disadvantages for horizontal scaling is: It introduces complexity and involves cloning servers - hence servers should be stateless: they should not contain any user-related data like sessions or profile pictures and sessions can be stored in a centralized data store such as a database (SQL, NoSQL) or a persistent cache (Redis, Memcached); Downstream servers such as caches and databases need to handle more simultaneous connections as upstream servers scale out
+  - (Disadvantages): The load balancer can become a performance bottleneck if it does not have enough resources or if it is not configured properly. Introducing a load balancer to help eliminate a single point of failure results in increased complexity. A single load balancer is a single point of failure, configuring multiple load balancers further increases complexity.
+
+- Reverse Proxy: It is a web server that centralizes internal services and provides unified interfaces to the public. Requests from clients are forwarded to a server that can fulfill it before the reverse proxy returns the server's response to the client.
+  - (Benefits): Increased security - Hide information about backend servers, blacklist IPs, limit number of connections per client; Increased scalability and flexibility - Clients only see the reverse proxy's IP, allowing you to scale servers or change their configuration; SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations; Compression - Compress server responses; Caching - Return the response for cached requests Static content - Serve static content directly like html/css, photos, videos. 
+  - Deploying a load balancer is useful when you have multiple servers. Often, load balancers route traffic to a set of servers serving the same function. Reverse proxies can be useful even with just one web server or application server, opening up the benefits described in the previous section. Solutions such as NGINX and HAProxy can support both layer 7 reverse proxying and load balancing.
+  - [Reverse proxy vs API Gateway vs Load Balancer _vl](https://www.youtube.com/watch?v=RqfaTIWc3LQ)
+
+- Microservices: Can be described as a suite of independently deployable, small, modular services. Each service runs a unique process and communicates through a well-defined, lightweight mechanism to serve a business goal. Pinterest, for example, could have the following microservices: user profile, follower, feed, search, photo upload microservices, etc.
+
+- Caching improves page load times and can reduce the load on your servers and databases. In this model, the dispatcher will first lookup if the request has been made before and try to find the previous result to return, in order to save the actual execution. Databases often benefit from a uniform distribution of reads and writes across its partitions. Popular items can skew the distribution, causing bottlenecks. Putting a cache in front of a database can help absorb uneven loads and spikes in traffic.
+  - We can have caching at: Client, Web server, Database, CDN, Application, Database query level, Object level caching.
+  - When to update the cache: 
+    - Cache-aside: The application is responsible for reading and writing from storage. The cache does not interact with storage directly. In short: Look for entry in cache -> resulting in a cache miss -> Load entry from the database -> Add entry to cache -> Return entry. Cache-aside is also referred to as lazy loading. Only requested data is cached, which avoids filling up the cache with data that isn't requested.
+    - Write-through: The application uses the cache as the main data store, reading and writing data to it, while the cache is responsible for reading and writing to the database. In short: Application adds/updates entry in cache -> Cache synchronously writes entry to data store -> Return
+    - Write-behind (write-back): In write-behind, the application does the following, In short: Add/update entry in cache -> Asynchronously write entry to the data store -> thereby improving write performance
+    - Refresh-ahead: You can configure the cache to automatically refresh any recently accessed cache entry prior to its expiration. Refresh-ahead can result in reduced latency vs read-through if the cache can accurately predict which items are likely to be needed in the future.
+    - All have their own set of advantages, disadvantages. 
+
+- Asynchronism
+  - Message queues receive, hold, and deliver messages. If an operation is too slow to perform inline, you can use a message queue with the following workflow:
+      - An application publishes a job to the queue, then notifies the user of job status
+      - A worker picks up the job from the queue, processes it, then signals the job is complete
+    - The user is not blocked and the job is processed in the background. During this time, the client might optionally do a small amount of processing to make it seem like the task has completed. For example, if posting a tweet, the tweet could be instantly posted to your timeline, but it could take some time before your tweet is actually delivered to all of your followers.
+    - Eg: Redis is useful as a simple message broker but messages can be lost. RabbitMQ is popular but requires you to adapt to the 'AMQP' protocol and manage your own nodes. Amazon SQS is hosted but can have high latency and has the possibility of messages being delivered twice.
+  - Tasks queues receive tasks and their related data, runs them, then delivers their results. They can support scheduling and can be used to run computationally-intensive jobs in the background. Celery has support for scheduling and primarily has python support.
+  - Back pressure: If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance. Back pressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. Once the queue fills up, clients get a server busy or HTTP 503 status code to try again later. Clients can retry the request at a later time, perhaps with exponential backoff.
+
+
+#### [surajv311/myCS-NOTES _al](https://github.com/Surajv311/myCS-NOTES)
+
+- Has my CS related notes. 
 
 ------------------
 
@@ -1640,96 +1752,9 @@ print(response.elapsed.total_seconds())
 - You know I used to think that 99.99% CPU at times or 98% RAM indicate bottlenecks and starved processes but that is not always the case. Your might have a multi-threaded or multi-process backend app that use 98% CPU of all cores at times but all processes are served equally and without any blocking or minimum blocking. You simply crafted the number of processes or threads in your CPU-bound backend workload so it runs efficient, which is what you want. So CPU usage alone isn’t enough to indicate pressure or stalling or blocking. I don’t know about Windows but in Linux, The psi (pressure stall information) is a metric I recently learned that tells you whether “some” or “full” pressure is being experienced, that is processes are being stalled for CPU or RAM. This even applies to RAM, some relational and in-memory databases pre-allocates large memory even though they are not using it showing large RAM usage but it doesn’t indicate that you necessarily need more RAM. SQL Server and memcachd comes to mind. So just because your memory usage is 98% doesn’t mean you necessarily need more RAM.
 - What is the Torn Page in SQL Server? It is the inability of the server to fetch a particular data during a transaction. It is caused when an Input/Output header tries to access a page that was written incorrectly to the disk. It reports a message saying 'I/O error (torn page) detected during read'.
 - [Backend for frontend pattern _al](https://medium.com/mobilepeople/backend-for-frontend-pattern-why-you-need-to-know-it-46f94ce420b0): You need to think of the user-facing application as being two components — a client-side application living outside your perimeter and a server-side component (BFF) inside your perimeter. BFF is a variant of the API Gateway pattern, but it also provides an additional layer between microservices and each client type separately. Instead of a single point of entry, it introduces multiple gateways. Because of that, you can have a tailored API that targets the needs of each client (mobile, web, desktop, voice assistant, etc.), and remove a lot of the bloat caused by keeping it all in one place. 
+- An API gateway manages incoming requests and routes them based on key factors such as request path, headers, and query parameters, among others. It allows for efficient distribution of traffic and ensures proper load balancing among target endpoints.
+- [Improve API performance _vl](https://www.youtube.com/watch?v=zvWKqUiovAM): Caching, Connection pool, Avoid N+1 Query Problem, Pagination, JSON Serializers, Payload Compression, Asynchronous logging
+- **Serialization** is the process of converting the state of an object into a form that can be persisted or transported. The complement of serialization is **deserialization**, which converts a stream into an object. Together, these processes allow data to be stored and transferred.
 
-------------------
-
-### Opensource Github repos knowledge extraction 
-
-#### [donnemartin/system-design-primer _al](https://github.com/donnemartin/system-design-primer)
-
-- A service is scalable if it results in increased performance in a manner proportional to resources added. Generally, increasing performance means serving more units of work, but it can also be to handle larger units of work, such as when datasets grow. Another way to look at performance vs scalability: If you have a performance problem, your system is slow for a single user. If you have a scalability problem, your system is fast for a single user but slow under heavy load.
-
-- Latency is the time to perform some action or to produce some result. Throughput is the number of such actions or results per unit of time. Generally, you should aim for maximal throughput with acceptable latency.
-
-- CAP Theorem: Also note that in a distributed computer system, you can only support two of the following guarantees:
-  - Consistency - Every read receives the most recent write or an error
-  - Availability - Every request receives a response, without guarantee that it contains the most recent version of the information
-  - Partition Tolerance - The system continues to operate despite arbitrary partitioning due to network failures
-
-- With multiple copies of the same data, we are faced with options on how to synchronize them so clients have a consistent view of the data. Consistency: Weak (After a write, reads may or may not see it), Eventual (After a write, reads will eventually see it (typically within milliseconds); Data is replicated asynchronously), Strong (After a write, reads will see it; Data is replicated synchronously) 
-
-- There are two complementary patterns to support high availability: 
-  - fail-over:
-    - In active-passive fail-over, heartbeats are sent between the active and the passive server on standby. If the heartbeat is interrupted, the passive server takes over the active's IP address and resumes service. The length of downtime is determined by whether the passive server is already running in 'hot' standby or whether it needs to start up from 'cold' standby. Only the active server handles traffic. Active-passive failover can also be referred to as master-slave failover.
-    - In active-active fail-over, both servers are managing traffic, spreading the load between them. If the servers are public-facing, the DNS would need to know about the public IPs of both servers. If the servers are internal-facing, application logic would need to know about both servers. Active-active failover can also be referred to as master-master failover.
-  - replication:
-    - In master-slave, master serves reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate to additional slaves in a tree-like fashion. If the master goes offline, the system can continue to operate in read-only mode until a slave is promoted to a master or a new master is provisioned. 
-    - In master-master, both masters serve reads and writes and coordinate with each other on writes. If either master goes down, the system can continue to operate with both reads and writes.
-  - All of above have their own set of advantages/disadvantages.  
-
-- Availability is often quantified by uptime (or downtime) as a percentage of time the service is available. 99.9% availability qualifies to having acceptable downtime of 43m 49.7s/month. In case of 99.99%, acceptable downtime is 4m 23s/month. 
-  - If a service consists of multiple components prone to failure, the service's overall availability depends on whether the components are in sequence or in parallel.
-    - In sequence: `Availability (Total) = Availability (Foo) * Availability (Bar)`
-    - In parallel: `Availability (Total) = 1 - (1 - Availability (Foo)) * (1 - Availability (Bar))`
-
-- Domain Name System (DNS) translates a domain name such as www.example.com to an IP address. DNS is hierarchical, with a few authoritative servers at the top level. Your router or ISP provides information about which DNS server(s) to contact when doing a lookup. Lower level DNS servers cache mappings, which could become stale due to DNS propagation delays. DNS results can also be cached by your browser or OS for a certain period of time, determined by the time to live (TTL).
-    - NS record (name server) - Specifies the DNS servers for your domain/subdomain.
-    - MX record (mail exchange) - Specifies the mail servers for accepting messages.
-    - A record (address) - Points a name to an IP address.
-    - CNAME (canonical) - Points a name to another name or CNAME (example.com to www.example.com) or to an A record.
-  - Services such as CloudFlare and Route 53 provide managed DNS services. Some DNS services can route traffic through various methods: Weighted round robin, Latency-based, Geolocation-based
-  - (Disadvantages): Accessing a DNS server introduces a slight delay, although mitigated by caching described above. And DNS server management could be complex. Also, DNS services have recently come under DDoS attack, preventing users from accessing websites such as Twitter without knowing Twitter's IP address(es).
-
-- Content Delivery Network (CDN) is a globally distributed network of proxy servers, serving content from locations closer to the user. Generally, static files such as HTML/CSS/JS, photos, and videos are served from CDN, although some CDNs such as Amazon's CloudFront support dynamic content. The site's DNS resolution will tell clients which server to contact. Serving content from CDNs can significantly improve performance in two ways:
-    - Users receive content from data centers close to them
-    - Your servers do not have to serve requests that the CDN fulfills
-  - Push CDNs receive new content whenever changes occur on your server. You take full responsibility for providing content, uploading directly to the CDN and rewriting URLs to point to the CDN. You can configure when content expires and when it is updated. Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage. Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs. Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
-  - Pull CDNs grab new content from your server when the first user requests the content. You leave the content on your server and rewrite URLs to point to the CDN. This results in a slower request until the content is cached on the CDN. A time-to-live (TTL) determines how long content is cached. Pull CDNs minimize storage space on the CDN, but can create redundant traffic if files expire and are pulled before they have actually changed. Sites with heavy traffic work well with pull CDNs, as traffic is spread out more evenly with only recently-requested content remaining on the CDN.
-  - (Disadvantages): CDN costs could be significant depending on traffic, although this should be weighed with additional costs you would incur not using a CDN. Content might be stale if it is updated before the TTL expires it. CDNs require changing URLs for static content to point to the CDN.
-
-- Load balancers distribute incoming client requests to computing resources such as application servers and databases. In each case, the load balancer returns the response from the computing resource to the appropriate client. Load balancers are effective at:
-    - Preventing requests from going to unhealthy servers
-    - Preventing overloading resources
-    - Helping to eliminate a single point of failure
-    - Load balancers can be implemented with hardware (expensive) or with software such as HAProxy.
-  - Additional benefits include:
-    - SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations
-    - Session persistence - Issue cookies and route a specific client's requests to same instance if the web apps do not keep track of sessions. Note that to protect against failures, it's common to set up multiple load balancers, either in active-passive or active-active mode.
-  - Load balancers can route traffic based on various metrics, including: Random, Least loaded, Session/cookies, Round robin or weighted round robin, Layer 4, Layer 7. 
-  - Layer 4 load balancers look at info at the transport layer to decide how to distribute requests. Generally, this involves the source, destination IP addresses, and ports in the header, but not the contents of the packet. Layer 4 load balancers forward network packets to and from the upstream server, performing Network Address Translation (NAT).
-  - Layer 7 load balancers look at the application layer to decide how to distribute requests. This can involve contents of the header, message, and cookies. Layer 7 load balancers terminate network traffic, reads the message, makes a load-balancing decision, then opens a connection to the selected server. For example, a layer 7 load balancer can direct video traffic to servers that host videos while directing more sensitive user billing traffic to security-hardened servers.
-  - Load balancers can also help with horizontal scaling, improving performance and availability. But disadvantages for horizontal scaling is: It introduces complexity and involves cloning servers - hence servers should be stateless: they should not contain any user-related data like sessions or profile pictures and sessions can be stored in a centralized data store such as a database (SQL, NoSQL) or a persistent cache (Redis, Memcached); Downstream servers such as caches and databases need to handle more simultaneous connections as upstream servers scale out
-  - (Disadvantages): The load balancer can become a performance bottleneck if it does not have enough resources or if it is not configured properly. Introducing a load balancer to help eliminate a single point of failure results in increased complexity. A single load balancer is a single point of failure, configuring multiple load balancers further increases complexity.
-
-- Reverse Proxy: It is a web server that centralizes internal services and provides unified interfaces to the public. Requests from clients are forwarded to a server that can fulfill it before the reverse proxy returns the server's response to the client.
-  - (Benefits): Increased security - Hide information about backend servers, blacklist IPs, limit number of connections per client; Increased scalability and flexibility - Clients only see the reverse proxy's IP, allowing you to scale servers or change their configuration; SSL termination - Decrypt incoming requests and encrypt server responses so backend servers do not have to perform these potentially expensive operations; Compression - Compress server responses; Caching - Return the response for cached requests Static content - Serve static content directly like html/css, photos, videos. 
-  - Deploying a load balancer is useful when you have multiple servers. Often, load balancers route traffic to a set of servers serving the same function. Reverse proxies can be useful even with just one web server or application server, opening up the benefits described in the previous section. Solutions such as NGINX and HAProxy can support both layer 7 reverse proxying and load balancing.
-
-- Microservices: Can be described as a suite of independently deployable, small, modular services. Each service runs a unique process and communicates through a well-defined, lightweight mechanism to serve a business goal. Pinterest, for example, could have the following microservices: user profile, follower, feed, search, photo upload microservices, etc.
-
-- Caching improves page load times and can reduce the load on your servers and databases. In this model, the dispatcher will first lookup if the request has been made before and try to find the previous result to return, in order to save the actual execution. Databases often benefit from a uniform distribution of reads and writes across its partitions. Popular items can skew the distribution, causing bottlenecks. Putting a cache in front of a database can help absorb uneven loads and spikes in traffic.
-  - We can have caching at: Client, Web server, Database, CDN, Application, Database query level, Object level caching.
-  - When to update the cache: 
-    - Cache-aside: The application is responsible for reading and writing from storage. The cache does not interact with storage directly. In short: Look for entry in cache -> resulting in a cache miss -> Load entry from the database -> Add entry to cache -> Return entry. Cache-aside is also referred to as lazy loading. Only requested data is cached, which avoids filling up the cache with data that isn't requested.
-    - Write-through: The application uses the cache as the main data store, reading and writing data to it, while the cache is responsible for reading and writing to the database. In short: Application adds/updates entry in cache -> Cache synchronously writes entry to data store -> Return
-    - Write-behind (write-back): In write-behind, the application does the following, In short: Add/update entry in cache -> Asynchronously write entry to the data store -> thereby improving write performance
-    - Refresh-ahead: You can configure the cache to automatically refresh any recently accessed cache entry prior to its expiration. Refresh-ahead can result in reduced latency vs read-through if the cache can accurately predict which items are likely to be needed in the future.
-    - All have their own set of advantages, disadvantages. 
-
-- Asynchronism
-  - Message queues receive, hold, and deliver messages. If an operation is too slow to perform inline, you can use a message queue with the following workflow:
-      - An application publishes a job to the queue, then notifies the user of job status
-      - A worker picks up the job from the queue, processes it, then signals the job is complete
-    - The user is not blocked and the job is processed in the background. During this time, the client might optionally do a small amount of processing to make it seem like the task has completed. For example, if posting a tweet, the tweet could be instantly posted to your timeline, but it could take some time before your tweet is actually delivered to all of your followers.
-    - Eg: Redis is useful as a simple message broker but messages can be lost. RabbitMQ is popular but requires you to adapt to the 'AMQP' protocol and manage your own nodes. Amazon SQS is hosted but can have high latency and has the possibility of messages being delivered twice.
-  - Tasks queues receive tasks and their related data, runs them, then delivers their results. They can support scheduling and can be used to run computationally-intensive jobs in the background. Celery has support for scheduling and primarily has python support.
-  - Back pressure: If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance. Back pressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. Once the queue fills up, clients get a server busy or HTTP 503 status code to try again later. Clients can retry the request at a later time, perhaps with exponential backoff.
-
-
-#### [surajv311/myCS-NOTES _al](https://github.com/Surajv311/myCS-NOTES)
-
-- Has my CS related notes. 
-
-
-------------------
+--------------------------------
 
