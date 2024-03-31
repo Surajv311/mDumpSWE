@@ -949,6 +949,7 @@ The greater the degree of optimization done, the more time a JIT compiler spends
 - Jackson Object Mapper method can be used to serialize any Java value as a byte array.
 - The Java Persistence API (JPA) is used to persist data between Java object and relational database. 
 - Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, updating, deleting etc.
+- Garbage Collection is process of reclaiming the runtime unused memory automatically. Java garbage collection is an automatic process.
 
 ------------------------------
 
@@ -1696,7 +1697,27 @@ Facebook and Google are two OAuth providers that you might use to log into other
 
 #### [surajv311/myCS-NOTES _al](https://github.com/Surajv311/myCS-NOTES)
 
-- Has my CS related notes. 
+- [Horizontal vs Vertical scaling _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(1).jpg) 
+- [2 phase vs 3 phase commit _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(10).jpg) 
+- [Pub-Sub model _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(11).jpg) 
+- [Cascading failure in Distributed Systems, CDN _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(13).jpg) 
+- [Forward Proxy, Reverse Proxy _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(16).jpg) 
+- [Service Mesh _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(17).jpg) 
+- [How DNS works? _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(19).jpg) 
+- [Consistent hashing _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(2).jpg) 
+- [L4 and L7 load balancing _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(20).jpg) 
+- [System Design Algos _al](https://github.com/Surajv311/myCS-NOTES/blob/main/CS_CORE-NOTES/SYSTEM_DESIGN/sd%20(22).jpg) 
+
+- Paxos is an algorithm that enables a distributed set of computers (for example, a cluster of distributed database nodes) to achieve consensus over an asynchronous network.
+- A split brain situation occurs when a distributed system, such as Elasticsearch, loses communication between its nodes. This can happen for a variety of reasons, such as network issues, hardware failures, or software bugs.
+- Cross-origin resource sharing (CORS) is a mechanism for integrating applications. CORS defines a way for client web applications that are loaded in one domain to interact with resources in a different domain.
+- A Bloom filter is a space-efficient probabilistic data structure that is used to test whether an element is a member of a set.
+- Forward Proxy (Proxies on behalf of clients), Reverse Proxy(Proxies on behalf of servers)
+- Service Mesh: In short, it manages communication between microservices. 
+- A canary deployment is a progressive rollout of an application that splits traffic between an already-deployed version and a new version, rolling it out to a subset of users before rolling out fully.
+- NAT stands for network address translation. It's a way to map multiple private addresses inside a local network to a public IP address before transferring the information onto the internet. Organizations that want multiple devices to employ a single IP address use NAT, as do most home routers.
+- A port number is a way to identify a specific process to which an internet or other network message is to be forwarded when it arrives at a server.
+- Message/Task queue, Monoliths, Microservices, ACID-BASE, Cache, Sharding, Architectures, etc. also covered in the repo. 
 
 ------------------
 
@@ -1807,6 +1828,7 @@ print(total)
   - A stateless process or application, however, does not retain information about the user's previous interactions. There is no stored knowledge of or reference to past transactions. Each transaction is made as if from scratch for the first time. Stateless applications provide one service or function and use a content delivery network (CDN), web, or print servers to process these short-term requests. An example of a stateless transaction would be doing a search online to answer a question you’ve thought of. You type your question into a search engine and hit enter. If your transaction is interrupted or closed accidentally, you just start a new one. Think of stateless transactions as a vending machine: a single request and a response.
 - Ephemeral storage, in the context of Kubernetes, is storage tied to the lifecycle of a pod, so when a pod finishes or is restarted, that storage is cleared out.
 - A bastion host is a publicly facing server that acts as an entry-point to the system which is protected from the high-end firewall or located in a private server. These servers can only be accessible from the bastion hosts so this would reduce the attack surface area from the outside world. [Private server bastion host _al](https://towardsaws.com/ssh-into-the-private-server-through-bastion-host-f637aa5f5c17), [SSH Proxy bastion _al](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump)
+- Data Warehouses are used by managers, analysts, and other business end-users. Data Lake stores mostly raw unstructured and semi-structured data — telemetry, graphics, logs of user behavior, website metrics, and information systems, as well as other data with different storage formats. They are not yet suitable for daily analytics in BI systems but can be used by Data Scientists to test new business hypotheses using statistical algorithms and Machine Learning methods.
 
 --------------------------------
 
