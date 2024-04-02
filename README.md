@@ -72,6 +72,8 @@ https://medium.com/@AbbasPlusPlus/docker-port-mapping-explained-c453dfb0ae39
 
 requests library does all the tcp thing , networking thing under the hood. it has abstracted a lot of things
 
+https://stackoverflow.com/questions/2829528/whats-the-scope-of-a-variable-initialized-in-an-if-statement
+
 ------------------------
 
 Table of contents (rough overview): 
