@@ -6,42 +6,140 @@ Abbrevations in doc hyperlinked:
 - `_vl`: video reference link
 - `_al`: article/page reference link
 
+------------------------
+Add these things: 
+
+A Web Server is a server capable of receiving HTTP requests, interpreting them, processing the corresponding HTTP Responses and sending them to the appropriate clients (Web Browsers). Example: Apache Web Server. Read more about Web Servers and their working>>
+
+
+https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe?rq=1
+
+The try block lets you test a block of code for errors.
+The **except** block lets you handle the error. - Its like catch block
+The else block lets you execute code when there is no error.
+The finally block lets you execute code, regardless of the result of the try- and except blocks.
+
+
+Of course! Let's simplify it with an analogy:
+Imagine you're a chef running a restaurant kitchen. Your job is to cook meals (handle requests) for customers (web users) who come to your restaurant (website). You have two different ways of managing your kitchen:
+The WSGI Kitchen (Traditional):
+In the WSGI kitchen, you work on one dish (request) at a time, from start to finish, without interruption.
+When a customer (web user) orders a meal (sends a request), you start preparing it immediately and don't move on to the next order until you're done with the current one.
+This approach works well for most meals but can be inefficient if you have a lot of orders coming in at once, as you might spend a lot of time waiting for one order to finish before starting the next.
+The ASGI Kitchen (Modern and Flexible):
+In the ASGI kitchen, you have the option to work on multiple dishes (requests) simultaneously, even if they're at different stages of preparation.
+When a customer orders a meal, you start preparing it but can also handle other orders at the same time. For example, you might start marinating chicken for one dish while grilling steak for another.
+This approach allows you to be more efficient and handle a higher volume of orders, especially if some dishes require longer cooking times or if you have special requests like making a dessert while the main course is still cooking.
+Now, let's relate this analogy back to web development:
+WSGI (Traditional): This is like the traditional kitchen where you handle one request at a time. When a web user sends a request to your website, the server processes it from start to finish before moving on to the next request. Frameworks like Flask and Django work this way.
+ASGI (Modern and Flexible): This is like the modern kitchen where you can handle multiple requests simultaneously, even if they're at different stages of processing. ASGI servers can handle long-lived connections, real-time updates, and high concurrency. Frameworks like FastAPI, Starlette, and Quart are designed to work with ASGI servers.
+In essence, ASGI allows web servers to handle requests more efficiently, especially for real-time applications or when dealing with a large number of concurrent users.
+WSGI (Web Server Gateway Interface):
+WSGI is a specification for how web servers communicate with Python web applications or frameworks.
+In WSGI, the web server receives an HTTP request from a client (like a web browser) and forwards it to a WSGI application.
+The WSGI application is a Python callable (such as a function or object) that processes the request and returns an HTTP response.
+WSGI applications typically follow a synchronous execution model, meaning they handle one request at a time and block until the request is completed.
+Most traditional Python web frameworks, like Flask and Django, are built on top of WSGI.
+ASGI (Asynchronous Server Gateway Interface):
+ASGI is an evolution of WSGI designed to support asynchronous and real-time web applications.
+ASGI provides a more flexible protocol that can handle both synchronous and asynchronous processing of HTTP requests.
+In ASGI, the web server receives an HTTP request and forwards it to an ASGI application, which can be either synchronous or asynchronous.
+ASGI applications can handle multiple requests concurrently and are well-suited for long-lived connections, such as WebSockets and server-sent events.
+ASGI servers support asynchronous frameworks like Quart, FastAPI, and Starlette, as well as traditional synchronous frameworks with ASGI adapters.
+In technical terms, WSGI and ASGI are specifications that define how Python web applications interact with web servers. WSGI follows a synchronous execution model, while ASGI supports both synchronous and asynchronous processing of HTTP requests, making it more versatile for modern web applications. ASGI enables real-time communication and better scalability, especially for applications with high concurrency or long-lived connections.
+is wsgi a load balancer then?
+No, WSGI is not a load balancer. WSGI (Web Server Gateway Interface) is a specification for how web servers communicate with Python web applications or frameworks. It defines the protocol for handling HTTP requests and responses between the web server and the Python application.
+A load balancer, on the other hand, is a separate component of a network infrastructure that distributes incoming network traffic across multiple servers. Its purpose is to improve the performance, reliability, and scalability of web applications by evenly distributing the workload among multiple servers.
+While WSGI defines how a Python web application interacts with a web server, a load balancer sits in front of multiple servers and routes incoming requests to the appropriate server based on various criteria, such as server availability, response time, or server load.
+In a typical web application deployment, a load balancer would sit in front of multiple web servers running WSGI-compliant applications. The load balancer distributes incoming requests across these servers to ensure efficient utilization of resources and high availability of the application. Each web server then communicates with the Python application through the WSGI interface.
+
+https://en.wikipedia.org/wiki/Common_Gateway_Interface
+https://docs.python.org/2/howto/webservers.html
+https://stackoverflow.com/questions/69641363/how-to-run-fastapi-app-on-multiple-ports
+
+
+No, a virtual environment created using pip does not encapsulate the entire operating system ecosystem. Instead, it isolates Python packages and dependencies within a specific directory, allowing you to manage and install packages independently of the system-wide Python installation.
+
+This was done because data stored in a RAM is volatile than that stored in a physical server. In contrast, Spark copies most of the data from a physical server to RAM; this is called “in-memory” operation. It reduces the time required to interact with servers and makes Spark faster than the Hadoop's MapReduce system.
+
+spark why faster than hadoop - because ram - in memery processing 
+singleton class - when is it comproised - synchronised keyword, double lock mechanism... java is 
+
+
+ssl certificate
+
+https://medium.com/@AbbasPlusPlus/docker-port-mapping-explained-c453dfb0ae39
+
+requests library does all the tcp thing , networking thing under the hood. it has abstracted a lot of things
+
+------------------------
+
 Table of contents (rough overview): 
-- [Understand_read_again_summarise](#Understand_read_again_summarise)
-- [Kafka](#Kafka)
-- [Airflow](#Airflow)
-- [Dask](#Dask)
-- [Spark](#Spark)
-- [Hadoop](#Hadoop)
-- [Sqoop](#Sqoop)
-- [Databricks](#Databricks)
-- [Snowflake](#Snowflake)
-- [Pinot](#Pinot)
-- [MultiThreading_Synchronous_Asynchronous_Programming](#MultiThreading_Synchronous_Asynchronous_Programming)
-- [CPU_Intensive_vs_IO_Bound_Processes](#CPU_Intensive_vs_IO_Bound_Processes)
-- [Concurrency_vs_Parallelism](#Concurrency_vs_Parallelism) 
-- [Threads_vs_Process](#Threads_vs_Process) 
-- [CPU_Threads_vs_Cores](#CPU_Threads_vs_Cores)
-- [Generators_Iterables_Coroutines](#Generators_Iterables_Coroutines)
-- [Python](#Python)
-- [Java](#Java)
-- [AWS_Services](#AWS_Services)
-- [Database_internals](#Database_internals)
-- [SQL Functions](#SQL-Functions)
-- [Linux_internals_and_commands](#Linux_internals_and_commands)
-- [Webhooks_APIs_Websockets](#Webhooks_APIs_Websockets)
-- [HTTP Request](#HTTP-Request)
-- [HTTP_1_vs_HTTP_2](#HTTP_1_vs_HTTP_2)
-- [Docker](#Docker)
-- [TCP vs UDP](#TCP-vs-UDP)
-- [gRPC_REST_GraphQL](#gRPC_REST_GraphQL)
-- [JSON vs Protobuf](#JSON-vs-Protobuf)
-- [Git](#Git)
-- [cURL](#cURL)
-- [Data_transformation_info](#Data_transformation_info)
-- [SAML](#SAML)
-- [Opensource_Github_repos_knowledge_extraction](#Opensource_Github_repos_knowledge_extraction)
-- [Info_Miscellaneous](#Info_Miscellaneous)
+- [mDumpSWE](#mdumpswe)
+    - [Understand\_read\_again\_summarise](#understand_read_again_summarise)
+    - [Kafka](#kafka)
+    - [Airflow](#airflow)
+    - [Dask](#dask)
+    - [Spark](#spark)
+    - [Hadoop](#hadoop)
+    - [Sqoop](#sqoop)
+    - [Databricks](#databricks)
+    - [Snowflake](#snowflake)
+    - [Pinot](#pinot)
+    - [MultiThreading\_Synchronous\_Asynchronous\_Programming](#multithreading_synchronous_asynchronous_programming)
+    - [CPU\_Intensive\_vs\_IO\_Bound\_Processes](#cpu_intensive_vs_io_bound_processes)
+    - [Concurrency\_vs\_Parallelism](#concurrency_vs_parallelism)
+    - [Threads\_vs\_Process](#threads_vs_process)
+    - [CPU\_Threads\_vs\_Cores](#cpu_threads_vs_cores)
+    - [Generators\_Iterables\_Coroutines](#generators_iterables_coroutines)
+    - [Python](#python)
+      - [aiohttp library](#aiohttp-library)
+      - [asyncio library](#asyncio-library)
+      - [concurrent.futures.ThreadPoolExecutor library](#concurrentfuturesthreadpoolexecutor-library)
+      - [Basic Data structures](#basic-data-structures)
+      - [Context Managers](#context-managers)
+      - [Try catch block](#try-catch-block)
+      - [Python Global Interpreter Lock](#python-global-interpreter-lock)
+      - [Function annotations](#function-annotations)
+      - [Classmethod and Staticmethod](#classmethod-and-staticmethod)
+      - [Others](#others)
+    - [Java](#java)
+      - [Java Int vs int](#java-int-vs-int)
+      - [Java virtual threads](#java-virtual-threads)
+      - [Java enum](#java-enum)
+      - [JIT Compiler](#jit-compiler)
+      - [Others](#others-1)
+    - [AWS\_Services](#aws_services)
+      - [EC2 Spot Instances](#ec2-spot-instances)
+      - [Redshift](#redshift)
+      - [Redshift Spectrum](#redshift-spectrum)
+      - [AWS Glue Catalogue](#aws-glue-catalogue)
+      - [AWS RDS and Aurora](#aws-rds-and-aurora)
+      - [AWS ECS Task, Task Definition \& Service](#aws-ecs-task-task-definition--service)
+      - [AWS ECR](#aws-ecr)
+      - [Misc infos:](#misc-infos)
+    - [Database\_internals](#database_internals)
+      - [Timeseries DB](#timeseries-db)
+    - [SQL Functions](#sql-functions)
+    - [Linux\_internals\_and\_commands](#linux_internals_and_commands)
+    - [Webhooks\_APIs\_Websockets](#webhooks_apis_websockets)
+    - [HTTP Request](#http-request)
+    - [HTTP\_1\_vs\_HTTP\_2](#http_1_vs_http_2)
+    - [Docker](#docker)
+    - [TCP vs UDP](#tcp-vs-udp)
+    - [gRPC\_REST\_GraphQL](#grpc_rest_graphql)
+    - [JSON vs Protobuf](#json-vs-protobuf)
+    - [Git](#git)
+    - [cURL](#curl)
+    - [Data\_transformation\_info](#data_transformation_info)
+      - [JSON explode vs JSON normalize](#json-explode-vs-json-normalize)
+      - [Dataframe Index](#dataframe-index)
+      - [Dataframe Reset Index](#dataframe-reset-index)
+    - [SAML](#saml)
+    - [Opensource\_Github\_repos\_knowledge\_extraction](#opensource_github_repos_knowledge_extraction)
+      - [donnemartin/system-design-primer \_al](#donnemartinsystem-design-primer-_al)
+      - [surajv311/myCS-NOTES \_al](#surajv311mycs-notes-_al)
+    - [Info\_Miscellaneous](#info_miscellaneous)
 
 
 --------------------------
@@ -1180,90 +1278,90 @@ ORDER BY [...]
 
 Consider a table named employees with the following data:
 
-| emp_id | emp_name    | department    |
-| :---:   | :---: | :---: |
-| 1 | Alice   | HR   |
-| 1 | Bob   | HR   |
-| 1 | Charlie   | Sales   |
-| 1 | David   | Sales   |
-| 1 | Eve   | Marketing   |
+| emp_id | emp_name | department |
+| :----: | :------: | :--------: |
+|   1    |  Alice   |     HR     |
+|   1    |   Bob    |     HR     |
+|   1    | Charlie  |   Sales    |
+|   1    |  David   |   Sales    |
+|   1    |   Eve    | Marketing  |
 
 For: `SELECT emp_name, department, RANK() OVER (ORDER BY department) AS dept_rank FROM employees;`
 `RANK()`: RANK() is a window function that assigns a unique rank to each row within the partition of a result set. It assigns the same rank to rows with the same values and leaves gaps between ranks when there are ties.
 Output: 
-| emp_id | emp_name    | dept_rank    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 1   |
-| Charlie | Sales   | 3   |
-| David | Sales   | 3   |
-| Eve | Marketing   | 5   |
+| emp_id  | emp_name  | dept_rank |
+| :-----: | :-------: | :-------: |
+|  Alice  |    HR     |     1     |
+|   Bob   |    HR     |     1     |
+| Charlie |   Sales   |     3     |
+|  David  |   Sales   |     3     |
+|   Eve   | Marketing |     5     |
 
 For: `SELECT emp_name, department, DENSE_RANK() OVER (ORDER BY department) AS dept_dense_rank FROM employees;`
 `DENSE_RANK()`: DENSE_RANK() is similar to RANK() but it doesn't leave gaps between ranks when there are ties. It assigns consecutive ranks to rows with the same values, so there are no gaps in the ranking sequence.
 Output: 
-| emp_id | emp_name    | dept_dense_rank    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 1   |
-| Charlie | Sales   | 2   |
-| David | Sales   | 2   |
-| Eve | Marketing   | 3   |
+| emp_id  | emp_name  | dept_dense_rank |
+| :-----: | :-------: | :-------------: |
+|  Alice  |    HR     |        1        |
+|   Bob   |    HR     |        1        |
+| Charlie |   Sales   |        2        |
+|  David  |   Sales   |        2        |
+|   Eve   | Marketing |        3        |
 
 For: `SELECT emp_name, department, ROW_NUMBER() OVER (ORDER BY emp_name) AS row_num FROM employees;`
 `ROW_NUMBER()`: ROW_NUMBER() is a window function that assigns a unique sequential integer to each row within the partition of a result set. It does not handle ties; each row receives a distinct number, starting from 1 and incrementing by 1 for each row.
 Output: 
-| emp_id | emp_name    | row_num    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 2   |
-| Charlie | Sales   | 3   |
-| David | Sales   | 4   |
-| Eve | Marketing   | 5   |
+| emp_id  | emp_name  | row_num |
+| :-----: | :-------: | :-----: |
+|  Alice  |    HR     |    1    |
+|   Bob   |    HR     |    2    |
+| Charlie |   Sales   |    3    |
+|  David  |   Sales   |    4    |
+|   Eve   | Marketing |    5    |
 
 For: `SELECT emp_name, department, RANK() OVER () AS rank_all FROM employees;`
 `OVER()`: OVER() is a clause used with window functions to define the window or set of rows that the function operates on. It specifies the partitioning and ordering of the rows in the result set for the window function to process. If used without any specific partitioning or ordering, it considers the entire result set as a single partition.
 Output: 
-| emp_id | emp_name    | rank_all    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 1   |
-| Charlie | Sales   | 3   |
-| David | Sales   | 3   |
-| Eve | Marketing   | 5   |
+| emp_id  | emp_name  | rank_all |
+| :-----: | :-------: | :------: |
+|  Alice  |    HR     |    1     |
+|   Bob   |    HR     |    1     |
+| Charlie |   Sales   |    3     |
+|  David  |   Sales   |    3     |
+|   Eve   | Marketing |    5     |
 
 For: `SELECT emp_name, department, RANK() OVER (PARTITION BY department ORDER BY emp_name) AS dept_rank FROM employees;`
 `OVER() PARTITION BY`: OVER() PARTITION BY is used to partition the result set into distinct subsets (partitions) based on the values of one or more columns. It divides the result set into groups, and the window function is applied separately to each group. Within each partition, the window function operates on the rows based on the specified ordering (or the default ordering if not specified).
 Output: 
-| emp_id | emp_name    | dept_rank    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 2   |
-| Charlie | Sales   | 1   |
-| David | Sales   | 2   |
-| Eve | Marketing   | 1   |
+| emp_id  | emp_name  | dept_rank |
+| :-----: | :-------: | :-------: |
+|  Alice  |    HR     |     1     |
+|   Bob   |    HR     |     2     |
+| Charlie |   Sales   |     1     |
+|  David  |   Sales   |     2     |
+|   Eve   | Marketing |     1     |
 
 For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department ORDER BY emp_name) AS dept_row_num FROM employees;`
 `ROW_NUMBER() OVER() PARTITION BY`: ROW_NUMBER() OVER() PARTITION BY combines the functionality of ROW_NUMBER() and OVER() PARTITION BY. It assigns a unique sequential integer to each row within each partition of the result set. The numbering starts from 1 for each partition, and rows are ordered within each partition as specified.
 Output: 
-| emp_id | emp_name    | dept_row_num    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 2  |
-| Charlie | Sales   | 1   |
-| David | Sales   | 2   |
-| Eve | Marketing   | 1   |
+| emp_id  | emp_name  | dept_row_num |
+| :-----: | :-------: | :----------: |
+|  Alice  |    HR     |      1       |
+|   Bob   |    HR     |      2       |
+| Charlie |   Sales   |      1       |
+|  David  |   Sales   |      2       |
+|   Eve   | Marketing |      1       |
 
 For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department ORDER BY emp_name) AS dept_row_num FROM employees;`
 `ROW_NUMBER() OVER PARTITION BY ORDER BY`: Similar to ROW_NUMBER() OVER() PARTITION BY, but with an added ORDER BY clause. It assigns a unique sequential integer to each row within each partition, ordered by the specified column(s). The numbering starts from 1 for each partition, and rows are ordered within each partition according to the specified ordering.
 Output: 
-| emp_id | emp_name    | dept_row_num    |
-| :---:   | :---: | :---: |
-| Alice | HR   | 1   |
-| Bob | HR   | 2  |
-| Charlie | Sales   | 1   |
-| David | Sales   | 2   |
-| Eve | Marketing   | 1   |
+| emp_id  | emp_name  | dept_row_num |
+| :-----: | :-------: | :----------: |
+|  Alice  |    HR     |      1       |
+|   Bob   |    HR     |      2       |
+| Charlie |   Sales   |      1       |
+|  David  |   Sales   |      2       |
+|   Eve   | Marketing |      1       |
 
 - SQL UPSERT command: It’s “update” and “insert.” In the context of relational databases, an upsert is a database operation that will update an existing row if a specified value already exists in a table, and insert a new row if the specified value doesn't already exist.
 - SQL clause "GROUP BY 1" mean: It means to group by the first column of your result set regardless of what it's called. You can do the same with ORDER BY.
