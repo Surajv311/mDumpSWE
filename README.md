@@ -74,6 +74,9 @@ requests library does all the tcp thing , networking thing under the hood. it ha
 
 https://stackoverflow.com/questions/2829528/whats-the-scope-of-a-variable-initialized-in-an-if-statement
 
+
+green thread vs virtual thread java
+
 ------------------------
 
 Table of contents (rough overview): 
