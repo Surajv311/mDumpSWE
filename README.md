@@ -74,8 +74,122 @@ requests library does all the tcp thing , networking thing under the hood. it ha
 
 https://stackoverflow.com/questions/2829528/whats-the-scope-of-a-variable-initialized-in-an-if-statement
 
-
 green thread vs virtual thread java
+
+pip freeze > requirements.txt -> creates a requirement txt file having all packages with versions we got as output from pip freeze
+
+jumpserver mean is like an interface with security measures implemented - cant be bypassed. you put jumpserver in front load and then let requests or ssh access i nbehind the machines
+
+port forwarding, policis on each machine - instead add it in jumpserver
+
+
+
+ 
+https://medium.com/@AbbasPlusPlus/docker-port-mapping-explained-c453dfb0ae39
+https://sparkbyexamples.com/spark/spark-rdd-vs-dataframe-vs-dataset/
+https://www.google.com/search?q=builder+design+pattern+prateek+mishra+linkedin&oq=builder+design+pattern+prateek+mishra+linkedin&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQIRigATIHCAIQIRigAdIBCDYyNDRqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8
+https://www.google.com/search?q=java+reflection&oq=java+refle&gs_lcrp=EgZjaHJvbWUqCggAEAAYsQMYgAQyCggAEAAYsQMYgAQyBwgBEAAYgAQyBwgCEAAYgAQyBggDEEUYOTIHCAQQABiABDIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBCDEzOTZqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8
+https://stackoverflow.com/questions/51359783/how-to-flatten-multilevel-nested-json
+https://www.geeksforgeeks.org/json-loads-in-python/
+
+check hussain nassers latest linkedin post and also check linkedin posts bytebyte go etc, read articles, research papers. 
+
+
+
+
+@@@@@@@@@@@@@@@@ TO ADD @@@@@@@@@@@@@@@@
+
+
+
+In PySpark and Python, the * (asterisk) operator can have different meanings and uses, depending on the context. Here are some of the common usages:
+
+Unpacking/Spreading Operator: When used in function arguments or function calls, the * operator is used to unpack or spread the elements of an iterable (such as a list, tuple, or set) into individual arguments. For example:
+python
+
+
+Copy code
+def my_function(a, b, c):
+    print(a, b, c)
+
+my_list = [1, 2, 3]
+my_function(*my_list)  # Output: 1 2 3
+Multiplication Operator: In mathematical expressions, the * operator is used for multiplication. For example:
+python
+
+
+Copy code
+a = 5
+b = 3
+c = a * b  # c = 15
+Wildcard Import: In Python, the * operator can be used in an import statement to import all symbols (functions, classes, variables) from a module. This is known as a "wildcard import". For example:
+python
+
+
+Copy code
+from module_name import *
+However, using wildcard imports is generally discouraged as it can lead to name clashes and make the code harder to read and maintain.
+Repeated Sequence: In Python, the * operator can be used to repeat a sequence (such as a string or a list) a certain number of times. For example:
+python
+
+
+Copy code
+print('hello' * 3)  # Output: hellohellohello
+Argument Lists: In function definitions, the * operator can be used to accept an arbitrary number of positional arguments. These arguments are then collected into a tuple. For example:
+python
+
+
+Copy code
+def my_function(*args):
+    print(args)
+
+my_function(1, 2, 3)  # Output: (1, 2, 3)
+Keyword Arguments: Similar to the usage in argument lists, the * operator can be used in function definitions to accept an arbitrary number of keyword arguments. These arguments are then collected into a dictionary. For example:
+python
+
+
+Copy code
+def my_function(**kwargs):
+    print(kwargs)
+
+my_function(a=1, b=2, c=3)  # Output: {'a': 1, 'b': 2, 'c': 3}
+The specific meaning of the * operator in PySpark or Python depends on the context in which it is used. Understanding these different usages is important for effectively working with and writing Python and PySpark code.
+
+@@@@@@@@@@@@@@@@@ ADD ABOVE... @@@@@@@@@@@@@@@@
+
+1 thread 1 core , per core only 1 thread is used........
+
+pip show jsonschema | grep ^Required-by
+
+
+
+Because you are using spark, your data is spread across multiple nodes, computing in parallel and sent in part to your directory. One of the reasons to use spark is that the data cannot be stored locally. So this is how the data is output. The larger your file the larger more "part" files should come through.
+Pyspark stores the files in smaller chunks and as far as I know, we can not store the JSON directly with a single given file name. I think this small python function will be helpful to what you're trying to achieve.
+def saveResult (data_frame, temp_location, file_path):
+    data_frame.write.mode('append').json(temp_location)
+    file = dbutils.fs.ls(temp_location)[-1].path # last file is the json or can also use regex to determine this
+    dbutils.fs.cp(file, file_path)
+    dbutils.fs.rm(temp_location, recurse=True)
+Basically, what's happening here is you are passing the data frame, the temp_location where all the file chunks are stored and the full file path (file path + filename) which you'd like to get as an output file. The function generates the chunks, deletes all the chunks, and saves the final file into the desired location with the desired file name.
+https://stackoverflow.com/questions/43269244/pyspark-dataframe-write-to-single-json-file-with-specific-name
+
+control plane vs data plane devops
+
+jump server
+
+ 
+rfc 2616
+
+
+firecracker vms
+https://stackoverflow.com/questions/20635230/how-can-i-see-all-packages-that-depend-on-a-certain-package-with-pip
+
+ycombinator news  for tech updates 
+
+Memgraph
+
+https://stackoverflow.com/questions/2322355/proper-name-for-python-operator
+
+https://ghost.org/
 
 ------------------------
 
