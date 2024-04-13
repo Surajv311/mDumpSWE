@@ -191,6 +191,19 @@ https://stackoverflow.com/questions/2322355/proper-name-for-python-operator
 
 https://ghost.org/
 
+UDFs are executed at workers, so the print statements inside them won't show up in the output (which is from the driver). The best way to handle issues with UDFs is to change the return type of the UDF to a struct or a list and pass the error information along with the returned output. In the code below I am just adding the error info to the string res that you were returning originally.
+
+import pyspark.sql.functions as F
+def myF(input):
+  myF.lineNumber += 1
+  if (somethingBad):
+    res += 'Error in line {}'.format(myF.lineNumber)
+  return res
+
+myF.lineNumber = 0
+
+myF_udf =  F.udf(myF, StringType())
+https://stackoverflow.com/questions/54252682/pyspark-udf-print-row-being-analyzed
 ------------------------
 
 Table of contents (rough overview): 
