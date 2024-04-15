@@ -204,6 +204,17 @@ myF.lineNumber = 0
 
 myF_udf =  F.udf(myF, StringType())
 https://stackoverflow.com/questions/54252682/pyspark-udf-print-row-being-analyzed
+
+
+
+
+
+spark does lazy evaluation
+
+
+it executes in workers as naming convention - part00... 
+
+
 ------------------------
 
 Table of contents (rough overview): 
