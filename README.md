@@ -214,6 +214,11 @@ spark does lazy evaluation
 
 it executes in workers as naming convention - part00... 
 
+https://stackoverflow.com/questions/53368343/does-coalesce1-the-dataframe-before-write-have-any-impact-on-performance
+
+
+
+
 
 ------------------------
 
