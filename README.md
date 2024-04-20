@@ -220,6 +220,12 @@ https://stackoverflow.com/questions/53368343/does-coalesce1-the-dataframe-before
 
 
 
+single tab of chrome runs on a single thread - check 
+
+
+
+
+
 ------------------------
 
 Table of contents (rough overview): 
