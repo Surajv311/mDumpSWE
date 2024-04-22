@@ -7,63 +7,13 @@ Abbrevations in doc hyperlinked:
 - `_al`: article/page reference link
 
 ------------------------
-Add these things: 
-
-A Web Server is a server capable of receiving HTTP requests, interpreting them, processing the corresponding HTTP Responses and sending them to the appropriate clients (Web Browsers). Example: Apache Web Server. Read more about Web Servers and their working>>
+ 
 
 
-https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe?rq=1
-
-The try block lets you test a block of code for errors.
-The **except** block lets you handle the error. - Its like catch block
-The else block lets you execute code when there is no error.
-The finally block lets you execute code, regardless of the result of the try- and except blocks.
 
 
-Of course! Let's simplify it with an analogy:
-Imagine you're a chef running a restaurant kitchen. Your job is to cook meals (handle requests) for customers (web users) who come to your restaurant (website). You have two different ways of managing your kitchen:
-The WSGI Kitchen (Traditional):
-In the WSGI kitchen, you work on one dish (request) at a time, from start to finish, without interruption.
-When a customer (web user) orders a meal (sends a request), you start preparing it immediately and don't move on to the next order until you're done with the current one.
-This approach works well for most meals but can be inefficient if you have a lot of orders coming in at once, as you might spend a lot of time waiting for one order to finish before starting the next.
-The ASGI Kitchen (Modern and Flexible):
-In the ASGI kitchen, you have the option to work on multiple dishes (requests) simultaneously, even if they're at different stages of preparation.
-When a customer orders a meal, you start preparing it but can also handle other orders at the same time. For example, you might start marinating chicken for one dish while grilling steak for another.
-This approach allows you to be more efficient and handle a higher volume of orders, especially if some dishes require longer cooking times or if you have special requests like making a dessert while the main course is still cooking.
-Now, let's relate this analogy back to web development:
-WSGI (Traditional): This is like the traditional kitchen where you handle one request at a time. When a web user sends a request to your website, the server processes it from start to finish before moving on to the next request. Frameworks like Flask and Django work this way.
-ASGI (Modern and Flexible): This is like the modern kitchen where you can handle multiple requests simultaneously, even if they're at different stages of processing. ASGI servers can handle long-lived connections, real-time updates, and high concurrency. Frameworks like FastAPI, Starlette, and Quart are designed to work with ASGI servers.
-In essence, ASGI allows web servers to handle requests more efficiently, especially for real-time applications or when dealing with a large number of concurrent users.
-WSGI (Web Server Gateway Interface):
-WSGI is a specification for how web servers communicate with Python web applications or frameworks.
-In WSGI, the web server receives an HTTP request from a client (like a web browser) and forwards it to a WSGI application.
-The WSGI application is a Python callable (such as a function or object) that processes the request and returns an HTTP response.
-WSGI applications typically follow a synchronous execution model, meaning they handle one request at a time and block until the request is completed.
-Most traditional Python web frameworks, like Flask and Django, are built on top of WSGI.
-ASGI (Asynchronous Server Gateway Interface):
-ASGI is an evolution of WSGI designed to support asynchronous and real-time web applications.
-ASGI provides a more flexible protocol that can handle both synchronous and asynchronous processing of HTTP requests.
-In ASGI, the web server receives an HTTP request and forwards it to an ASGI application, which can be either synchronous or asynchronous.
-ASGI applications can handle multiple requests concurrently and are well-suited for long-lived connections, such as WebSockets and server-sent events.
-ASGI servers support asynchronous frameworks like Quart, FastAPI, and Starlette, as well as traditional synchronous frameworks with ASGI adapters.
-In technical terms, WSGI and ASGI are specifications that define how Python web applications interact with web servers. WSGI follows a synchronous execution model, while ASGI supports both synchronous and asynchronous processing of HTTP requests, making it more versatile for modern web applications. ASGI enables real-time communication and better scalability, especially for applications with high concurrency or long-lived connections.
-is wsgi a load balancer then?
-No, WSGI is not a load balancer. WSGI (Web Server Gateway Interface) is a specification for how web servers communicate with Python web applications or frameworks. It defines the protocol for handling HTTP requests and responses between the web server and the Python application.
-A load balancer, on the other hand, is a separate component of a network infrastructure that distributes incoming network traffic across multiple servers. Its purpose is to improve the performance, reliability, and scalability of web applications by evenly distributing the workload among multiple servers.
-While WSGI defines how a Python web application interacts with a web server, a load balancer sits in front of multiple servers and routes incoming requests to the appropriate server based on various criteria, such as server availability, response time, or server load.
-In a typical web application deployment, a load balancer would sit in front of multiple web servers running WSGI-compliant applications. The load balancer distributes incoming requests across these servers to ensure efficient utilization of resources and high availability of the application. Each web server then communicates with the Python application through the WSGI interface.
-
-https://en.wikipedia.org/wiki/Common_Gateway_Interface
-https://docs.python.org/2/howto/webservers.html
-https://stackoverflow.com/questions/69641363/how-to-run-fastapi-app-on-multiple-ports
 
 
-No, a virtual environment created using pip does not encapsulate the entire operating system ecosystem. Instead, it isolates Python packages and dependencies within a specific directory, allowing you to manage and install packages independently of the system-wide Python installation.
-
-This was done because data stored in a RAM is volatile than that stored in a physical server. In contrast, Spark copies most of the data from a physical server to RAM; this is called “in-memory” operation. It reduces the time required to interact with servers and makes Spark faster than the Hadoop's MapReduce system.
-
-spark why faster than hadoop - because ram - in memery processing 
-singleton class - when is it comproised - synchronised keyword, double lock mechanism... java is 
 
 
 ssl certificate
@@ -92,8 +42,10 @@ https://www.google.com/search?q=java+reflection&oq=java+refle&gs_lcrp=EgZjaHJvbW
 https://stackoverflow.com/questions/51359783/how-to-flatten-multilevel-nested-json
 https://www.geeksforgeeks.org/json-loads-in-python/
 
-check hussain nassers latest linkedin post and also check linkedin posts bytebyte go etc, read articles, research papers. 
+ 
 
+
+https://stackoverflow.com/questions/41573587/what-is-the-difference-between-venv-pyvenv-pyenv-virtualenv-virtualenvwrappe?rq=1
 
 
 
@@ -158,7 +110,6 @@ The specific meaning of the * operator in PySpark or Python depends on the conte
 
 1 thread 1 core , per core only 1 thread is used........
 
-pip show jsonschema | grep ^Required-by
 
 
 
@@ -256,13 +207,13 @@ Table of contents (rough overview):
       - [Python Global Interpreter Lock](#python-global-interpreter-lock)
       - [Function annotations](#function-annotations)
       - [Classmethod and Staticmethod](#classmethod-and-staticmethod)
-      - [Others](#others)
+      - [Otherspython](#otherspython)
     - [Java](#java)
       - [Java Int vs int](#java-int-vs-int)
       - [Java virtual threads](#java-virtual-threads)
       - [Java enum](#java-enum)
       - [JIT Compiler](#jit-compiler)
-      - [Others](#others-1)
+      - [Othersjava](#othersjava)
     - [AWS\_Services](#aws_services)
       - [EC2 Spot Instances](#ec2-spot-instances)
       - [Redshift](#redshift)
@@ -290,6 +241,7 @@ Table of contents (rough overview):
       - [Dataframe Index](#dataframe-index)
       - [Dataframe Reset Index](#dataframe-reset-index)
     - [SAML](#saml)
+    - [ASGI_vs_WSGI](#asgi_vs_wsgi)
     - [Opensource\_Github\_repos\_knowledge\_extraction](#opensource_github_repos_knowledge_extraction)
       - [donnemartin/system-design-primer \_al](#donnemartinsystem-design-primer-_al)
       - [surajv311/myCS-NOTES \_al](#surajv311mycs-notes-_al)
@@ -576,7 +528,11 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
 [Pyspark internals _al](https://cwiki.apache.org/confluence/display/SPARK/PySpark+Internals)
 
 - The `createOrReplaceTempView()` is used to create a temporary view/table from the Spark DataFrame or Dataset objects. It is part of Spark 2.0. In Spark 1.0 `registerTempTable()` was used. 
-
+- Why spark faster than hadoop?: 
+  - Spark is faster than Hadoop MapReduce due to in-memory data processing, reducing the need for disk I/O and improving performance for iterative algorithms.
+  - Spark efficiently manages memory and can spill data to disk if the memory is not sufficient, allowing it to handle larger datasets than Hadoop MapReduce.
+  - Spark uses its Catalyst Query Planner, which optimizes query execution plans, leading to better performance and more efficient resource utilization.
+  
 ------------------------------
 
 ### Hadoop 
@@ -1044,7 +1000,7 @@ print(MyClass.static_method(3, 4))  # Output: 7
 - In summary: Use @classmethod when you want a method to operate on the class itself and have access to class-level attributes.
 Use @staticmethod when you want a method that does not depend on instance or class state and behaves like a regular function but belongs to the class's namespace.
 
-#### Others 
+#### Otherspython 
 
 - Use Pytest to test Python unit tests code: https://docs.pytest.org/en/7.1.x/how-to/usage.html
 - What does __name__ == "__main__" do?: It allows you to execute code when the file runs as a script. In other words, remember in C++ code we had main() function, when we ran the file, the default function used to execute. Similar analogy. [init main info _al](https://stackoverflow.com/questions/419163/what-does-if-name-main-do)
@@ -1139,6 +1095,14 @@ Python caches integers in the range [-5, 256], so integers in that range are usu
 
 - `'wb'` in Python code: The wb indicates that the file is opened for writing in binary mode. When writing in binary mode, Python makes no changes to data as it is written to the file. In text mode (when the b is excluded as in just w or when you specify text mode with wt), however, Python will encode the text based on the default text encoding. Additionally, Python will convert line endings (\n) to whatever the platform-specific line ending is, which would corrupt a binary file like an exe or png file. Text mode should therefore be used when writing text files (whether using plain text or a text-based format like CSV), while binary mode must be used when writing non-text files like images. [wb in python _al](https://stackoverflow.com/questions/2665866/what-does-wb-mean-in-this-code-using-python)
 
+- Try catch except finally block: 
+  - The try block lets you test a block of code for errors.
+  - The except block lets you handle the error. - Its like catch block
+  - The else block lets you execute code when there is no error.
+  - The finally block lets you execute code, regardless of the result of the try- and except blocks.
+
+
+
 ------------------------------
 
 ### Java 
@@ -1196,12 +1160,41 @@ The JIT compiler is able to perform certain simple optimizations while compiling
 
 The greater the degree of optimization done, the more time a JIT compiler spends in the execution stage. Therefore it cannot afford to do all the optimizations that a static compiler is capable of, because of the extra overhead added to the execution time and moreover its view of the program is also restricted.
 
-#### Others
+#### Othersjava
 
 - Jackson Object Mapper method can be used to serialize any Java value as a byte array.
 - The Java Persistence API (JPA) is used to persist data between Java object and relational database. 
 - Object Relational Mapping (ORM) is a functionality which is used to develop and maintain a relationship between an object and relational database by mapping an object state to database column. It is capable to handle various database operations easily such as inserting, updating, deleting etc.
 - Garbage Collection is process of reclaiming the runtime unused memory automatically. Java garbage collection is an automatic process.
+- When can singleton class in java be compromised?: 
+  - A java singleton class is a class that can have only one object (an instance of the class) at a time. After the first time, if we try to instantiate the Java Singleton classes, the new variable also points to the first instance created. So whatever modifications we do to any variable inside the class through any instance, affects the variable of the single instance created and is visible if we access that variable through any variable of that class type defined.
+  - The primary purpose of a java Singleton class is to restrict the limit of the number of object creations to only one. This often ensures that there is access control to resources, for example, socket or database connection.
+  - The singleton pattern can break if: [Break a singleton pattern in Java _al](https://stackoverflow.com/questions/20421920/what-are-the-different-ways-we-can-break-a-singleton-pattern-in-java), [Singleton Pattern prevent from Reflection, Serialization and Cloning _al](https://www.geeksforgeeks.org/prevent-singleton-pattern-reflection-serialization-cloning/)
+  - Eg: 
+
+```
+class Singleton {
+    // Static variable reference of single_instance of type Singleton
+    private static Singleton single_instance = null;
+    public String s;
+ 
+    // Here we will be creating private constructor restricted to this class itself
+    private Singleton()
+    {
+        s = "Hello I am a string part of Singleton class";
+    }
+    // Static method to create instance of Singleton class
+    public static synchronized Singleton getInstance()
+    {
+        if (single_instance == null)
+            single_instance = new Singleton();
+ 
+        return single_instance;
+    }
+}
+```
+
+- 
 
 ------------------------------
 
@@ -1863,6 +1856,28 @@ Facebook and Google are two OAuth providers that you might use to log into other
 
 ------------------
 
+### ASGI_vs_WSGI 
+
+- A Web Server is a server capable of receiving HTTP requests, interpreting them, processing the corresponding HTTP Responses and sending them to the appropriate clients (Web Browsers). Example: Apache Web Server.
+  - WSGI (Web Server Gateway Interface):
+   - WSGI is a specification for how web servers communicate with Python web applications or frameworks. 
+   - In WSGI, the web server receives an HTTP request from a client (like a web browser) and forwards it to a WSGI application. 
+   - The WSGI application is a Python callable (such as a function or object) that processes the request and returns an HTTP response.
+   - WSGI applications typically follow a synchronous execution model, meaning they handle one request at a time and block until the request is completed. 
+   - Most traditional Python web frameworks, like Flask and Django, are built on top of WSGI.
+  - ASGI (Asynchronous Server Gateway Interface):
+    - ASGI is an evolution of WSGI designed to support asynchronous and real-time web applications.
+    - ASGI provides a more flexible protocol that can handle both synchronous and asynchronous processing of HTTP requests.
+    - In ASGI, the web server receives an HTTP request and forwards it to an ASGI application, which can be either synchronous or asynchronous.
+    - ASGI applications can handle multiple requests concurrently and are well-suited for long-lived connections, such as WebSockets and server-sent events.
+    - ASGI servers support asynchronous frameworks like Quart, FastAPI, and Starlette, as well as traditional synchronous frameworks with ASGI adapters.
+  - In technical terms, WSGI and ASGI are specifications that define how Python web applications interact with web servers. WSGI follows a synchronous execution model, while ASGI supports both synchronous and asynchronous processing of HTTP requests, making it more versatile for modern web applications. ASGI enables real-time communication and better scalability, especially for applications with high concurrency or long-lived connections.
+  - Is wsgi a load balancer then?:  No, WSGI is not a load balancer. WSGI (Web Server Gateway Interface) is a specification for how web servers communicate with Python web applications or frameworks. It defines the protocol for handling HTTP requests and responses between the web server and the Python application. A load balancer, on the other hand, is a separate component of a network infrastructure that distributes incoming network traffic across multiple servers. Its purpose is to improve the performance, reliability, and scalability of web applications by evenly distributing the workload among multiple servers. While WSGI defines how a Python web application interacts with a web server, a load balancer sits in front of multiple servers and routes incoming requests to the appropriate server based on various criteria, such as server availability, response time, or server load. In a typical web application deployment, a load balancer would sit in front of multiple web servers running WSGI-compliant applications. The load balancer distributes incoming requests across these servers to ensure efficient utilization of resources and high availability of the application. Each web server then communicates with the Python application through the WSGI interface.  
+
+[cgi _al](https://en.wikipedia.org/wiki/Common_Gateway_Interface), [webservers _al](https://docs.python.org/2/howto/webservers.html)
+
+------------------
+
 ### Opensource_Github_repos_knowledge_extraction 
 
 #### [donnemartin/system-design-primer _al](https://github.com/donnemartin/system-design-primer)
@@ -1998,6 +2013,8 @@ subprocess.run(db_config_create_command, shell=False) -- Fine
   - `!pip install -r requirements.txt --use-deprecated=legacy-resolver` - For pip dependency issue resolving. 
   - `pip list`: pip list shows all the installed packages.
   - `pip freeze`: pip freeze shows packages installed via pip (or pipenv if using that tool) command in a requirements format.
+  - `pip show jsonschema | grep ^Required-by`: Lists down all pacakges dependent on jsonschema package
+  - A virtual environment created using pip does not encapsulate the entire operating system ecosystem. Instead, it isolates Python packages and dependencies within a specific directory, allowing you to manage and install packages independently of the system-wide Python installation.
 - Semantic versioning (also known as SemVer) is a versioning system that has been on the rise over the last few years. SemVer is in the form of MajorVersion.MinorVersion.PatchVersion; Eg: 4.7.6. [Semantic version doc _al](https://semver.org/)
 - In this code:
 
