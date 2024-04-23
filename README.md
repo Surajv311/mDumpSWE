@@ -114,6 +114,8 @@ The specific meaning of the * operator in PySpark or Python depends on the conte
 https://www.google.com/search?q=hussain+nasser+linkedin&oq=hussain+nasser+linkedin&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQABgKGIAEMggIAhAAGBYYHjIICAMQABgWGB4yCggEEAAYgAQYogQyCggFEAAYgAQYogTSAQgyNjA5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
 byetbyte go hussain nasser
 
+https://dba.stackexchange.com/questions/62439/a-little-clarification-on-how-limit-works
+
 Because you are using spark, your data is spread across multiple nodes, computing in parallel and sent in part to your directory. One of the reasons to use spark is that the data cannot be stored locally. So this is how the data is output. The larger your file the larger more "part" files should come through.
 Pyspark stores the files in smaller chunks and as far as I know, we can not store the JSON directly with a single given file name. I think this small python function will be helpful to what you're trying to achieve.
 def saveResult (data_frame, temp_location, file_path):
