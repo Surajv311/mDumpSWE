@@ -133,6 +133,18 @@ jump server
  
 rfc 2616
 
+https://stackoverflow.com/questions/44058122/what-happens-if-sparksession-is-not-closed
+# spark = SparkSession.builder.appName("ProcessEvent").getOrCreate()
+# spark.stop()
+# if (spark.getActiveSession()):
+#     print('yes')
+# else:
+#     print('no')
+
+https://stackoverflow.com/questions/47723761/how-many-sparksessions-can-a-single-application-have
+
+
+
 
 firecracker vms
 https://stackoverflow.com/questions/20635230/how-can-i-see-all-packages-that-depend-on-a-certain-package-with-pip
