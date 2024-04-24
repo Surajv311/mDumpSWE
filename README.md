@@ -13,9 +13,8 @@ Abbrevations in doc hyperlinked:
 
 
 
-
-
-
+compute() method or dask. compute(...) function. This function will block until the computation is finished, going straight from a lazy dask collection to a concrete value in local memory.
+For example a Dask array turns into a NumPy array and a Dask dataframe turns into a Pandas dataframe. The entire dataset must fit into memory before calling this operation.
 ssl certificate
 
 https://medium.com/@AbbasPlusPlus/docker-port-mapping-explained-c453dfb0ae39
