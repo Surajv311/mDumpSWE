@@ -2,7 +2,7 @@
 
 Collection of interesting articles/newsletters/blogs/videos - related to software engineering, I've surfed online and learned about. Thank you internet and chatgpt. Creating a repo for my memory dump. I've tried to add as many references from where I read the articles about, but may have missed few. 
 
-Abbrevations in doc hyperlinked: 
+Abbreviations in doc hyperlinked: 
 - `_vl`: video reference link
 - `_al`: article/page reference link
 
