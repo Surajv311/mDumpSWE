@@ -1,7 +1,16 @@
 
 # Understand-Again-Summarise
 
- 
+
+Polars was built from the ground up to be blazingly fast and can do common operations around 5–10 times faster than pandas.Polars is that it is written in Rust, a low-level language that is almost as fast as C and C++. In contrast, pandas is built on top of Python libraries, one of these being NumPy. While NumPy’s core is written in C, it is still hamstrung by inherent problems with the way Python handles certain types in memory, such as strings for categorical data, leading to poor performance when handling these types. Another factor that contributes to Polars’ impressive performance is Apache Arrow, a language-independent memory format. Arrow was actually co-created by Wes McKinney in response to many of the issues he saw with pandas as the size of data exploded. It is also the backend for pandas 2.0, a more performant version of pandas. One of the other cores of Polars’ performance is how it evaluates code. Pandas, by default, uses eager execution, carrying out operations in the order you’ve written them. In contrast, Polars has the ability to do both eager and lazy execution, where a query optimizer will evaluate all of the required operations and map out the most efficient way of executing the code.
+https://wesmckinney.com/blog/apache-arrow-pandas-internals/
+https://stackoverflow.com/questions/75680491/what-is-the-trade-off-between-lazy-and-strict-eager-evaluation
+
+
+window function in pyspark
+
+https://blog.jetbrains.com/dataspell/2023/08/polars-vs-pandas-what-s-the-difference/
+
 https://news.ycombinator.com/
 
 https://sachidisanayaka98.medium.com/how-chrome-browser-use-process-threads-643dff8ad32c
