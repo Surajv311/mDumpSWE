@@ -6,7 +6,8 @@ Polars was built from the ground up to be blazingly fast and can do common opera
 https://wesmckinney.com/blog/apache-arrow-pandas-internals/
 https://stackoverflow.com/questions/75680491/what-is-the-trade-off-between-lazy-and-strict-eager-evaluation
 
-
+https://www.youtube.com/watch?v=lqz12s064RY - data lineage using openlineage
+ 
 window function in pyspark
 
 https://blog.jetbrains.com/dataspell/2023/08/polars-vs-pandas-what-s-the-difference/
