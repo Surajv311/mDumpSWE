@@ -10,6 +10,8 @@ https://www.youtube.com/watch?v=lqz12s064RY - data lineage using openlineage
  
 window function in pyspark
 
+https://www.reddit.com/r/dataengineering/comments/te0m0x/pandas_on_spark_vs_pyspark_dataframe/
+
 partition vs group by difference
 pyspark - filter narrow transformation, groupby wide transformation
 scalar and predicate subqueries.
