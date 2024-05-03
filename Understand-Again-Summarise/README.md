@@ -12,6 +12,10 @@ window function in pyspark
 
 https://www.reddit.com/r/dataengineering/comments/te0m0x/pandas_on_spark_vs_pyspark_dataframe/
 
+
+If you don't use await in an async function in Python, the function will still be executed, but it won't pause the execution flow to wait for the result of the coroutine it calls. This can lead to unexpected behavior if you rely on the result of the coroutine or if you expect certain operations to be completed before proceeding.
+
+
 partition vs group by difference
 pyspark - filter narrow transformation, groupby wide transformation
 scalar and predicate subqueries.
