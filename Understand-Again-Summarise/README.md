@@ -1,6 +1,19 @@
 
 # Understand-Again-Summarise
 
+
+good videos on sql window functions
+https://stackoverflow.com/questions/2404565/sql-difference-between-partition-by-and-group-by
+https://www.youtube.com/watch?v=Ww71knvhQ-s
+https://www.youtube.com/watch?v=KwEjkpFltjc
+
+check this later: 
+https://spoddutur.github.io/spark-notes/distribution_of_executors_cores_and_memory_for_spark_application.html
+https://joydipnath.medium.com/how-to-determine-executor-core-memory-and-size-for-a-spark-app-19310c60c0f7
+https://sparkbyexamples.com/spark/spark-tune-executor-number-cores-and-memory/
+https://community.cloudera.com/t5/Support-Questions/How-to-decide-spark-submit-configurations/m-p/226197
+https://www.linkedin.com/pulse/apache-spark-things-keep-mind-while-setting-up-executors-deka
+
 https://medium.com/@madhur25/meaning-of-at-least-once-at-most-once-and-exactly-once-delivery-10e477fafe16
 
 https://stackoverflow.com/questions/75680491/what-is-the-trade-off-between-lazy-and-strict-eager-evaluation
