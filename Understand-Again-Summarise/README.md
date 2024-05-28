@@ -1,6 +1,39 @@
 
 # Understand-Again-Summarise
 
+sql query execution
+https://www.red-gate.com/simple-talk/databases/sql-server/performance-sql-server/execution-plan-basics/
+https://stackoverflow.com/questions/7359702/how-do-i-obtain-a-query-execution-plan-in-sql-server
+https://www.reddit.com/r/dataengineering/comments/1axd7cy/what_are_your_top_sql_query_optimization_tips/
+also filter first then join, rather than joining and then filtering
+https://dba.stackexchange.com/questions/133315/filter-first-then-join-or-join-first-then-filter
+https://stackoverflow.com/questions/2509987/which-sql-query-is-faster-filter-on-join-criteria-or-where-clause
+https://builtin.com/articles/optimize-sql-for-large-data-sets
+https://medium.com/@alejandro.ibapen/top-20-sql-query-optimisation-tricks-for-data-analysis-3d31642d9917
+https://www.thoughtspot.com/data-trends/data-modeling/optimizing-sql-queries
+Reddit: 
+Selecting only necessary columns: When writing a query, avoid using the wildcard (*) and select only the columns you actually need. This reduces the amount of data that needs to be processed and returned, resulting in faster query execution.
+Using appropriate indexes: Indexes can significantly improve query performance. Be mindful of creating and using indexes on columns that are frequently used in WHERE clauses, JOIN conditions, or ORDER BY clauses.
+Limiting the result set: Use LIMIT or TOP clauses to restrict the number of rows returned by your query. This can help reduce the amount of data processed and speed up the query execution.
+Avoiding correlated subqueries: Correlated subqueries can be resource-intensive and slow down query execution. Where possible, use JOINs or derived tables to avoid correlated subqueries.
+Filtering data early: Apply filters and conditions as early as possible in the query. This reduces the amount of data that needs to be processed in subsequent steps, resulting in faster query execution.
+Using the appropriate JOIN type: Different JOIN types (INNER, OUTER, LEFT, RIGHT) can have a significant impact on query performance. Choose the appropriate JOIN type based on the data and relationships between tables.
+Minimizing the use of functions in predicates: Using functions in WHERE clauses or JOIN conditions can slow down query execution. If possible, pre-calculate function results or use other methods to minimize their usage in these clauses.
+Avoiding excessive nesting: Deeply nested subqueries or derived tables can be difficult to read and maintain, and can also impact query performance. Look for opportunities to simplify your query by using JOINs, temporary tables, or other techniques.
+Utilizing query execution plans: Analyze and understand the query execution plan to identify potential bottlenecks and areas for improvement. This can help you optimize your query and achieve better performance.
+Testing and monitoring: Regularly test and monitor your queries to ensure they are performing optimally. Identify slow-running queries and make necessary adjustments to maintain the performance of your database system.
+https://www.youtube.com/watch?v=HhqOrbX3Bls&list=PLDYqU5RH_aX1VSVvjdla9TOKf939UhIDB&index=1
+
+others: 
+https://stackoverflow.com/questions/17199113/psycopg2-leaking-memory-after-large-query
+https://stackoverflow.com/questions/42081971/retrieve-data-in-chunks-in-postgresql
+https://dba.stackexchange.com/questions/123244/update-by-iterating-table-in-batches-faster-than-whole-table-in-postgresql
+https://dba.stackexchange.com/questions/279941/why-is-my-sql-server-giving-out-of-memory-errors-when-there-should-be-plenty
+https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
+https://serverfault.com/questions/359414/to-improve-sql-performance-why-not-just-put-lots-of-ram-rather-than-having-fast
+https://dba.stackexchange.com/questions/64570/postgresql-error-out-of-memory
+
+
 
 good videos on sql window functions
 https://stackoverflow.com/questions/2404565/sql-difference-between-partition-by-and-group-by
