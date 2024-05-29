@@ -24,6 +24,13 @@ Utilizing query execution plans: Analyze and understand the query execution plan
 Testing and monitoring: Regularly test and monitor your queries to ensure they are performing optimally. Identify slow-running queries and make necessary adjustments to maintain the performance of your database system.
 https://www.youtube.com/watch?v=HhqOrbX3Bls&list=PLDYqU5RH_aX1VSVvjdla9TOKf939UhIDB&index=1
 
+
+
+pandas df size compute:
+https://community.databricks.com/t5/data-engineering/what-is-the-maximum-size-of-a-dataframe-that-i-can-convert/td-p/30386#:~:text=There%20is%20no%20hardcoded%20limit,The%20only%20limit%20is%20memory.
+https://stackoverflow.com/questions/23569771/maximum-size-of-pandas-dataframe
+https://www.quora.com/How-large-of-data-can-Pandas-handle
+
 others: 
 https://stackoverflow.com/questions/17199113/psycopg2-leaking-memory-after-large-query
 https://stackoverflow.com/questions/42081971/retrieve-data-in-chunks-in-postgresql
