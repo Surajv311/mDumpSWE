@@ -31,6 +31,16 @@ https://community.databricks.com/t5/data-engineering/what-is-the-maximum-size-of
 https://stackoverflow.com/questions/23569771/maximum-size-of-pandas-dataframe
 https://www.quora.com/How-large-of-data-can-Pandas-handle
 
+https://stackoverflow.com/questions/31837979/pandas-sql-chunksize/31839639#31839639
+https://stackoverflow.com/questions/18107953/how-to-create-a-large-pandas-dataframe-from-an-sql-query-without-running-out-of
+As mentioned in a comment, starting from pandas 0.15, you have a chunksize option in read_sql to read and process the query chunk by chunk:
+sql = "SELECT * FROM My_Table"
+for chunk in pd.read_sql_query(sql , engine, chunksize=5):
+    print(chunk)
+Anyone relying on using the chunksize option should first read github.com/pandas-dev/pandas/issues/12265. For many databases, the entire dataset will still be read into memory whole, before an iterator is returned. For some databases, setting connection options appropriately can overcome this problem - for instance with Postgres, set execution_options={'stream_results': True} when creating the engine... 
+this does not save memory-- it pulls down the whole table and then chunks it.
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html
+
 others: 
 https://stackoverflow.com/questions/17199113/psycopg2-leaking-memory-after-large-query
 https://stackoverflow.com/questions/42081971/retrieve-data-in-chunks-in-postgresql
