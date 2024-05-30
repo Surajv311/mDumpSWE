@@ -25,6 +25,9 @@ Testing and monitoring: Regularly test and monitor your queries to ensure they a
 https://www.youtube.com/watch?v=HhqOrbX3Bls&list=PLDYqU5RH_aX1VSVvjdla9TOKf939UhIDB&index=1
 
 
+https://stackoverflow.com/questions/73095254/how-is-vectorvectorint-heavier-than-vectorpairint-int
+
+
 
 pandas df size compute:
 https://community.databricks.com/t5/data-engineering/what-is-the-maximum-size-of-a-dataframe-that-i-can-convert/td-p/30386#:~:text=There%20is%20no%20hardcoded%20limit,The%20only%20limit%20is%20memory.
