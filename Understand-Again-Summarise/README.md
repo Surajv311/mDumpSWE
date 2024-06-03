@@ -27,7 +27,9 @@ https://www.youtube.com/watch?v=HhqOrbX3Bls&list=PLDYqU5RH_aX1VSVvjdla9TOKf939Uh
 
 https://stackoverflow.com/questions/73095254/how-is-vectorvectorint-heavier-than-vectorpairint-int
 
-
+https://stackoverflow.com/questions/60595131/what-is-the-difference-between-cpu-intensive-and-i-o-intensive
+https://stackoverflow.com/questions/8591155/running-a-cpu-memory-intensive-task-what-coding-approach-is-the-most-performan
+https://stackoverflow.com/questions/54805231/how-to-disable-using-cache-results-in-redshift-query
 
 pandas df size compute:
 https://community.databricks.com/t5/data-engineering/what-is-the-maximum-size-of-a-dataframe-that-i-can-convert/td-p/30386#:~:text=There%20is%20no%20hardcoded%20limit,The%20only%20limit%20is%20memory.
