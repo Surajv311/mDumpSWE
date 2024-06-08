@@ -6,6 +6,11 @@
 
 A Spot Instance is an instance that uses spare EC2 capacity that is available for less than the On-Demand price. Because Spot Instances enable you to request unused EC2 instances at steep discounts, you can lower your Amazon EC2 costs significantly. The hourly price for a Spot Instance is called a Spot price. The Spot price of each instance type in each Availability Zone is set by Amazon EC2, and is adjusted gradually based on the long-term supply of and demand for Spot Instances. Your Spot Instance runs whenever capacity is available. [Spot instances _al](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html)
 
+[EC2 burstable instances _al](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html), [Burstable credits _al](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-credits-baseline-concepts.html): 
+- Many general purpose workloads are on average not busy, and do not require a high level of sustained CPU performance. 
+- These low-to-moderate CPU utilization workloads lead to wastage of CPU cycles and, as a result, you pay for more than you use. To overcome this, you can leverage the low-cost burstable general purpose instances, which are the T instances. Simply put: Burstable instances are designed for scenarios where an instance is typically idle, or has low CPU utilization with occasional spikes in usage. 
+- The EC2 burstable instances consist of T4g, T3a and T3 instance types, and the previous generation T2 instance types.
+
 #### Redshift
 
 Redshift is a clustered data warehouse and each cluster can house multiple databases. As expected, each database contains multiple objects like tables, views, stored procedures, etc. It is logical to expect that the data tables are stored across multiple nodes.
@@ -23,6 +28,8 @@ Note that,
 - **'Tag'** is a reserved word in Redshift, if you like to use reserved words as column names or aliases you need to use delimited identifiers (double quotes). Hence to create column in a table with name tag, instead of using this: alter table schema.tablename add column tag varchar(100), you have to use this: alter table schema.tablename add column "tag" varchar(100)
 - A table's **distkey** is the column on which it's distributed to each node. Rows with the same value in this column are guaranteed to be on the same node. 
 - A table's **sortkey** is the column by which it's sorted within each node.
+
+Note: To disable using cache results in Redshift query use: SET enable_result_cache_for_session TO OFF;
 
 #### Redshift Spectrum 
 

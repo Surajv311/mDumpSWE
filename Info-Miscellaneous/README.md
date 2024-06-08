@@ -136,7 +136,16 @@ print(total)
   - Note: To convert cURL to Python request, follow this link: [Execute curl command _al](https://stackoverflow.com/questions/25491090/how-to-use-python-to-execute-a-curl-command)
 - Memgraph is a high performant graph database that is compatible with Neo4j while eliminating Neo4j complexity.
 - * operator in Python is called: splat operator
-* 
+- [How is vector<vector<int>> "heavier" than vector<pair<int,int>>? _al](https://stackoverflow.com/questions/73095254/how-is-vectorvectorint-heavier-than-vectorpairint-int):
+  - Each vector is a single contiguous area of memory, dynamically allocated.
+  - Each vector is a single contiguous area of memory, dynamically allocated. Let's say that you have 1000 values you'll be working with. 
+  - std::vector<std::pair<int, int>>: This gets you a single, contiguous block of memory, for 2000 integers.
+  - std::vector<std::vector<int>>: This gets you a single contiguous block of memory for 1000 vectors. Each one of those 1000 std::vectors gets you another contiguous block of memory for just two integers.
+  - So, instead of one single contiguous block of memory, for this data structure, it will consist of 1001 blocks of memory scattered all over. You have no guarantees, whatsoever, that all those blocks of memory will be contiguous, one after another.
+  - Each dynamic memory allocation comes at a cost. The cost is fairly small but it adds up very, very quickly. A single penny is easily ignored. A thousand pennies should be enough to get you a cup of coffee at Starbucks.
+  - Furthermore, modern CPUs are very good at accessing contiguous blocks of memory. Iterating over a single contiguous block of memory to add up two thousand ints will be much, much faster than doing the same over a thousand disjointed sections of memory.
+- [psycopg2 leaking memory after large query _al](https://stackoverflow.com/questions/17199113/psycopg2-leaking-memory-after-large-query): Instead of `cursor = conn.cursor()`, use `cursor = conn.cursor(name="my_cursor_name")`
+- When we say data loaded to memory - means RAM, and loaded to disk - means harddisk. 
 
 ----------------------------------------------------------------------
 

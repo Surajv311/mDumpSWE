@@ -128,6 +128,11 @@ Note: Pointers in MySQL are 2, 3, 4 or 5 bytes in length depending on the size o
 
 [TSDB internals _al](https://medium.com/@vinciabhinav7/whats-tsdb-part-2-concepts-and-example-ce12a4c8be9f)
 
+#### PostgreSQL 
+
+- [Update by iterating table in batches faster than whole table in PostgreSQL _al](https://dba.stackexchange.com/questions/123244/update-by-iterating-table-in-batches-faster-than-whole-table-in-postgresql):
+  - (Note: Though above point is hyperlinked, if comments of the post are checked, seems the ans is not accurate, hence verify...)
+
 ----------------------------------------------------------------------
 
 
