@@ -139,10 +139,20 @@ FROM cte_quantity;
 
 - Order of execution of ORDER BY and LIMIT in a MySQL query: A SQL LIMIT will in all databases always work on the result of a query, so it will first run the query with the ORDER BY and that result will then be limited.
   - If the query has not got any specific ordering, it returns the first 10 rows it receives. But if there is a "WHERE ..." or "ORDER BY ..." clause, it must first get the full resultset and then fetch the first 10 rows. [Limit clause _al](https://dba.stackexchange.com/a/62444)
-
 - ORDER BY: sort the data in ascending or descending order; GROUP BY: arrange identical data into groups. It allows you to perform aggregation functions on non-grouped columns (such as SUM, COUNT, AVG, etc).
-- [SQL Query plan internals](https://www.red-gate.com/simple-talk/databases/sql-server/performance-sql-server/execution-plan-basics/)
--
+- PARTITION BY and GROUP BY difference: PARTITION BY is analytic, while GROUP BY is aggregate. In order to use PARTITION BY, you have to contain it with an OVER clause.
+  - GROUP BY modifies the entire query, like: `select customerId, count(*) as orderCount from Orders group by customerId`
+    - GROUP BY normally reduces the number of rows returned by rolling them up and calculating averages or sums for each row.
+  - But PARTITION BY just works on a window function, like ROW_NUMBER(): `select row_number() over (partition by customerId order by orderId) as OrderNumberForThisCustomer from Orders`
+    - PARTITION BY does not affect the number of rows returned, but it changes how a window function's result is calculated.
+  - [SQL Window Functions good reference 1 _vl](https://www.youtube.com/watch?v=Ww71knvhQ-s), [SQL Window Functions good reference 2 _vl](https://www.youtube.com/watch?v=KwEjkpFltjc)
+- [SQL Query plan internals _al](https://www.red-gate.com/simple-talk/databases/sql-server/performance-sql-server/execution-plan-basics/)
+- Scalar vs Predicate Queries: 
+  - Scalar: A scalar subquery is a subquery that returns exactly one value (one row with one column). This type of subquery is often used in places where a single value is expected, such as in the SELECT clause, WHERE clause, or HAVING clause.
+    - Eg: `SELECT employee_id, first_name, last_name FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);`
+  - Predicate: A predicate subquery is a subquery that is used as part of a predicate (a condition that evaluates to true or false) in the WHERE or HAVING clause. These subqueries can return multiple values and are often used with operators like IN, ANY, ALL, or EXISTS.
+    - Eg: `SELECT employee_id, first_name, last_name FROM employees WHERE department_id IN (SELECT department_id FROM departments WHERE location_id = 1700);`
+  - Scalar subqueries return a single value (one row, one column). Predicate subqueries can return multiple rows and columns, but they are used in conditions that evaluate to true or false.
 
 
 ----------------------------------------------------------------------

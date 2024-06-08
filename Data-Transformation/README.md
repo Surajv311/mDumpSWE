@@ -1,6 +1,30 @@
 
 # Data_transformation_info
 
+### Pandas infos: 
+- What is the max data that can be loaded in pandas df?
+  - Pandas loads datasets onto the memory, so the data size should not be bigger than the RAM you have.
+  - However, even when your data only occupies, for example, 1 GB of your hard disk, it may take up, e.g. 2 GB of your memory when being loaded by Pandas.
+  - The reason is data representation techniques are different. On your hard disk, your data may be compressed to take up less space, then Pandas has to uncompress it to easier and faster processing, resulting in a bigger size on the memory.
+  - Another reason may be because of data types. If you save your data as a CSV file, a number, e.g. 0 is saved as a character, i.e. 1 byte in size. However, when Pandas loads it, that number is recognized as an integer, which takes up 4 or 8 bytes.
+  - Loading is one story, processing is another. Pandas may be able to load your data, yet doing complex computation may fail. This is why I said “handle” is hard to define.
+  - In conclusion, Pandas is optimized to work with data on the memory, so if your dataset is bigger than your memory, don’t use Pandas (or use Pandas on each chunk of your data separately, Pandas supports this).
+- [Pandas SQL chunksize _al](https://stackoverflow.com/questions/31837979/pandas-sql-chunksize/31839639#31839639)
+  - chunksize is None(default value):
+    - pandas passes query to database; database executes query; pandas checks and sees that chunksize is None; pandas tells database that it wants to receive all rows of the result table at once; database returns all rows of the result table; pandas stores the result table in memory and wraps it into a data frame; now you can use the data frame
+  - chunksize in not None:
+    - pandas passes query to database; database executes query; pandas checks and sees that chunksize has some value; pandas creates a query iterator(usual 'while True' loop which breaks when database says that there is no more data left) and iterates over it each time you want the next chunk of the result table; pandas tells database that it wants to receive chunksize rows; database returns the next chunksize rows from the result table; pandas stores the next chunksize rows in memory and wraps it into a data frame; now you can use the data frame
+  - Though understand that (in one of comments to the linked page): For many databases, the entire dataset will still be read into memory whole, before an iterator is returned, essentially meaning it pulls down the whole table and then chunks it.
+
+```
+Eg: 
+sql = "SELECT * FROM My_Table"
+for chunk in pd.read_sql_query(sql , engine, chunksize=5):
+    print(chunk)
+```
+
+- 
+
 #### JSON explode vs JSON normalize  
 
 JSON explode creates more rows by expanding a column with lists, while JSON normalize creates more columns by flattening nested JSON objects within a column.
@@ -76,6 +100,11 @@ You can do this using `df.reset_index(drop=True, inplace=True)` as shown in the 
 0   2    Bob    789 Oak St      Chicago
 As you can see, the old index column (0, 1, etc.) is retained as a new column in the DataFrame. This can sometimes lead to confusion, especially if you want to work with a clean DataFrame that starts with an index of 0 and increments sequentially.
 ```
+
+#### Others
+
+- Polars was built from the ground up to be blazingly fast and can do common operations around 5–10 times faster than pandas. Polars is that it is written in Rust, a low-level language that is almost as fast as C and C++. In contrast, pandas is built on top of Python libraries, one of these being NumPy. While NumPy’s core is written in C, it is still hamstrung by inherent problems with the way Python handles certain types in memory, such as strings for categorical data, leading to poor performance when handling these types. Another factor that contributes to Polars’ impressive performance is Apache Arrow, a language-independent memory format. Arrow was actually co-created by Wes McKinney in response to many of the issues he saw with pandas as the size of data exploded. It is also the backend for pandas 2.0, a more performant version of pandas. One of the other cores of Polars’ performance is how it evaluates code. Pandas, by default, uses eager execution, carrying out operations in the order you’ve written them. In contrast, Polars has the ability to do both eager and lazy execution, where a query optimizer will evaluate all of the required operations and map out the most efficient way of executing the code.
+
 
 ----------------------------------------------------------------------
 

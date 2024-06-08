@@ -40,6 +40,14 @@ It is an application that resides outside of your Kafka cluster and handles the 
 [Kafka commit strategies _al](https://quarkus.io/blog/kafka-commit-strategies/), [Kafka commit types _al](https://medium.com/@rramiz.rraza/kafka-programming-different-ways-to-commit-offsets-7bcd179b225a), 
 [Kafka in nutshell _al](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)
 
+[Kafka configurations _al](https://medium.com/@madhur25/meaning-of-at-least-once-at-most-once-and-exactly-once-delivery-10e477fafe16)
+- At-most once Configuration: At-most-once means the message will be delivered at-most once. Once delivered, there is no chance of delivering again. If the consumer is unable to handle the message due to some exception, the message is lost. This is because Kafka is automatically committing the last offset used.
+- At-least once configuration: At-least once as the name suggests, message will be delivered atleast once. There is high chance that message will be delivered again as duplicate. Let’s say consumer has processed the messages and committed the messages to its local store, but consumer crashes and did not get a chance to commit offset to Kafka before it has crashed. When consumer restarts, Kafka would deliver messages from the last offset, resulting in duplicates.
+  - Consumer should now then take control of the message offset commits to Kafka by making the consumer.commitSync() call.
+- Exactly-once configuration: Exactly-once as the name suggests, there will be only one and once message delivery. It difficult to achieve in practice.
+  - In this case offset needs to be manually managed.
+
+
 ----------------------------------------------------------------------
 
 

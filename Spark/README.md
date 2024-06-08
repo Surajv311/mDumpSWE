@@ -104,7 +104,9 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
   - Spark uses its Catalyst Query Planner, which optimizes query execution plans, leading to better performance and more efficient resource utilization.
 - Spark does lazy evaluation. 
   - For transformations, Spark adds them to a DAG of computation and only when driver requests some data, does this DAG actually gets executed. One advantage of this is that Spark can make many optimization decisions after it had a chance to look at the DAG in entirety. This would not be possible if it executed everything as soon as it got it. For example -- if you executed every transformation eagerly, what does that mean? Well, it means you will have to materialize that many intermediate datasets in memory. This is evidently not efficient -- for one, it will increase your GC costs. (Because you're really not interested in those intermediate results as such. Those are just convenient abstractions for you while writing the program.) So, what you do instead is -- you tell Spark what is the eventual answer you're interested and it figures out best way to get there. [spark lazy evaluation _al](https://stackoverflow.com/questions/38027877/spark-transformation-why-is-it-lazy-and-what-is-the-advantage)
-  - Lazy Evaluation: It is an evaluation strategy which holds the evaluation of an expression until its value is needed. It avoids repeated evaluation. 
+  - [Lazy vs Eager Evaluation _al](https://stackoverflow.com/questions/75680491/what-is-the-trade-off-between-lazy-and-strict-eager-evaluation): 
+    - Lazy: It is an evaluation strategy which holds the evaluation of an expression until its value is needed. It avoids repeated evaluation. 
+    - Eager: Eager Evaluation is a programming concept where an expression is evaluated as soon as it is defined. This approach is in contrast to Lazy Evaluation, where the calculation is deferred until it is needed.
 - [Spark RDD vs Dataframe vs Dataset _al](https://sparkbyexamples.com/spark/spark-rdd-vs-dataframe-vs-dataset/):
 
 | Context             | RDDs                                                                                                                  | Dataframes                                                                                                                                   | Dataset                                                                                                                        |
@@ -188,6 +190,13 @@ def myF(input):
 myF.lineNumber = 0
 myF_udf =  F.udf(myF, StringType())
 ```
+
+- Narrow vs Wide Transformations in Pyspark: 
+  - Narrow transformations:
+    - Data computation happen on a single partition meaning there will not be any data movement between partitions to execute narrow transformations. 
+    - Eg: map(), filter()
+  - Wide Transformations: These are the operations that require shuffling data across partitions. This means that the data needs to be moved between executor or worker nodes.
+    - Eg: groupBy, groupByKey(), reduceByKey(), aggregate(), aggregateByKey(), distinct(), join(), repartition()
 
 - In BigData, writing optimized sql query is an art. [sql_queries optimize _al](https://blog.dataengineer.io/p/how-to-save-millions-by-optimizing), [reddit sql optimize1 _al](https://www.reddit.com/r/dataengineering/comments/13dlgrr/are_sql_query_optimization_skills_important_and/), [reddit sql optimize2 _al](https://www.reddit.com/r/SQL/comments/1cjinf5/how_to_optimize_sql_queries/), [reddit sql optimize3 _al](https://www.reddit.com/r/dataengineering/comments/1axd7cy/what_are_your_top_sql_query_optimization_tips/), [optimize sql _al](https://medium.com/@alejandro.ibapen/top-20-sql-query-optimisation-tricks-for-data-analysis-3d31642d9917)
   - Shuffling is caused when you try to aggregate or join datasets in distributed environments like Spark or BigQuery.

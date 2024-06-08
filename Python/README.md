@@ -81,6 +81,8 @@ if __name__ == "__main__":
 [asyncio gather _al](https://www.educative.io/answers/what-is-asynciogather), 
 [asyncio python _al](https://superfastpython.com/python-asyncio/)
 
+- Note: If you don't use await in an async function in Python, the function will still be executed, but it won't pause the execution flow to wait for the result of the coroutine it calls. This can lead to unexpected behavior if you rely on the result of the coroutine or if you expect certain operations to be completed before proceeding.
+
 #### concurrent.futures.ThreadPoolExecutor library
 
 ThreadPoolExecutor is part of the concurrent.futures module and provides a way to run functions concurrently using threads.
