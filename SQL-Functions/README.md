@@ -140,6 +140,11 @@ FROM cte_quantity;
 - Order of execution of ORDER BY and LIMIT in a MySQL query: A SQL LIMIT will in all databases always work on the result of a query, so it will first run the query with the ORDER BY and that result will then be limited.
   - If the query has not got any specific ordering, it returns the first 10 rows it receives. But if there is a "WHERE ..." or "ORDER BY ..." clause, it must first get the full resultset and then fetch the first 10 rows. [Limit clause _al](https://dba.stackexchange.com/a/62444)
 
+- ORDER BY: sort the data in ascending or descending order; GROUP BY: arrange identical data into groups. It allows you to perform aggregation functions on non-grouped columns (such as SUM, COUNT, AVG, etc).
+- [SQL Query plan internals](https://www.red-gate.com/simple-talk/databases/sql-server/performance-sql-server/execution-plan-basics/)
+-
+
+
 ----------------------------------------------------------------------
 
 

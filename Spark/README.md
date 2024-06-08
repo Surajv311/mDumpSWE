@@ -189,7 +189,34 @@ myF.lineNumber = 0
 myF_udf =  F.udf(myF, StringType())
 ```
 
-- 
+- In BigData, writing optimized sql query is an art. [sql_queries optimize _al](https://blog.dataengineer.io/p/how-to-save-millions-by-optimizing), [reddit sql optimize1 _al](https://www.reddit.com/r/dataengineering/comments/13dlgrr/are_sql_query_optimization_skills_important_and/), [reddit sql optimize2 _al](https://www.reddit.com/r/SQL/comments/1cjinf5/how_to_optimize_sql_queries/), [reddit sql optimize3 _al](https://www.reddit.com/r/dataengineering/comments/1axd7cy/what_are_your_top_sql_query_optimization_tips/), [optimize sql _al](https://medium.com/@alejandro.ibapen/top-20-sql-query-optimisation-tricks-for-data-analysis-3d31642d9917)
+  - Shuffling is caused when you try to aggregate or join datasets in distributed environments like Spark or BigQuery.
+  - In terms of worstness ~ ORDER BY (takes the worst parts of shuffling and forces all the data to pass through one machine) > JOIN > GROUP BY
+    - Eliminating shuffle for GROUP BY or JOIN by bucketing your data.
+  - Using a broadcast join is also a good option.
+  - Normalize database tables
+  - Use UNION ALL instead of UNION (UNION removes duplicate rows, UNION ALL does not. There is a performance hit when using UNION instead of UNION ALL, since the database server must do additional work to remove the duplicate rows, but usually you do not want the duplicates especially when developing reports)
+  - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. These subqueries can be more efficient, especially when dealing with extensive subquery results.
+  - Regularly maintain your database to ensure optimal performance: Rebuild indexes periodically to maintain their efficiency; Use VACUUM and ANALYZE commands to manage table data and update query planner statistics; 
+  - Common Table Expressions (CTEs) provide a way to create temporary result sets within a query. They can enhance the readability and maintainability of complex queries. While not always an optimisation technique, CTEs can help organise your query for better performance analysis and troubleshooting. CTE is a named temporary result set that can be referenced within a SELECT, INSERT, UPDATE, or DELETE statement. It is defined using the WITH keyword and is useful for recursive queries, subquery replacement, and code reusability.
+  - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. 
+  - For applications making frequent database connections, use connection pooling to minimise the overhead of establishing and closing connections.
+  - Partitioning can significantly improve query performance by limiting the amount of data that needs to be scanned.
+  - Using SELECT DISTINCT to remove duplicates from query results can be resource-intensive. If possible, design your data model to prevent duplicates, or use GROUP BY when you genuinely need to aggregate data.
+  - Selecting only necessary columns: When writing a query, avoid using the wildcard (*) and select only the columns you actually need. This reduces the amount of data that needs to be processed and returned, resulting in faster query execution.
+  - Using appropriate indexes: Indexes can significantly improve query performance. Be mindful of creating and using indexes on columns that are frequently used in WHERE clauses, JOIN conditions, or ORDER BY clauses.
+  - Limiting the result set: Use LIMIT or TOP clauses to restrict the number of rows returned by your query. This can help reduce the amount of data processed and speed up the query execution.
+  - Avoiding correlated subqueries: Correlated subqueries can be resource-intensive and slow down query execution. Where possible, use JOINs or derived tables to avoid correlated subqueries. Ensure that subqueries are well-optimized by using appropriate indexes, limiting the number of returned rows, and avoiding unnecessary subqueries when possible.
+  - Filtering data early: Apply filters and conditions as early as possible in the query. This reduces the amount of data that needs to be processed in subsequent steps, resulting in faster query execution. Eg: Filtering the data and then joining rather than joining first later filtering maybe a better approach. 
+  - Using the appropriate JOIN type: Different JOIN types (INNER, OUTER, LEFT, RIGHT) can have a significant impact on query performance. Choose the appropriate JOIN type based on the data and relationships between tables.
+  - Minimizing the use of functions in predicates: Using functions in WHERE clauses or JOIN conditions can slow down query execution. If possible, pre-calculate function results or use other methods to minimize their usage in these clauses.
+  - Avoiding excessive nesting: Deeply nested subqueries or derived tables can be difficult to read and maintain, and can also impact query performance. Look for opportunities to simplify your query by using JOINs, temporary tables, or other techniques.
+  - Utilizing query execution plans: Analyze and understand the query execution plan to identify potential bottlenecks and areas for improvement. This can help you optimize your query and achieve better performance.
+  - Testing and monitoring: Regularly test and monitor your queries to ensure they are performing optimally. Identify slow-running queries and make necessary adjustments to maintain the performance of your database system.
+  -
+
+
+
 
 ----------------------------------------------------------------------
 
