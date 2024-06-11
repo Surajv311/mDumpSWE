@@ -1,6 +1,11 @@
 
 # Understand-Again-Summarise
 
+
+https://www.geeksforgeeks.org/what-is-dev-null-in-linux/
+
+
+
 Spark domain: 
 https://www.reddit.com/r/dataengineering/comments/te0m0x/pandas_on_spark_vs_pyspark_dataframe/
 Pyspark Window functions - Learn about it - Google
