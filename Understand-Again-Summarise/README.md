@@ -114,6 +114,7 @@ https://blog.allegro.tech/2024/03/kafka-performance-analysis.html
 https://www.youtube.com/watch?v=d86ws7mQYIg
 https://www.linkedin.com/pulse/builder-design-pattern-prateek-mishra
 Youtube/Linkedin/Twitter articles: Alex Xu, Arpit Bhayani, Hussaein Nasser - to watch/update
+Substack/email articles
 
 ----------------------------------------------------------------------
 
