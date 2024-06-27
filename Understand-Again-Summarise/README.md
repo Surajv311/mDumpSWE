@@ -120,6 +120,11 @@ Substack/email articles
 
 Infos from books (to be updated WIP):
 (Book)- Spark: The Definitive Guide Big Data Processing Made Simple - Bill Chambers and Matei Zaharia
+
+
+
+Will be good if you have used a bit of spark before: 
+C1
 Apache Spark is a unified computing engine and a set of libraries for parallel data processing on computer clusters.
 For example, if you load data using a SQL query and then evaluate a machine learning model over it using Spark’s ML library, the engine can com‐ bine these steps into one scan over the data. The combination of general APIs and high-performance execution, no matter how you combine them, makes Spark a powerful platform for interactive and production applications.
 At the same time that Spark strives for unification, it carefully limits its scope to a computing engine. By this, we mean that Spark handles loading data from stor‐ age systems and performing computation on it, not permanent storage as the end itself. 
@@ -130,6 +135,7 @@ Unfortunately, this trend in hardware stopped around 2005: due to hard limits in
 On top of that, the technologies for storing and collecting data did not slow down appreciably in 2005, when processor speeds did. The cost to store 1 TB of data con‐ tinues to drop by roughly two times every 14 months, meaning that it is very inex‐ pensive for organizations of all sizes to store large amounts of data. Moreover, many of the technologies for collecting data (sensors, cameras, public datasets, etc.) con‐ tinue to drop in cost and improve in resolution. For example, camera technology continues to improve in resolution and drop in cost per pixel every year, to the point where a 12-megapixel webcam costs only $3 to $4; this has made it inexpensive to collect a wide range of visual data, whether from people filming video or automated sensors in an industrial setting. Moreover, cameras are themselves the key sensors in other data collection devices, such as telescopes and even gene-sequencing machines, driving the cost of these technologies down as well.
 The end result is a world in which collecting data is extremely inexpensive—many organizations today even consider it negligent not to log data of possible relevance to the business—but processing it requires large, parallel computations, often on clus‐ ters of machines. Moreover, in this new world, the software developed in the past 50 years cannot automatically scale up, and neither can the traditional programming models for data processing applications, creating the need for new programming models. It is this world that Apache Spark was built for.
 Apache Spark began at UC Berkeley in 2009 as the Spark research project, which was first published the following year in a paper entitled “Spark: Cluster Computing with Working Sets” by Matei Zaharia, Mosharaf Chowdhury, Michael Franklin, Scott Shenker, and Ion Stoica of the UC Berkeley AMPlab. 
+C2
 Typically, when you think of a “computer,” you think about one machine sitting on your desk at home or at work. This machine works perfectly well for watching movies or working with spreadsheet software. However, as many users likely experience at some point, there are some things that your computer is not powerful enough to per‐ form. One particularly challenging area is data processing. Single machines do not have enough power and resources to perform computations on huge amounts of information (or the user probably does not have the time to wait for the computation to finish). A cluster, or group, of computers, pools the resources of many machines together, giving us the ability to use all the cumulative resources as if they were a sin‐ gle computer. Now, a group of machines alone is not powerful, you need a framework to coordinate work across them. Spark does just that, managing and coordinating the execution of tasks on data across a cluster of computers.
 The cluster of machines that Spark will use to execute tasks is managed by a cluster manager like Spark’s standalone cluster manager, YARN, or Mesos. We then submit Spark Applications to these cluster managers, which will grant resources to our appli‐ cation so that we can complete our work.
 Spark Applications consist of a driver process and a set of executor processes. The driver process runs your main() function, sits on a node in the cluster, and is respon‐ sible for three things: maintaining information about the Spark Application; respond‐ ing to a user’s program or input; and analyzing, distributing, and scheduling work across the executors (discussed momentarily). The driver process is absolutely essen‐ tial—it’s the heart of a Spark Application and maintains all relevant information dur‐ ing the lifetime of the application.
@@ -151,7 +157,38 @@ With narrow transformations, Spark will automatically perform an operation calle
 Lazy evaulation means that Spark will wait until the very last moment to execute the graph of computation instructions.
 In Spark, instead of modifying the data immedi‐ ately when you express some operation, you build up a plan of transformations that you would like to apply to your source data. By waiting until the last minute to exe‐ cute the code, Spark compiles this plan from your raw DataFrame transformations to a streamlined physical plan that will run as efficiently as possible across the cluster. This provides immense benefits because Spark can optimize the entire data flow from end to end. An example of this is something called predicate pushdown on Data‐ Frames. If we build a large Spark job but specify a filter at the end that only requires us to fetch one row from our source data, the most efficient way to execute this is to access the single record that we need. Spark will actually optimize this for us by push‐ ing the filter down automatically.
 An 'action' instructs Spark to compute a result from a series of transformations.
-Spark UI:
+Spark UI: The Spark UI displays information on the state of your Spark jobs, its environment, and cluster state. It’s very useful, especially for tuning and debugging.
+Schema inference, which means that we want Spark to take a best guess at what the schema of our DataFrame should be.
+To get the schema information, Spark reads in a little bit of the data and then attempts to parse the types in those rows according to the types available in Spark. Eg: 
+flightData2015 = spark\
+      .read\
+      .option("inferSchema", "true")\
+      .option("header", "true")\
+      .csv("/data/flight-data/csv/2015-summary.csv")
+We can call explain on any Data‐ Frame object to see the DataFrame’s lineage (or how Spark will execute this query). Eg: flightData2015.sort("count").explain()
+By default, when we perform a shuffle, Spark outputs 200 shuffle partitions. You can change it via: spark.conf.set("spark.sql.shuffle.partitions", "5")
+Spark can run the same transformations, regardless of the language, in the exact same way.
+With Spark SQL, you can register any DataFrame as a table or view (a temporary table) and query it using pure SQL. There is no performance difference between writing SQL queries or writ‐ ing DataFrame code, they both “compile” to the same underlying plan that we specify in DataFrame code. You can make any DataFrame into a table or view with one simple method call: flightData2015.createOrReplaceTempView("flight_data_2015")
+# in Python
+sqlWay = spark.sql("""
+SELECT DEST_COUNTRY_NAME, count(1)
+FROM flight_data_2015
+GROUP BY DEST_COUNTRY_NAME
+""")
+dataFrameWay = flightData2015\
+  .groupBy("DEST_COUNTRY_NAME")\
+  .count()
+sqlWay.explain()
+dataFrameWay.explain()
+Notice that these plans compile to the exact same underlying plan, i.e:
+== Physical Plan ==
+    *HashAggregate(keys=[DEST_COUNTRY_NAME#182], functions=[count(1)])
+    +- Exchange hashpartitioning(DEST_COUNTRY_NAME#182, 5)
+       +- *HashAggregate(keys=[DEST_COUNTRY_NAME#182], functions=[partial_count(1)])
+          +- *FileScan csv [DEST_COUNTRY_NAME#182] ...
+This execution plan is a directed acyclic graph (DAG) of transformations, each resulting in a new immutable DataFrame, on which we call an action to generate a result.
+C3
+
 
 
 ----------------------------------------------------------------------
