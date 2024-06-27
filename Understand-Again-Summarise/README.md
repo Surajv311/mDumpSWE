@@ -78,7 +78,14 @@ https://www.linkedin.com/pulse/apache-spark-things-keep-mind-while-setting-up-ex
 
 Linux domain:
 https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
-
+Commands: 
+cat /opt/node_exporter/scheduler_status.sh
+ls -lrt
+tail -f /var/log/syslog
+:set nu
+screen
+watch -n 1 "ps -ef | grep -i ansible"
+ps -ef | grep -i ansible
 
 Misc (websites, linkedin, medium blogs, etc etc need to read) domain: 
 https://news.ycombinator.com/
