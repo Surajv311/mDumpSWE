@@ -26,7 +26,7 @@
 - `which python`: Displays path where executable file of python is located.
 - `top`: Displays real-time information about system processes, including CPU and memory usage.
 - `set | grep AWS_KEY`: Displays environment variables (set) and filters the output to show lines containing AWS_KEY using grep.
-- `screen -ls`: Lists currently running screen sessions.
+- `screen -ls`: Lists currently running screen sessions. screen command in Linux provides the ability to launch and use multiple shell sessions from a single ssh session.
 - `screen -S vikas`: Starts a new screen session with the name vikas.
 - `find ~ -name aws_credentials`: Searches for files named aws_credentials in the user's home directory (~).
 - `grep -iR AWS_KEY *`: Searches recursively (-R) for occurrences of AWS_KEY in files in the current directory and its subdirectories (*).
@@ -47,6 +47,11 @@
 - `rm /path/to/directory/*`: To remove all non-hidden files* in a directory 
 - `rm -r /path/to/directory/*`: To remove all non-hidden files and sub-directories (along with all of their contents) in a directory
 - `rm -rf "/path/to the/directory/"*`: Force removal of files
+- `tail -f /var/log/syslog`: It only shows the last part of the logs, where problems usually lie. tail will continue watching the log file and print out the next line written to the file.
+- `history`: Provides a chronological list of previously executed commands
+- `bash`: bash is a command interpreter, a shell, a program with an interface that interprets the commands that you put into it.
+- `pstree`: To know how many sub-shells deep you are. 
+
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
 
