@@ -20,7 +20,7 @@
 - `ls -lrt`: Lists files and directories in the current directory in long format (-l) sorted by modification time in reverse order (-r for reverse, -t for time).
 - `pwd`: Prints the current working directory.
 - `ls -la`: Lists all files (including hidden files) and directories in the current directory in long format, showing detailed information, including hidden files (-a for all).
-- `su``: Allows switching to another user account. If no username is specified, it defaults to the superuser (root) account.
+- `su`: Allows switching to another user account. If no username is specified, it defaults to the superuser (root) account.
 - `su root`: Switches to the root user account.
 - `whoami`: Displays the username of the current user.
 - `which python`: Displays path where executable file of python is located.
