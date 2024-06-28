@@ -4,14 +4,14 @@
 
 - Note that in some places, I've googled/chatgpt'd few terms/reordered explanations and added here in the README for understanding. 
 
-- Chapter 1
+- Chapter 1:
   - Apache Spark is a unified computing engine and a set of libraries for parallel data processing on computer clusters.
   - For example, if you load data using a SQL query and then evaluate a machine learning model over it using Spark’s ML library, the engine can combine these steps into one scan over the data. The combination of general APIs and high-performance execution, no matter how you combine them, makes Spark a powerful platform for interactive and production applications. At the same time that Spark strives for unification, it carefully limits its scope to a computing engine. By this, we mean that Spark handles loading data from storage systems and performing computation on it, not permanent storage as the end itself. However, Spark neither stores data long term itself, nor favors one over another. The key motivation here is that most data already resides in a mix of storage systems. Data is expensive to move so Spark focuses on performing computations over the data, no matter where it resides. Spark’s focus on computation makes it different from earlier big data software platforms such as Apache Hadoop. ***Hadoop included both a storage system (the Hadoop file system, designed for low-cost storage over clusters of commodity servers) and a computing system (MapReduce), which were closely integrated together***. However, this choice makes it difficult to run one of the systems without the other. For most of their history, computers became faster every year through processor speed increases: the new processors each year could run more instructions per second than the previous year’s. As a result, applications also automatically became faster every year, without any changes needed to their code. This trend led to a large and established ecosystem of applications building up over time, most of which were designed to run only on a single processor. These applications rode the trend of improved processor speeds to scale up to larger computations and larger volumes of data over time. ***Unfortunately, this trend in hardware stopped around 2005: due to hard limits in heat dissipation, hardware developers stopped making individual processors faster, and switched toward adding more parallel CPU cores all running at the same speed***. This change meant that suddenly applications needed to be modified to add parallelism in order to run faster, which set the stage for new programming models such as Apache Spark. 
   - On top of that, the technologies for storing and collecting data did not slow down appreciably in 2005, when processor speeds did. ***The cost to store 1 TB of data continues to drop by roughly two times every 14 months***, meaning that it is very inexpensive for organizations of all sizes to store large amounts of data. Moreover, many of the technologies for collecting data (sensors, cameras, public datasets, etc.) continue to drop in cost and improve in resolution. For example, camera technology continues to improve in resolution and drop in cost per pixel every year, to the point where a 12-megapixel webcam costs only $3 to $4; this has made it inexpensive to collect a wide range of visual data, whether from people filming video or automated sensors in an industrial setting. Moreover, cameras are themselves the key sensors in other data collection devices, such as telescopes and even gene-sequencing machines, driving the cost of these technologies down as well.
   - The end result is a world in which collecting data is extremely inexpensive—many organizations today even consider it negligent not to log data of possible relevance to the business—but processing it requires large, parallel computations, often on clusters of machines. Moreover, in this new world, the software developed in the past 50 years cannot automatically scale up, and neither can the traditional programming models for data processing applications, creating the need for new programming models. It is this world that Apache Spark was built for.
   - ***Apache Spark began at UC Berkeley in 2009*** as the Spark research project, which was first published the following year in a paper entitled “Spark: Cluster Computing with Working Sets” by ***Matei Zaharia***, Mosharaf Chowdhury, Michael Franklin, Scott Shenker, and Ion Stoica of the UC Berkeley AMPlab. 
 
-- Chapter 2
+- Chapter 2:
   - Typically, when you think of a “computer” you think about one machine sitting on your desk at home or at work. This machine works perfectly well for watching movies or working with spreadsheet software. However, as many users likely experience at some point, there are some things that your computer is not powerful enough to per‐ form. One particularly challenging area is data processing. Single machines do not have enough power and resources to perform computations on huge amounts of information (or the user probably does not have the time to wait for the computation to finish). A cluster, or group, of computers, pools the resources of many machines together, giving us the ability to use all the cumulative resources as if they were a sin‐ gle computer. Now, a group of machines alone is not powerful, you need a framework to coordinate work across them. ***Spark does just that, managing and coordinating the execution of tasks on data across a cluster of computers. The cluster of machines that Spark will use to execute tasks is managed by a cluster manager like Spark’s standalone cluster manager, YARN, or Mesos.*** 
   - ***We then submit Spark Applications to these cluster managers, which will grant resources to our application so that we can complete our work. Spark Applications consist of a driver process and a set of executor processes. The driver process runs your main() function, sits on a node in the cluster, and is responsible for three things:***
     - maintaining information about the Spark Application; 
@@ -81,7 +81,7 @@ Notice that these plans compile to the exact same underlying plan, i.e:
 This execution plan is a directed acyclic graph (DAG) of transformations, each resulting in a new immutable DataFrame, on which we call an action to generate a result.
 ```
 
-- Chapter 3
+- Chapter 3:
   - ***Spark-submit does one thing: it lets you send your application code to a cluster and launch it to execute there***. Upon submission, the application will run until it exits (completes the task) or encounters an error. ***You can do this with all of Spark’s support cluster managers including Standalone, Mesos, and YARN***.
   - spark-submit offers several controls with which you can specify the resources your application needs as well as how it should be run and its command-line arguments.
 
@@ -156,17 +156,16 @@ This addition operation happens because Spark will convert an expression written
   - You can create rows by manually instantiating a Row object with the values that belong in each column. It’s important to note that only DataFrames have schemas. Rows themselves do not have schemas. This means that if you create a Row manually, you must specify the values in the same order as the schema of the DataFrame to which they might be appended.
 
 ```
-from pyspark.sql import Row
+1) from pyspark.sql import Row
 myRow = Row("Hello", None, 1, False)
-
 Accessing data in rows is equally as easy: you just specify the position that you would like. 
 # in Python
 myRow[0]
 myRow[2]
     
-We can: add/remove, transform rows or columns, as well as change the order of rows based on the values in columns
+2) We can: add/remove, transform rows or columns, as well as change the order of rows based on the values in columns.
 
-We can also create DataFrames on the fly by taking a set of rows and converting them to a DataFrame.
+3) We can also create DataFrames on the fly by taking a set of rows and converting them to a DataFrame.
 # in Python
 from pyspark.sql import Row
 from pyspark.sql.types import StructField, StructType, StringType, LongType 
@@ -179,33 +178,30 @@ myManualSchema = StructType([
     myDf = spark.createDataFrame([myRow], myManualSchema)
     myDf.show()
     
-select and selectExpr: You can use them to manipulate columns in your DataFrames. selectExpr allow you to do the DataFrame equivalent of SQL queries on a table of data. 
+4) select and selectExpr: You can use them to manipulate columns in your DataFrames. selectExpr allow you to do the DataFrame equivalent of SQL queries on a table of data. 
 # in Python
 You can select multiple columns select() 
 # in Python: df.select("DEST_COUNTRY_NAME", "ORIGIN_COUNTRY_NAME").show(2)
 # in SQL: SELECT DEST_COUNTRY_NAME, ORIGIN_COUNTRY_NAME FROM dfTable LIMIT 2
 
-The alias method on the column:
+4.1) The alias method on the column:
 # in Python: df.select(expr("DEST_COUNTRY_NAME AS destination")).show(2)
 # in SQL: SELECT DEST_COUNTRY_NAME as destination FROM dfTable LIMIT 2
-
 # in Python: df.select(expr("DEST_COUNTRY_NAME AS destination")).show(2) 
 # in SQL: SELECT DEST_COUNTRY_NAME as destination FROM dfTable LIMIT 2
 
-In this case, the preceding operation changes the column name back to its original name: 
+4.2) In this case, the preceding operation changes the column name back to its original name: 
 # in Python: df.select(expr("DEST_COUNTRY_NAME as destination").alias("DEST_COUNTRY_NAME")).show(2)
 
-Because select followed by a series of expr is such a common pattern, Spark has a shorthand for doing this efficiently: selectExpr: 
+5) Because select followed by a series of expr is such a common pattern, Spark has a shorthand for doing this efficiently using selectExpr: 
 # in Python: df.selectExpr("DEST_COUNTRY_NAME as newColumnName", "DEST_COUNTRY_NAME").show(2)
 
-We can treat selectExpr as a simple way to build up complex expressions that create new DataFrames. In fact, we can add any valid non-aggregating SQL statement, and as long as the columns resolve, it will be valid.
-
+5.1) We can treat selectExpr as a simple way to build up complex expressions that create new DataFrames. In fact, we can add any valid non-aggregating SQL statement, and as long as the columns resolve, it will be valid.
 Other eg: 
 # in Python: df.selectExpr(
 "*", # all original columns
 "(DEST_COUNTRY_NAME = ORIGIN_COUNTRY_NAME) as withinCountry")\ .show(2)
-# in SQL: SELECT *, (DEST_COUNTRY_NAME = ORIGIN_COUNTRY_NAME) as withinCountry FROM dfTable
-LIMIT 2
+# in SQL: SELECT *, (DEST_COUNTRY_NAME = ORIGIN_COUNTRY_NAME) as withinCountry FROM dfTable LIMIT 2
 Above will give below output: 
 Giving an output like:
 +-----------------+-------------------+-----+-------------+
@@ -215,42 +211,103 @@ Giving an output like:
 |    United States|            Croatia|    1|        false|
 +-----------------+-------------------+-----+-------------+
 
-With select expression, we can also specify aggregations over the entire DataFrame by taking advantage of the functions that we have. 
+5.2) With select expression, we can also specify aggregations over the entire DataFrame by taking advantage of the functions that we have. 
 # in Python: df.selectExpr("avg(count)", "count(distinct(DEST_COUNTRY_NAME))").show(2) 
 # in SQL: SELECT avg(count), count(distinct(DEST_COUNTRY_NAME)) FROM dfTable LIMIT 2
 
-Sometimes, we need to pass explicit values into Spark that are just a value (rather than a new column). The way we do this is through literals.
+6) Sometimes, we need to pass explicit values into Spark that are just a value (rather than a new column). The way we do this is through literals.
 from pyspark.sql.functions import lit 
 # in Python: df.select(expr("*"), lit(1).alias("One")).show(2)
 # in SQL: SELECT *, 1 as One FROM dfTable LIMIT 2
 
-There’s also a more formal way of adding a new column to a DataFrame, and that’s by using the withColumn method on our DataFrame.
+7) There’s also a more formal way of adding a new column to a DataFrame, and that’s by using the withColumn method on our DataFrame.
 # in Python: df.withColumn("numberOne", lit(1)).show(2)
 # in SQL: SELECT *, 1 as numberOne FROM dfTable LIMIT 2
 
-Notice that the withColumn function takes two arguments: the column name and the expression that will create the value for that given row in the DataFrame. Other eg: 
+7.1) Notice that the withColumn function takes two arguments: the column name and the expression that will create the value for that given row in the DataFrame. Other eg: 
 df.withColumn("withinCountry", expr("ORIGIN_COUNTRY_NAME == DEST_COUNTRY_NAME")).show(2)
 
-Renaming columns: df.withColumnRenamed("DEST_COUNTRY_NAME", "dest").columns
+8) Renaming columns: df.withColumnRenamed("DEST_COUNTRY_NAME", "dest").columns
 
-One thing that you might come across is reserved characters like spaces or dashes in column names.
+9) One thing that you might come across is reserved characters like spaces or dashes in column names.
 Handling these means escaping column names appropriately. In Spark, we do this by using backtick (`) characters. 
-# in Python: dfWithLongColName.selectExpr(
+# in Python: 
+dfWithLongColName.selectExpr(
         "`This Long Column-Name`",
-        "`This Long Column-Name` as `new col`")\
-      .show(2) 
+        "`This Long Column-Name` as `new col`").show(2) 
     dfWithLongColName.createOrReplaceTempView("dfTableLong")
 # in SQL: SELECT `This Long Column-Name`, `This Long Column-Name` as `new col` FROM dfTableLong LIMIT 2
 
+10) By default Spark is case insensitive, but: # in SQL: set spark.sql.caseSensitive true
 
+11) Drop multiple columns: dfWithLongColName.drop("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME")
+
+12) Changing columns type: 
+# Python: df.withColumn("count2", col("count").cast("long")) 
+# SQL: SELECT *, cast(count as long) AS count2 FROM dfTable
+
+13) To filter rows, we create an expression that evaluates to true or false. There are two methods to perform this operation: you can use 'where' or 'filter' and they both will perform the same operation and accept the same argument types when used with DataFrames. 
+Way 1 Python: df.filter(col("count") < 2).show(2)
+Way 2 Python: df.where("count < 2").show(2)
+SQL: SELECT * FROM dfTable WHERE count < 2 LIMIT 2
+
+13.1) Multiple filters: 
+Python: df.where(col("count") < 2).where(col("ORIGIN_COUNTRY_NAME") != "Croatia").show(2)
+SQL: SELECT * FROM dfTable WHERE count < 2 AND ORIGIN_COUNTRY_NAME != "Croatia" LIMIT 2
+
+14) Distinct rows: 
+Python: df.select("ORIGIN_COUNTRY_NAME", "DEST_COUNTRY_NAME").distinct().count() 
+SQL: ELECT COUNT(DISTINCT(ORIGIN_COUNTRY_NAME, DEST_COUNTRY_NAME)) FROM dfTable
+
+15) Random samples or fraction of rows: 
+seed=5
+withReplacement = False
+fraction = 0.5
+df.sample(withReplacement, fraction, seed).count()
+
+16) Random splits can be helpful when you need to break up your DataFrame into a ran‐ dom “splits” of the original DataFrame. This is often used with machine learning algorithms to create training, validation, and test sets.
+# in Python: dataFrames = df.randomSplit([0.25, 0.75], seed) dataFrames[0].count() > dataFrames[1].count() # False
+
+17) To append to a DataFrame, you must union the original DataFrame along with the new DataFrame. To union two DataFrames, you must be sure that they have the same schema and number of columns; otherwise, the union will fail. Unions are currently performed based on location, not on the schema. This means that columns will not automatically line up the way you think they might.
+Python: df.union(newDF).where("count = 1").where(col("ORIGIN_COUNTRY_NAME") != "United States").show()
+
+18) Sort: There are two equivalent operations to do this sort and orderBy that work the exact same way.
+Way 1: df.sort("count").show(5)
+Way 2: df.orderBy("count", "DEST_COUNTRY_NAME").show(5) or df.orderBy(col("count"), col("DEST_COUNTRY_NAME")).show(5)
+To be more explicit: 
+# in Python: 
+from pyspark.sql.functions import desc, asc
+df.orderBy(expr("count desc")).show(2)
+df.orderBy(col("count").desc(), col("DEST_COUNTRY_NAME").asc()).show(2)
+# in SQL: SELECT * FROM dfTable ORDER BY count DESC, DEST_COUNTRY_NAME ASC LIMIT 2
+
+19) Limiting records to dispay from df: df.limit(5).show() or SELECT * FROM dfTable LIMIT 6
 ```
 
-- 
-```
+  - Another important optimization opportunity is to partition the data according to some frequently filtered columns, which control the physical layout of data across the cluster including the partitioning scheme and the number of partitions.
+    - ***Repartition*** will incur a full shuffle of the data, regardless of whether one is necessary. This means that you should typically only repartition when the future number of partitions is greater than your current number of partitions or when you are looking to partition by a set of columns:
 
 ```
+df.rdd.getNumPartitions() # 1
+or - df.repartition(5)
+Repartitioning based on column and total patitions: 
+df.repartition(5, col("DEST_COUNTRY_NAME"))
+```
 
-  - 
+  - ***Spark maintains the state of the cluster in the driver***. There are times when you’ll want to collect some of your data to the driver in order to manipulate it on your local machine.
+    - Thus far, we did not explicitly define this operation. However, we used several differ‐ ent methods for doing so that are effectively all the same. collect gets all data from the entire DataFrame, take selects the first N rows, and show prints out a number of rows nicely in below example:
+
+```
+# in Python
+collectDF = df.limit(10)
+collectDF.take(5) # take works with an Integer count collectDF.show() # this prints it out nicely collectDF.show(5, False)
+collectDF.collect()
+```
+  - There’s an additional way of collecting rows to the driver in order to iterate over the entire dataset. The method toLocalIterator collects partitions to the driver as an iterator. This method allows you to iterate over the entire dataset partition-by- partition in a serial manner: collectDF.toLocalIterator()
+  - ***Any collection of data to the driver can be a very expensive opera‐ tion! If you have a large dataset and call collect, you can crash the driver. If you use toLocalIterator and have very large partitions, you can easily crash the driver node and lose the state of your application. This is also expensive because we can operate on a one-by-one basis, instead of running computation in parallel.***
+
+- Chapter 6: 
+  -  
 
 
 
