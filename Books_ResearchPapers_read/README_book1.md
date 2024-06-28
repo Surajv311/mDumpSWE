@@ -140,7 +140,9 @@ This addition operation happens because Spark will convert an expression written
   - In essence, within the Structured APIs, there are two more APIs, the “untyped” DataFrames and the “typed” Datasets. DataFrames are untyped is slightly inaccurate; they have types, but Spark maintains them completely and only checks whether those types line up to those specified in the schema at runtime. Datasets, on the other hand, check whether types conform to the specification at compile time. Datasets are only available to Java Virtual Machine (JVM)–based languages (Scala and Java). 
   - ***DataFrames are simply Datasets of Type Row. The “Row” type is Spark’s internal representation of its optimized in-memory format for computation***. This format makes for highly specialized and efficient computation because rather than using JVM types, which can cause high garbage-collection and object instantiation costs, Spark can operate on its own internal format without incurring any of those costs. This format applies the same efficiency gains to all of Spark’s language APIs.
   - Columns represent a simple type like an integer or string, a complex type like an array or map, or a null value. A row is nothing more than a record of data.
-  - Spark’s language bindings: (image below - for Python type reference, similarly other langauge types)
+  - Spark’s language bindings: (for Python type reference, similarly other langauge types)
+
+<>Upload img on Python type inference<>
 
   - ***Overview of Structured API Execution***: 
     - Step 1: Write DataFrame/Dataset/SQL Code and execute it: This code is then submitted to Spark either through the console or via a submitted job. This code then passes through the Catalyst Optimizer, which decides how the code should be executed and lays out a plan for doing so before, finally, the code is run and the result is returned to the user.
@@ -516,6 +518,7 @@ df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map")).select
 You can also explode map types, which will turn them into columns. 
 ```
 
+<>Upload img on explode()<>
 
   - Spark has some unique support for working with JSON data. You can operate directly on strings of JSON in Spark and parse from JSON or extract JSON objects. 
   - 
