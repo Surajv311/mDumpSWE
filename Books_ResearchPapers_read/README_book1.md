@@ -520,9 +520,78 @@ You can also explode map types, which will turn them into columns.
 
 <>Upload img on explode()<>
 
-  - Spark has some unique support for working with JSON data. You can operate directly on strings of JSON in Spark and parse from JSON or extract JSON objects. 
-  - 
+  - Spark has some unique support for working with JSON data. You can operate directly on strings of JSON in Spark and parse from JSON or extract JSON objects.
 
+```
+You can use the get_json_object to inline query a JSON object, be it a dictionary or array.
+jsonDF.select(get_json_object(col("jsonString"), "$.myJSONKey.myJSONValue[1]") as "column", json_tuple(col("jsonString"), "myJSONKey")).show(2)
+Here’s the equivalent in SQL:
+    jsonDF.selectExpr(
+      "json_tuple(jsonString, '$.myJSONKey.myJSONValue[1]') as column").show(2)
+
+You can also turn a StructType into a JSON string by using the to_json function:
+df.selectExpr("(InvoiceNo, Description) as myStruct")\
+      .select(to_json(col("myStruct")))
+
+This function also accepts a dictionary (map) of parameters that are the same as the JSON data source. 
+Etc etc... 
+```
+  - ***UDFs (User Defined Functions)*** can take and return one or more columns as input. Although you can write UDFs in Scala, Python, or Java, there are performance considerations that you should be aware of.
+    - When you use the function, there are essentially two different things that occur. If the function is written in Scala or Java, you can use it within the Java Virtual Machine (JVM). This means that there will be little performance penalty aside from the fact that you can’t take advantage of code generation capabilities that Spark has for built-in functions. 
+    - If the function is written in Python, something quite different happens. Spark starts a Python process on the worker, serializes all of the data to a format that Python can understand (remember, it was in the JVM earlier), executes the function row by row on that data in the Python process, and then finally returns the results of the row operations to the JVM and Spark. 
+      - ***Starting this Python process is expensive, but the real cost is in seri‐ alizing the data to Python. This is costly for two reasons: it is an expensive computation, but also, after the data enters Python, Spark cannot manage the memory of the worker. This means that you could potentially cause a worker to fail if it becomes resource constrained (because both the JVM and Python are competing for memory on the same machine). We recommend that you write your UDFs in Scala or Java—the small amount of time it should take you to write the function in Scala will always yield significant speed ups, and on top of that, you can still use the function from Python.***
+
+```
+Eg consider the function: 
+udfExampleDF = spark.range(5).toDF("num") 
+def power3(double_value):
+  return double_value ** 3 power3(2.0)
+  
+Now that we’ve created these functions and tested them, we need to register them with Spark so that we can use them on all of our worker machines. Spark will serialize the function on the driver and transfer it over the network to all executor processes. This happens regardless of language.
+Eg:
+from pyspark.sql.functions import udf 
+power3udf = udf(power3)
+or udfExampleDF.selectExpr("power3(num)").show(2)
+
+You can also use UDF/UDAF creation via a Hive syntax. o allow for this, first you must enable Hive support when they create their SparkSession (via SparkSession.builder().enableHiveSupport()). Then you can register UDFs in SQL. 
+```
+
+- Chapter 7: 
+  - Aggregating is the act of collecting something together and is a cornerstone of big data analytics. In an aggregation, you will specify a key or grouping and an aggregation function that specifies how you should transform one or more columns.
+  - Spark allows us to create the following groupings types:
+    - The simplest grouping is to just summarize a complete DataFrame by perform‐ ing an aggregation in a select statement.
+    - A ***“group by”*** allows you to specify one or more keys as well as one or more aggregation functions to transform the value columns.
+    - A ***“window”*** gives you the ability to specify one or more keys as well as one or more aggregation functions to transform the value columns. However, the rows input to the function are somehow related to the current row.
+    - A ***“grouping set”*** which you can use to aggregate at multiple different levels. Grouping sets are available as a primitive in SQL and via rollups and cubes in DataFrames.
+    - A ***“rollup”*** makes it possible for you to specify one or more keys as well as one or more aggregation functions to transform the value columns, which will be summarized hierarchically.
+    - A ***“cube”*** allows you to specify one or more keys as well as one or more aggrega‐ tion functions to transform the value columns, which will be summarized across all combinations of columns.
+  - Basic aggregations apply to an entire DataFrame.
+  - Some functions: count, countDistinct, approx_count_distinct, first and last, min and max, sum, sumDistinct, avg.
+  - Spark performs the formula for the sample standard deviation or variance if you use the variance or stddev functions.
+  - Skewness and kurtosis are both measurements of extreme points in your data. Skew‐ ness measures the asymmetry of the values in your data around the mean, whereas kurtosis is a measure of the tail of data. These are both relevant specifically when modeling your data as a probability distribution of a random variable. 
+  - Correlation measures the Pearson correlation coefficient, which is scaled between –1 and +1. The covariance is scaled according to the inputs in the data.
+  - In Spark, you can perform aggregations not just of numerical values using formulas, you can also perform them on complex types. For example, we can collect a list of values present in a given column or only the unique values by collecting to a set. Eg: `df.agg(collect_set("Country"), collect_list("Country")).show()`
+  - We can also do grouping, grouping with expressions (Eg: `df.groupBy("InvoiceNo").agg(count("Quantity").alias("quan"), expr("count(Quantity)")).show()`), grouping with maps. 
+  - We can also perform window functions. Eg: `windowSpec = Window.partitionBy("CustomerId", "date").orderBy(desc("Quantity")).rowsBetween(Window.unboundedPreceding, Window.currentRow)`
+  - Grouping sets: An aggregation across multiple groups. We achieve this by using grouping sets. Eg: `SELECT CustomerId, stockCode, sum(Quantity) FROM dfNoNull GROUP BY customerId, stockCode GROUPING SETS((customerId, stockCode)) ORDER BY CustomerId DESC, stockCode DESC`. 
+    - ***Grouping sets depend on null values for aggregation levels. If you do not filter-out null values, you will get incorrect results. This applies to cubes, rollups, and grouping sets.***
+    - ***The GROUPING SETS operator is only available in SQL. To perform the same in Data‐ Frames, you use the rollup and cube operators—which allow us to get the same results.***
+  - A ***rollup*** is a multidimensional aggregation that performs a vari‐ ety of group-by style calculations for us.
+  - A ***cube*** takes the rollup to a level deeper. Rather than treating elements hierarchically, a cube does the same thing across all dimensions.
+  - Grouping Metadata... 
+  - Pivots make it possible for you to convert a row into a column. 
+  - ***User-defined aggregation functions (UDAFs)*** (note it is slightly different from UDF) are a way for users to define their own aggregation functions based on custom formulae or business rules. You can use UDAFs to compute custom calculations over groups of input data (as opposed to sin‐ gle rows). Spark maintains a single AggregationBuffer to store intermediate results for every group of input data.
+
+- Chapter 8: 
+  - A join brings together two sets of data. There are a variety of different join types available in Spark for you to use:
+    - ***Inner joins*** (keep rows with keys that exist in the left and right datasets)
+    - ***Outer joins*** (keep rows with keys in either the left or right datasets)
+    - ***Left outer joins*** (keep rows with keys in the left dataset)
+    - ***Right outer joins*** (keep rows with keys in the right dataset)
+    - ***Left semi joins*** (keep the rows in the left, and only the left, dataset where the key appears in the right dataset)
+    - ***Left anti joins*** (keep the rows in the left, and only the left, dataset where they do not appear in the right dataset)
+    - ***Natural joins*** (perform a join by implicitly matching the columns between the two datasets with the same names)
+    - ***Cross (or Cartesian) joins*** (match every row in the left dataset with every row in the right dataset)
 
 
 ---------------------------------
