@@ -591,7 +591,79 @@ You can also use UDF/UDAF creation via a Hive syntax. o allow for this, first yo
     - ***Left semi joins*** (keep the rows in the left, and only the left, dataset where the key appears in the right dataset)
     - ***Left anti joins*** (keep the rows in the left, and only the left, dataset where they do not appear in the right dataset)
     - ***Natural joins*** (perform a join by implicitly matching the columns between the two datasets with the same names)
+      - ***Implicit is always dangerous; The following query will give us incorrect results because the two DataFrames/tables share a col‐ umn name (id), but it means different things in the datasets. You should always use this join with caution.***
     - ***Cross (or Cartesian) joins*** (match every row in the left dataset with every row in the right dataset)
+
+```
+Eg: 
+1) Inner join
+joinType = "inner"
+person.join(graduateProgram, joinExpression, joinType).show()
+-- in SQL
+SELECT * FROM person INNER JOIN graduateProgram ON person.graduate_program = graduateProgram.id
+
+2) Complex dtype join
+from pyspark.sql.functions import expr person.withColumnRenamed("id", "personId").join(sparkStatus, expr("array_contains(spark_status, id)")).show()
+-- in SQL
+SELECT * FROM (select id as personId, name, graduate_program, spark_status FROM person) INNER JOIN sparkStatus ON array_contains(spark_status, id)
+```
+  - ***Handling Duplicate Column Names when Joining:***
+    - When you have two keys that have the same name, probably the easiest fix is to change the join expression from a Boolean expression to a string or sequence. This automatically removes one of the columns for you during the join: `person.join(gradProgramDupe,"graduate_program").select("graduate_program").show()`. 
+    - Another approach is to drop the offending column after the join: `person.join(gradProgramDupe, joinExpr).drop(person.col("graduate_program")).select("graduate_program").show()`.
+    - (Or) We can avoid this issue altogether if we rename one of our columns before the join. 
+  - ***How Spark Performs Joins:***
+    - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---------------------------------
