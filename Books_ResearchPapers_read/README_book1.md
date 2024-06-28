@@ -1,4 +1,3 @@
-
 ## Spark: The Definitive Guide: Big Data Processing Made Simple (Matei Zaharia)
 
 #### Interesting points/notes: 
