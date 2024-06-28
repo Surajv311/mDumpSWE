@@ -12,7 +12,7 @@ https://medium.com/analytics-vidhya/horizontal-parallelism-with-pyspark-d05390aa
 As soon as we call with the function multiple tasks will be submitted in parallel to spark executor from pyspark-driver at the same time and spark executor will execute the tasks in parallel provided we have enough cores
 Note this will work only if we have required executor cores to execute the parallel task
 For example if we have 100 executors cores(num executors=50 and cores=2 will be equal to 50*2) and we have 50 partitions on using this method will reduce the time approximately by 1/2 if we have threadpool of 2 processes. But on the other hand if we specified a threadpool of 3 we will have the same performance because we will have only 100 executors so at the same time only 2 tasks can run even though three tasks have been submitted from the driver to executor only 2 process will run and the third task will be picked by executor only upon completion of the two tasks.
-
+https://stackoverflow.com/questions/58235076/what-is-the-difference-between-predicate-pushdown-and-projection-pushdown
 
 https://superfastpython.com/threadpoolexecutor-vs-gil/: 
 The presence of the GIL in Python impacts the ThreadPoolExecutor.
