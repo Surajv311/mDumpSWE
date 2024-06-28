@@ -307,10 +307,218 @@ collectDF.collect()
   - ***Any collection of data to the driver can be a very expensive opera‐ tion! If you have a large dataset and call collect, you can crash the driver. If you use toLocalIterator and have very large partitions, you can easily crash the driver node and lose the state of your application. This is also expensive because we can operate on a one-by-one basis, instead of running computation in parallel.***
 
 - Chapter 6: 
-  -  
+  -  About filtering and working with different types of data... 
+
+```
+Some examples: 
+Eg1: 
+from pyspark.sql.functions import instr
+DOTCodeFilter = col("StockCode") == "DOT"
+priceFilter = col("UnitPrice") > 600
+descripFilter = instr(col("Description"), "POSTAGE") >= 1 df.withColumn("isExpensive", DOTCodeFilter & (priceFilter | descripFilter))\
+      .where("isExpensive")\
+      .select("unitPrice", "isExpensive").show(5)
+      
+Eg2: 
+df.selectExpr(
+"CustomerId",
+"(POWER((Quantity * UnitPrice), 2.0) + 5) as realQuantity").show(2)
+-- in SQL
+SELECT customerId, (POWER((Quantity * UnitPrice), 2.0) + 5) as realQuantity FROM dfTable
+
+Eg3: To round off
+from pyspark.sql.functions import lit, round, bround 
+df.select(round(lit("2.5")), bround(lit("2.5"))).show(2)
+-- in SQL
+SELECT round(2.5), bround(2.5)
+
+Eg4: Correlation between columns
+from pyspark.sql.functions import corr df.stat.corr("Quantity", "UnitPrice") df.select(corr("Quantity", "UnitPrice")).show()
+-- in SQL
+SELECT corr(Quantity, UnitPrice) FROM dfTable
+
+Eg5: Compute some stats
+# in Python: df.describe().show()
+
+Eg6: 
+The initcap function will capitalize every word in a given string when that word is separated from another by a space.
+from pyspark.sql.functions import initcap df.select(initcap(col("Description"))).show()
+-- in SQL
+SELECT initcap(Description) FROM dfTable
+
+Eg7:
+from pyspark.sql.functions import lower, upper df.select(col("Description"),
+        lower(col("Description")),
+        upper(lower(col("Description")))).show(2)
+-- in SQL
+SELECT Description, lower(Description), Upper(lower(Description)) FROM dfTable
+
+Eg8:
+Another trivial task is adding or removing spaces around a string. You can do this by using lpad, ltrim, rpad and rtrim, trim:
+from pyspark.sql.functions import lit, ltrim, rtrim, rpad, lpad, trim df.select(
+        ltrim(lit("    HELLO    ")).alias("ltrim"),
+        rtrim(lit("    HELLO    ")).alias("rtrim"),
+        trim(lit("    HELLO    ")).alias("trim"),
+        lpad(lit("HELLO"), 3, " ").alias("lp"),
+        rpad(lit("HELLO"), 10, " ").alias("rp")).show(2)
+-- in SQL
+SELECT ltrim(' HELLLOOOO '), rtrim(' HELLLOOOO '), trim(' HELLLOOOO '), lpad('HELLOOOO ', 3, ' '), rpad('HELLOOOO ', 10, ' ')
+FROM dfTable
+
+Eg9:
+Searching for the existence of one string in another or replacing all mentions of a string with another value. This is often done with a tool called regular expressions that exists in many programming languages.
+from pyspark.sql.functions import regexp_replace regex_string = "BLACK|WHITE|RED|GREEN|BLUE" df.select(
+      regexp_replace(col("Description"), regex_string, "COLOR").alias("color_clean"),
+      col("Description")).show(2)
+-- in SQL
+SELECT
+regexp_replace(Description, 'BLACK|WHITE|RED|GREEN|BLUE', 'COLOR') as color_clean, Description
+FROM dfTable
+
+Eg10:
+This simple feature can often help you programmatically generate columns or Boolean filters in a way that is simple to understand and extend.
+# in Python
+from pyspark.sql.functions import expr, locate simpleColors = ["black", "white", "red", "green", "blue"] def color_locator(column, color_string):
+return locate(color_string.upper(), column)\ .cast("boolean")\
+.alias("is_" + c)
+selectedColumns = [color_locator(df.Description, c) for c in simpleColors]
+selectedColumns.append(expr("*")) # has to a be Column type df.select(*selectedColumns).where(expr("is_white OR is_red"))\
+      .select("Description").show(3, False)
+
+Eg11: 
+Date & Timestamp related examples: 
+from pyspark.sql.functions import current_date, current_timestamp 
+dateDF = spark.range(10)\
+      .withColumn("today", current_date())\
+      .withColumn("now", current_timestamp())
+    dateDF.createOrReplaceTempView("dateTable")
+    
+Eg11.1: Adding dates: 
+from pyspark.sql.functions import date_add, date_sub 
+dateDF.select(date_sub(col("today"), 5), date_add(col("today"), 5)).show(1)
+-- in SQL
+SELECT date_sub(today, 5), date_add(today, 5) FROM dateTable
+
+Eg11.2: Subtracting dates: 
+from pyspark.sql.functions import datediff, months_between, to_date 
+dateDF.withColumn("week_ago", date_sub(col("today"), 7))\
+      .select(datediff(col("week_ago"), col("today"))).show(1)
+
+Eg11.3: The to_date function allows you to convert a string to a date, optionally with a specified format.
+dateDF.select(
+        to_date(lit("2016-01-01")).alias("start"),
+        to_date(lit("2017-05-22")).alias("end"))\
+      .select(months_between(col("start"), col("end"))).show(1)
+-- in SQL
+SELECT to_date('2016-01-01'), months_between('2016-01-01', '2017-01-01'), datediff('2016-01-01', '2017-01-01')
+FROM dateTable
+
+Eg11.4: 
+from pyspark.sql.functions import to_timestamp cleanDateDF.select(to_timestamp(col("date"), dateFormat)).show()
+-- in SQL
+SELECT to_timestamp(date, 'yyyy-dd-MM'), to_timestamp(date2, 'yyyy-dd-MM') FROM dateTable2
+
+Eg11.5: 
+-- in SQL
+SELECT cast(to_date("2017-01-01", "yyyy-dd-MM") as timestamp)
+
+Eg12: 
+Spark includes a function to allow you to select the first non-null value from a set of columns by using the coalesce function.
+There are several other SQL functions that you can use to achieve similar things: ifnull, nullIf, nvl, and nvl2
+from pyspark.sql.functions import coalesce 
+df.select(coalesce(col("Description"), col("CustomerId"))).show()
+-- in SQL
+SELECT
+ifnull(null, 'return_value'), nullif('value', 'value'),
+nvl(null, 'return_value'), nvl2('not_null', 'return_value', "else_value")
+FROM dfTable LIMIT 1
+
+Eg13: Drop, which removes rows that contain nulls.
+df.na.drop("any")
+SELECT * FROM dfTable WHERE Description IS NOT NULL
+
+Eg14: Fill function, you can fill one or more columns with a set of values.
+df.na.fill("All Null values become this string")
+
+Eg15:
+df.na.replace([""], ["UNKNOWN"], "Description")
+
+Eg16: You can use asc_nulls_first, desc_nulls_first, asc_nulls_last, or desc_nulls_last to specify where you would like your null val‐ ues to appear in an ordered DataFrame.
+```
+
+  - ***Spark will not throw an error if it cannot parse the date; rather, it will just return null. This can be a bit tricky in larger pipelines because you might be expecting your data in one format and getting it in another.***
+  - ***Nulls are a challenging part of all programming, and Spark is no exception. When we declare a column as not having a null time, that is not actually enforced. To reiterate, when you define a schema in which all columns are declared to not have null values, Spark will not enforce that and will happily let null values into that column. The nullable signal is simply to help Spark SQL optimize for handling that column. If you have null val‐ ues in columns that should not have null values, you can get an incorrect result or see strange exceptions that can be difficult to debug. There are two things you can do with null values: you can explicitly drop nulls or you can fill them with a value (globally or on a per-column basis).***
+
+```
+Complex types can help you organize and structure your data in ways that make more sense for the problem that you are hoping to solve. There are three kinds of complex types: structs, arrays, and maps.
+1) 
+You can think of structs as DataFrames within DataFrames. Eg: 
+complexDF = df.select(struct("Description", "InvoiceNo").alias("complex"))
+2) 
+The first task is to turn our Description column into a complex type, an array. We do this by using the split function and specify the delimiter:
+from pyspark.sql.functions import split 
+df.select(split(col("Description"), " ")).show(2)
+-- in SQL
+SELECT split(Description, ' ') FROM dfTable
++---------------------+
+|split(Description,  )|
++---------------------+
+| [WHITE, HANGING, ...|
+| [WHITE, METAL, LA...|
++---------------------+
+We can also query the values of the array using Python-like syntax:
+df.select(split(col("Description"), " ").alias("array_col")).selectExpr("array_col[0]").show(2)
+-- in SQL
+SELECT split(Description, ' ')[0] FROM dfTable This gives us the following result:
++------------+
+|array_col[0]|
++------------+
+| WHITE      |
+| WHITE      |
++------------+
+For array length: df.select(size(split(col("Description"), " "))).show(2) # shows 5 and 3
+If array contains a value: 
+df.select(array_contains(split(col("Description"), " "), "WHITE")).show(2)
+-- in SQL
+SELECT array_contains(split(Description, ' '), 'WHITE') FROM dfTable
+To convert a complex type into a set of rows (one per value in our array), we need to use the explode function: 
+df.withColumn("splitted", split(col("Description"), " ")).withColumn("exploded", explode(col("splitted"))).select("Description", "InvoiceNo", "exploded").show(2)
+-- in SQL
+SELECT Description, InvoiceNo, exploded
+FROM (SELECT *, split(Description, " ") as splitted FROM dfTable) LATERAL VIEW explode(splitted) as exploded
++--------------------+---------+--------+
+|         Description|InvoiceNo|exploded|
++--------------------+---------+--------+
+|WHITE HANGING HEA...|   536365|   WHITE|
+|WHITE HANGING HEA...|   536365| HANGING|
++--------------------+---------+--------+
+3) 
+Maps are created by using the map function and key-value pairs of columns.
+ in Python
+from pyspark.sql.functions import create_map df.select(create_map(col("Description"), col("InvoiceNo")).alias("complex_map"))\
+.show(2)
+-- in SQL
+SELECT map(Description, InvoiceNo) as complex_map FROM dfTable WHERE Description IS NOT NULL
+This produces the following result:
++--------------------+
+|         complex_map|
++--------------------+
+|Map(WHITE HANGING...|
+|Map(WHITE METAL L...|
+You can query them by using the proper key. A missing key returns null:
+df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map")).selectExpr("complex_map['WHITE METAL LANTERN']").show(2)
++--------------------------------+
+|complex_map[WHITE METAL LANTERN]|
++--------------------------------+
+|                            null|
+|                          536365|
++--------------------------------+
+You can also explode map types, which will turn them into columns. 
+```
 
 
-
+  - Spark has some unique support for working with JSON data. You can operate directly on strings of JSON in Spark and parse from JSON or extract JSON objects. 
+  - 
 
 
 
