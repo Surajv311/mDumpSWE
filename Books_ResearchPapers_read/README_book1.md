@@ -613,193 +613,140 @@ SELECT * FROM (select id as personId, name, graduate_program, spark_status FROM 
     - (Or) We can avoid this issue altogether if we rename one of our columns before the join. 
   - ***How Spark Performs Joins:***
     - To understand this, you need to know the two core resources at play: 
-      - the node-to-node communication strategy and 
-      - per node computation strategy
+      - node-to-node communication strategy (shuffle join) and 
+      - per node computation strategy (broadcast join)
     - Spark approaches cluster communication in two different ways during joins. It either incurs a ***shuffle join***, which results in an all-to-all communication or a ***broadcast join***.
     - Some of these internal optimizations are likely to change over time with new improvements to the cost-based optimizer and improved communication strategies.
-The core foundation of our simplified view of joins is that in Spark you will have either a big table or a small table. Although this is obviously a spectrum (and things do happen differently if you have a “medium-sized table”), but for easier explanation. 
-When you join a big table to another big table, you end up with a shuffle join.
-In a shuffle join, every node talks to every other node and they share data according to which node has a certain key or set of keys (on which you are joining). These joins are expensive because the network can become congested with traffic, especially if your data is not partitioned well.
-When the table is small enough to fit into the memory of a single worker node, with some breathing room of course, we can optimize our join. Although we can use a big table–to–big table communication strategy, it can often be more efficient to use a broadcast join. What this means is that we will replicate our small DataFrame onto every worker node in the cluster (be it located on one machine or many). Now this sounds expensive. However, what this does is prevent us from performing the all-to- all communication during the entire join process. Instead, we perform it only once at the beginning and then let each individual worker node perform the work without having to wait or communicate with any other worker node.
-At the beginning of this join will be a large communication, just like in the previous type of join. However, immediately after that first, there will be no further communication between nodes. This means that joins will be performed on every single node individually, making CPU the biggest bottleneck. Some explain, how it explain() query for such a case looks like: 
-    == Physical Plan ==
-    *BroadcastHashJoin [graduate_program#40], [id#5....
-    :- LocalTableScan [id#38, name#39, graduate_progr...
-    +- BroadcastExchange HashedRelationBroadcastMode(....
-       +- LocalTableScan [id#56, degree#57, departmen....
-The SQL interface also includes the ability to provide hints to perform joins. These are not enforced, however, so the optimizer might choose to ignore them. You can set one of these hints by using a special comment syntax. MAPJOIN, BROADCAST, and BROAD CASTJOIN all do the same thing and are all supported:
+    - The core foundation of our simplified view of joins is that in Spark you will have either a big table or a small table. Although this is obviously a spectrum (and things do happen differently if you have a “medium-sized table”), but for easier explanation. 
+    - ***When you join a big table to another big table, you end up with a shuffle join.***
+      - In a shuffle join, every node talks to every other node and they share data according to which node has a certain key or set of keys (on which you are joining). These joins are expensive because the network can become congested with traffic, especially if your data is not partitioned well.
+    - When the table is small enough to fit into the memory of a single worker node, with some breathing room of course, we can optimize our join. Although we can use a big table–to–big table communication strategy, it can often be more efficient to ***use a broadcast join***. 
+      - What this means is that we will replicate our small DataFrame onto every worker node in the cluster (be it located on one machine or many). ***Now this sounds expensive. However, what this does is prevent us from performing the all-to-all communication during the entire join process***. Instead, ***we perform it only once at the beginning and then let each individual worker node perform the work*** without having to wait or communicate with any other worker node. ***At the beginning of this join will be a large communication, just like in the previous type of join. However, immediately after that first, there will be no further communication between nodes.*** This means that joins will be performed on every single node individually, making CPU the biggest bottleneck. explain() query for such a case looks like: 
+
+```
+      == Physical Plan ==
+      *BroadcastHashJoin [graduate_program#40], [id#5....
+      :- LocalTableScan [id#38, name#39, graduate_progr...
+      +- BroadcastExchange HashedRelationBroadcastMode(....
+         +- LocalTableScan [id#56, degree#57, departmen....
+```
+  - ***The SQL interface also includes the ability to provide hints to perform joins. These are not enforced,*** however, so the optimizer might choose to ignore them. You can set one of these hints by using a special comment syntax. MAPJOIN, BROADCAST, and BROAD CASTJOIN all do the same thing and are all supported:
+
+```
+Eg: 
 -- in SQL
 SELECT /*+ MAPJOIN(graduateProgram) */ * FROM person JOIN graduateProgram
 ON person.graduate_program = graduateProgram.id
-This doesn’t come for free either: if you try to broadcast something too large, you can crash your driver node (because that collect is expensive). This is likely an area for optimization in the future.
-When performing joins with small tables, it’s usually best to let Spark decide how to join them. You can always force a broadcast join if you’re noticing strange behavior.
+```
+  - ***This doesn’t come for free either: if you try to broadcast something too large, you can crash your driver node (because that collect is expensive).*** This is likely an area for optimization in the future.
+  - When performing joins with small tables, it’s usually best to let Spark decide how to join them. You can always force a broadcast join if you’re noticing strange behavior.
 
-Chapter 9: 
-Spark has six “core” data sources and hundreds of external data sources written by the community: CSV, JSON, Parquet, ORC, JDBC/ODBC connections, Plain-text files
-Spark has numerous community-created data sources. Here’s just a small sample: Cassandra, HBase, MongoDB, AWS Redshift, etc. 
+- Chapter 9: 
+  - Spark has six “core” data sources and hundreds of external data sources written by the community: CSV, JSON, Parquet, ORC, JDBC/ODBC connections, Plain-text files. Spark has numerous community-created data sources. Here’s just a small sample: Cassandra, HBase, MongoDB, AWS Redshift, etc. 
+  - The core structure for reading data is as follows: DataFrameReader.format(...).option("key", "value").schema(...).load()
+  - There are a variety of ways in which you can set options; for example, you can build a map and pass in your configurations. 
+  - Similarly, we have different write modes... can be checked....
+  - In writing parquet files, even though there are only two options, you can still encounter problems if you’re working with incompatible Parquet files. 
+    - ***Be careful when you write out Parquet files with different versions of Spark (especially older ones) because this can cause significant headache.***
+  - Reading/Writing from SQL Databases; Eg: 
 
-The core structure for reading data is as follows: DataFrameReader.format(...).option("key", "value").schema(...).load()
-There are a variety of ways in which you can set options; for example, you can build a map and pass in your configurations. 
-Similarly we have different write modes... can be checked. 
+```
+Eg: To connect to a sql db from spark and query: 
+driver = "org.sqlite.JDBC"
+path = "/data/flight-data/jdbc/my-sqlite.db"
+url = "jdbc:sqlite:" + path
+tablename = "flight_info"
+```
+  - As we create this DataFrame, it is no different from any other: you can query it, transform it, and join it without issue. You’ll also notice that there is already a schema, as well. That’s because ***Spark gathers this information from the table itself and maps the types to Spark data types.***
+  - Spark makes a best-effort attempt to filter data in the database itself before creating the DataFrame.
+  - ***Spark can’t translate all of its own functions into the functions available in the SQL database in which you’re working. Therefore, sometimes you’re going to want to pass an entire query into your SQL that will return the results as a DataFrame.***
+  - Spark has an underlying algorithm that can read multiple files into one partition, or conversely, read multiple partitions out of one file, depending on the file size and the “splitability” of the file type and compression. The same flexibility that exists with files, ***also exists with SQL databases except that you must configure it a bit more manually.*** What you can ***configure, is the ability to specify a maximum number of partitions to allow you to limit how much you are reading and writing in parallel:***
 
-Even though there are only two options, you can still encounter problems if you’re working with incompatible Parquet files. Be careful when you write out Parquet files with different versions of Spark (especially older ones) because this can cause significant headache.
-
-
-Reading/Writing from SQL Databases:
-Eg:
-# in Python
-    driver = "org.sqlite.JDBC"
-    path = "/data/flight-data/jdbc/my-sqlite.db"
-    url = "jdbc:sqlite:" + path
-    tablename = "flight_info"
-As we create this DataFrame, it is no different from any other: you can query it, transform it, and join it without issue. You’ll also notice that there is already a schema, as well. That’s because Spark gathers this information from the table itself and maps the types to Spark data types. 
-Spark makes a best-effort attempt to filter data in the database itself before cre‐ ating the DataFrame.
-Spark can’t translate all of its own functions into the functions available in the SQL database in which you’re working. Therefore, sometimes you’re going to want to pass an entire query into your SQL that will return the results as a DataFrame. 
-
-# in Python
-    pushdownQuery = """(SELECT DISTINCT(DEST_COUNTRY_NAME) FROM flight_info)
-      AS flight_info"""
-    dbDataFrame = spark.read.format("jdbc")\
-      .option("url", url).option("dbtable", pushdownQuery).option("driver",  driver)\
-      .load()
-
-Spark has an underlying algorithm that can read multiple files into one partition, or conversely, read multiple partitions out of one file, depending on the file size and the “splitability” of the file type and compression. The same flexibility that exists with files, also exists with SQL databases except that you must configure it a bit more manually. What you can configure, is the ability to specify a maximum number of partitions to allow you to limit how much you are reading and writing in parallel:
-
+```
 # in Python
     dbDataFrame = spark.read.format("jdbc")\
       .option("url", url).option("dbtable", tablename).option("driver",  driver)\
-      .option("numPartitions", 10).load()
-You can explicitly push predicates down into SQL databases through the connection itself. This optimization allows you to control the physical location of certain data in certain partitions by specifying predicates.
+      .option("numPartitions", 10).load()  
+```
 
-Spark predicate push down to database allows for better optimized Spark queries. A predicate is a condition on a query that returns true or false, typically located in the WHERE clause. A predicate push down filters the data in the database query, reducing the number of entries retrieved from the database and improving query performance. By default the Spark Dataset API will automatically push down valid WHERE clauses to the database.
+  - ***You can explicitly push predicates down into SQL databases through the connection itself. This optimization allows you to control the physical location of certain data in certain partitions by specifying predicates.***
+  - ***Spark predicate push down to database allows for better optimized Spark queries.*** 
+    - A ***predicate*** is a condition on a query that returns true or false, typically located in the WHERE clause. A predicate push down filters the data in the database query, reducing the number of entries retrieved from the database and improving query performance. By default the Spark Dataset API will automatically push down valid WHERE clauses to the database.
+  - Splittable File Types and Compression: Certain file formats are fundamentally “splittable.” This can improve speed because it makes it possible for Spark to avoid reading an entire file, and access only the parts of the file necessary to satisfy your query. Additionally if you’re using something like Hadoop Distributed File System (HDFS), splitting a file can provide further optimization if that file spans multiple blocks. In conjunction with this is a need to manage compression. Not all compression schemes are splittable. ***How you store your data is of immense consequence when it comes to making your Spark jobs run smoothly. We recommend Parquet with gzip compression.***
+  - ***Reading Data in Parallel***: Multiple executors cannot read from the same file at the same time necessarily, but they can read different files at the same time. In general, this means that when you read from a folder with multiple files in it, each one of those files will become a partition in your DataFrame and be read in by available executors in parallel (with the remaining queueing up behind the others).
+  - ***Writing Data in Parallel***: The number of files or data written is dependent on the number of partitions the DataFrame has at the time you write out the data. By default, one file is written per partition of the data. This means that although we specify a “file,” it’s actually a number of files within a folder, with the name of the specified file, with one file per each partition that is written.
+  - ***Partitioning (partitionBy)*** is a tool that allows you to control what data is stored (and where) as you write it. When you write a file to a partitioned directory (or table), you basically encode a column as a folder. Eg: `csvFile.limit(10).write.mode("overwrite").partitionBy("DEST_COUNTRY_NAME").save("/tmp/partitioned-files.parquet")`
+    - This is probably the ***lowest-hanging optimization that you can use when you have a table that readers frequently filter by before manipulating.*** For instance, date is particularly common for a partition because, downstream, often we want to look at only the previous week’s data (instead of scanning the entire list of records). This can provide massive speedups for readers.
+  - ***Bucketing*** is another file organization approach with which you can control the data that is specifically written to each file. This can ***help avoid shuffles later when you go to read the data because data with the same bucket ID*** will all be grouped together into one physical partition. 
+    - Rather than partitioning on a specific column (which might write out a ton of directories), it’s probably worthwhile to explore bucketing the data instead. This will create a certain number of files and organize our data into those “buckets”.
+  - Although Spark can work with all of these types, not every single type works well with every data file format. For instance, ***CSV files do not support complex types,*** whereas Parquet and ORC do.
+  - Managing file sizes is an important factor ***not so much for writing data but reading it later on.*** When you’re writing lots of small files, there’s a significant metadata over‐head that you incur managing all of those files. ***Spark especially does not do well with small files,*** although many file systems (like HDFS) don’t handle lots of small files well, either. You might hear this referred to as the ***“small file problem.”*** The opposite is also true: you don’t want files that are too large either, because it becomes inefficient to have to read entire blocks of data when you need only a few rows.
+    - Spark 2.2 introduced a new ***method for controlling file sizes in a more automatic way.*** We saw previously that the number of output files is a derivative of the number of partitions we had at write time (and the partitioning columns we selected). Now, you can take advantage of another tool in order to limit output file sizes so that you can target an optimum file size. You can use the maxRecordsPerFile option and specify a number of your choosing. For example, if you set an option for a writer as df.write.option("maxRecordsPerFile", 5000), Spark will ensure that files will contain at most 5,000 records.
 
+- Chapter 10: 
+  - With Spark SQL you can run SQL queries against views or tables organized into databases. SQL or Structured Query Language is a domain-specific language for expressing relational operations over data.
+  - ***Before Spark’s rise, Hive was the de facto big data SQL access layer.*** Originally developed at Facebook, Hive became an incredibly popular tool across industry for performing SQL operations on big data. In many ways it helped propel Hadoop into different industries because analysts could run SQL queries. Although Spark began as a general processing engine with Resilient Distributed Datasets (RDDs), a large cohort of users now use Spark SQL.
+  - With the release of Spark 2.0, its authors created a superset of Hive’s support, writing a native SQL parser that supports both ANSI-SQL as well as HiveQL queries.
+  - ***Spark SQL is intended to operate as an online analytic processing (OLAP) database, not an online transaction processing (OLTP) database.*** This means that it is not intended to perform extremely low-latency queries. Even though support for in-place modifications is sure to be something that comes up in the future, it’s not something that is currently available.
+  - Spark SQL has a great relationship with Hive because it can connect to Hive metastores. ***The Hive metastore is the way in which Hive maintains table information for use across sessions.*** With Spark SQL, you can connect to your Hive metastore (if you already have one) and access table metadata to reduce file listing when accessing information. This is popular for users who are migrating from a legacy Hadoop environment and beginning to run all their workloads using Spark.
+  - You can connect to hive metastore using the options here: spark.sql.hive.metastore... 
+  - The highest level abstraction in Spark SQL is the Catalog. ***The Catalog is an abstraction for the storage of metadata about the data stored in your tables as well as other helpful things like databases, tables, functions, and views.*** The catalog is available in the org.apache.spark.sql.catalog.Catalog package and contains a number of helpful functions for doing things like listing tables, databases, and functions. 
+  - To do anything useful with Spark SQL, you first need to define tables. Tables are logically equivalent to a DataFrame in that they are a structure of data against which you run commands. 
+  - ***The core difference between tables and DataFrames is this: you define DataFrames in the scope of a programming language, whereas you define tables within a database.*** 
+  - One important note is the concept of ***managed versus unmanaged tables.*** Tables store two important pieces of information. The data within the tables as well as the data about the tables; that is, the metadata. 
+    - You can have Spark manage the metadata for a set of files as well as for the data. When you define a table from files on disk, you are defining an unmanaged table. 
+    - When you use saveAsTable on a DataFrame, you are creating a managed table for which Spark will track of all of the relevant information.
+    - This will read your table and write it out to a new location in Spark format. You can see this reflected in the new explain plan.
+  - Creating table: CREATE TABLE flights (DEST_COUNTRY_NAME STRING, ORIGIN_COUNTRY_NAME STRING, count LONG) USING JSON OPTIONS (path '/data/flight-data/json/2015-summary.json')
+  - The specification of the ***USING syntax*** in the above example is of significant importance. If you do not specify the format, Spark will default to a Hive SerDe configuration. This has performance implications for future readers and writers because ***Hive SerDes are much slower than Spark’s native serialization.***
+  - Spark will manage the table’s metadata; however, the files are not managed by Spark at all. You create this table by using the CREATE EXTERNAL TABLE statement: CREATE EXTERNAL TABLE hive_flights (DEST_COUNTRY_NAME STRING, ORIGIN_COUNTRY_NAME STRING, count LONG) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/data/flight-data-hive/'
+  - Describing Table Metadata: DESCRIBE TABLE flights_csv
+  - View the partitioning scheme for the data: SHOW PARTITIONS partitioned_flights
+  - Refreshing Table Metadata: Maintaining table metadata is an important task to ensure that you’re reading from the most recent set of data. There are two commands to refresh table metadata. 
+    - ***REFRESH TABLE*** refreshes all cached entries (essentially, files) associated with the table. If the table were previously cached, it would be cached lazily the next time it is scanned: REFRESH table partitioned_flights
+    - Another related command is ***REPAIR TABLE***, which refreshes the partitions maintained in the catalog for that given table. This command’s focus is on collecting new partition information—an example might be writing out a new partition manually and the need to repair the table accordingly: MSCK REPAIR TABLE partitioned_flights
+  - Dropping Tables: DROP TABLE IF EXISTS flights_csv;
+  - Dropping unmanaged tables: No data will be removed but you will no longer be able to refer to this data by the table name.
+  - Just like DataFrames, you can ***cache and uncache tables.*** You simply specify which table you would like using the following syntax:
+    - CACHE TABLE flights 
+    - Here’s how you uncache them: UNCACHE TABLE FLIGHTS
+  - A view specifies a set of transformations on top of an existing table—***basically just saved query plans***, which can be convenient for organizing or reusing your query logic. Spark has several different notions of views. Views can be global, set to a database, or per session.
+    - CREATE VIEW just_usa_view AS SELECT * FROM flights WHERE dest_country_name = 'United States'
+    - You can also have: CREATE TEMP VIEW, CREATE GLOBAL TEMP VIEW, CREATE OR REPLACE TEMP VIEW, etc. 
+    - A view is effectively a transformation and Spark will perform it only at query time. Effectively, views are equivalent to creating a new DataFrame from an existing DataFrame.
+    - Similarly, you can drop views: DROP VIEW IF EXISTS just_usa_view;
+  - Also, you can create, set databases in spark, etc. 
+  - Oftentimes, you might need to ***conditionally replace values in your SQL queries.*** You can do this by using a case...when...then...end style statement. This is essentially the equivalent of programmatic if statements:
 
-Splittable File Types and Compression
-Certain file formats are fundamentally “splittable.” This can improve speed because it makes it possible for Spark to avoid reading an entire file, and access only the parts of the file necessary to satisfy your query. Additionally if you’re using something like Hadoop Distributed File System (HDFS), splitting a file can provide further optimi‐ zation if that file spans multiple blocks. In conjunction with this is a need to manage compression. Not all compression schemes are splittable. How you store your data is of immense consequence when it comes to making your Spark jobs run smoothly. We recommend Parquet with gzip compression.
-Reading Data in Parallel
-Multiple executors cannot read from the same file at the same time necessarily, but they can read different files at the same time. In general, this means that when you read from a folder with multiple files in it, each one of those files will become a parti‐ tion in your DataFrame and be read in by available executors in parallel (with the remaining queueing up behind the others).
-Writing Data in Parallel
-The number of files or data written is dependent on the number of partitions the DataFrame has at the time you write out the data. By default, one file is written per partition of the data. This means that although we specify a “file,” it’s actually a num‐ ber of files within a folder, with the name of the specified file, with one file per each partition that is written.
-
-
-Partitioning (partitionBy) is a tool that allows you to control what data is stored (and where) as you write it. When you write a file to a partitioned directory (or table), you basically encode a column as a folder. 
-# in Python
-    csvFile.limit(10).write.mode("overwrite").partitionBy("DEST_COUNTRY_NAME")\
-      .save("/tmp/partitioned-files.parquet")
-
-This is probably the lowest-hanging optimization that you can use when you have a table that readers frequently filter by before manipulating. For instance, date is partic‐ ularly common for a partition because, downstream, often we want to look at only the previous week’s data (instead of scanning the entire list of records). This can pro‐ vide massive speedups for readers.
-
-Bucketing is another file organization approach with which you can control the data that is specifically written to each file. This can help avoid shuffles later when you go to read the data because data with the same bucket ID will all be grouped together into one physical partition. 
-
-Rather than partitioning on a specific column (which might write out a ton of direc‐ tories), it’s probably worthwhile to explore bucketing the data instead. This will create a certain number of files and organize our data into those “buckets”:
-Although Spark can work with all of these types, not every single type works well with every data file format. For instance, CSV files do not support complex types, whereas Par‐ quet and ORC do.
-
-**
-Managing file sizes is an important factor not so much for writing data but reading it later on. When you’re writing lots of small files, there’s a significant metadata over‐ head that you incur managing all of those files. Spark especially does not do well with small files, although many file systems (like HDFS) don’t handle lots of small files well, either. You might hear this referred to as the “small file problem.” The opposite is also true: you don’t want files that are too large either, because it becomes inefficient to have to read entire blocks of data when you need only a few rows.
-
-Spark 2.2 introduced a new method for controlling file sizes in a more automatic way. We saw previously that the number of output files is a derivative of the number of partitions we had at write time (and the partitioning columns we selected). Now, you can take advantage of another tool in order to limit output file sizes so that you can target an optimum file size. You can use the maxRecordsPerFile option and specify a number of your choosing.
-For example, if you set an option for a writer as df.write.option("maxRecordsPerFile", 5000), Spark will ensure that files will contain at most 5,000 records.
-
-Chapter 10: 
-
-With Spark SQL you can run SQL queries against views or tables organized into databases.
-SQL or Structured Query Language is a domain-specific language for expressing rela‐ tional operations over data.
-
-Before Spark’s rise, Hive was the de facto big data SQL access layer. Originally devel‐ oped at Facebook, Hive became an incredibly popular tool across industry for per‐ forming SQL operations on big data. In many ways it helped propel Hadoop into different industries because analysts could run SQL queries. Although Spark began as a general processing engine with Resilient Distributed Datasets (RDDs), a large cohort of users now use Spark SQL.
-
-With the release of Spark 2.0, its authors created a superset of Hive’s support, writing a native SQL parser that supports both ANSI-SQL as well as HiveQL queries.
-
-
-Spark SQL is intended to operate as an online analytic processing (OLAP) database, not an online transaction processing (OLTP) database. This means that it is not intended to perform extremely low-latency queries. Even though support for in-place modifica‐ tions is sure to be something that comes up in the future, it’s not something that is currently available.
-
-Spark SQL has a great relationship with Hive because it can connect to Hive meta‐ stores. The Hive metastore is the way in which Hive maintains table information for use across sessions. With Spark SQL, you can connect to your Hive metastore (if you already have one) and access table metadata to reduce file listing when accessing information. This is popular for users who are migrating from a legacy Hadoop envi‐ ronment and beginning to run all their workloads using Spark.
-
-You can connect to hive metastore using the options here: spark.sql.hive.metastore... 
-
-The highest level abstraction in Spark SQL is the Catalog. The Catalog is an abstrac‐ tion for the storage of metadata about the data stored in your tables as well as other helpful things like databases, tables, functions, and views. The catalog is available in the org.apache.spark.sql.catalog.Catalog package and contains a number of helpful functions for doing things like listing tables, databases, and functions. 
-
-To do anything useful with Spark SQL, you first need to define tables. Tables are logi‐ cally equivalent to a DataFrame in that they are a structure of data against which you run commands. 
-
-
-The core difference between tables and DataFrames is this: you define DataFrames in the scope of a programming lan‐ guage, whereas you define tables within a database. 
-
-One important note is the concept of managed versus unmanaged tables. Tables store two important pieces of information. The data within the tables as well as the data about the tables; that is, the metadata. You can have Spark manage the metadata for a set of files as well as for the data. When you define a table from files on disk, you are defining an unmanaged table. When you use saveAsTable on a DataFrame, you are creating a managed table for which Spark will track of all of the relevant information.
-This will read your table and write it out to a new location in Spark format. You can see this reflected in the new explain plan.
-
-Creating table: 
-
-CREATE TABLE flights (
-DEST_COUNTRY_NAME STRING, ORIGIN_COUNTRY_NAME STRING, count LONG)
-USING JSON OPTIONS (path '/data/flight-data/json/2015-summary.json')
-
-The specification of the USING syntax in the above example is of significant impor‐ tance. If you do not specify the format, Spark will default to a Hive SerDe configura‐ tion. This has performance implications for future readers and writers because Hive SerDes are much slower than Spark’s native serialization.
-
-Spark will manage the table’s metadata; however, the files are not managed by Spark at all. You create this table by using the CREATE EXTERNAL TABLE statement.
-
-CREATE EXTERNAL TABLE hive_flights (
-DEST_COUNTRY_NAME STRING, ORIGIN_COUNTRY_NAME STRING, count LONG)
-ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LOCATION '/data/flight-data-hive/'
-
-Describing Table Metadata: DESCRIBE TABLE flights_csv
-see the partitioning scheme for the data: SHOW PARTITIONS partitioned_flights
-Refreshing Table Metadata: Maintaining table metadata is an important task to ensure that you’re reading from the most recent set of data. There are two commands to refresh table metadata. REFRESH TABLE refreshes all cached entries (essentially, files) associated with the table. If the table were previously cached, it would be cached lazily the next time it is scan‐ ned:
-REFRESH table partitioned_flights
-Another related command is REPAIR TABLE, which refreshes the partitions main‐ tained in the catalog for that given table. This command’s focus is on collecting new partition information—an example might be writing out a new partition manually and the need to repair the table accordingly:
-MSCK REPAIR TABLE partitioned_flights
-
-Dropping Tables: DROP TABLE IF EXISTS flights_csv;
-Dropping unmanaged tables: no data will be removed but you will no longer be able to refer to this data by the table name.
-Just like DataFrames, you can cache and uncache tables. You simply specify which table you would like using the following syntax:
-CACHE TABLE flights Here’s how you uncache them:
-UNCACHE TABLE FLIGHTS
-
-A view specifies a set of transformations on top of an existing table—basically just saved query plans, which can be convenient for organizing or reusing your query logic. Spark has several different notions of views. Views can be global, set to a database, or per session.
-CREATE VIEW just_usa_view AS
-SELECT * FROM flights WHERE dest_country_name = 'United States'
-
-You can also have: CREATE TEMP VIEW, CREATE GLOBAL TEMP VIEW, CREATE OR REPLACE TEMP VIEW, etc. 
-A view is effectively a transformation and Spark will perform it only at query time.
-Effectively, views are equivalent to creating a new DataFrame from an existing DataFrame.
-
-Similarly, you can drop views: DROP VIEW IF EXISTS just_usa_view;
-
-
-Also, you can create, set databases, etc. 
-
-
-Oftentimes, you might need to conditionally replace values in your SQL queries. You can do this by using a case...when...then...end style statement. This is essentially the equivalent of programmatic if statements:
+```
 SELECT
 CASE WHEN DEST_COUNTRY_NAME = 'UNITED STATES' THEN 1
 WHEN DEST_COUNTRY_NAME = 'Egypt' THEN 0
 ELSE -1 END
 FROM partitioned_flights
+```
 
+  - There are ***three core complex types in Spark SQL: structs, lists, and maps.***
+    - Structs are more akin to maps. They provide a way of creating or querying nested data in Spark. To create one, you simply need to wrap a set of columns (or expressions) in parentheses: CREATE VIEW IF NOT EXISTS nested_data AS SELECT (DEST_COUNTRY_NAME, ORIGIN_COUNTRY_NAME) as country, count FROM flights
+      - You can query individual columns within a struct—all you need to do is use dot syntax: SELECT country.DEST_COUNTRY_NAME, count FROM nested_data
+    - There are several ways to create an array or list of values. You can use the collect_list function, which creates a list of values. You can also use the function collect_set, which creates an array without duplicate values. These are both aggregation functions and therefore can be specified only in aggregations: SELECT DEST_COUNTRY_NAME as new_name, collect_list(count) as flight_counts, collect_set(ORIGIN_COUNTRY_NAME) as origin_set FROM flights GROUP BY DEST_COUNTRY_NAME 
+      - You can query lists by position by using a Python-like array query syntax: SELECT DEST_COUNTRY_NAME as new_name, collect_list(count)[0] FROM flights GROUP BY DEST_COUNTRY_NAME
+  - To see a list of functions in Spark SQL, you use the SHOW FUNCTIONS statement in sql. Eg: SHOW FUNCTIONS LIKE "collect*";
+  - As we know Spark gives you the ability to define your own functions and use them in a distributed manner (UDFs):
 
-There are three core complex types in Spark SQL: structs, lists, and maps.
-Structs are more akin to maps. They provide a way of creating or querying nested data in Spark. To create one, you simply need to wrap a set of columns (or expres‐ sions) in parentheses:
-CREATE VIEW IF NOT EXISTS nested_data AS
-SELECT (DEST_COUNTRY_NAME, ORIGIN_COUNTRY_NAME) as country, count FROM flights
-
-You can query individual columns within a struct—all you need to do is use dot
-syntax:
-SELECT country.DEST_COUNTRY_NAME, count FROM nested_data
-
-
-There are several ways to create an array or list of values. You can use the col lect_list function, which creates a list of values. You can also use the function collect_set, which creates an array without duplicate values. These are both aggre‐ gation functions and therefore can be specified only in aggregations:
-SELECT DEST_COUNTRY_NAME as new_name, collect_list(count) as flight_counts, collect_set(ORIGIN_COUNTRY_NAME) as origin_set
-FROM flights GROUP BY DEST_COUNTRY_NAME
-You can query lists by position by using a Python-like array query syntax:
-SELECT DEST_COUNTRY_NAME as new_name, collect_list(count)[0] FROM flights GROUP BY DEST_COUNTRY_NAME
-
-
-To see a list of functions in Spark SQL, you use the SHOW FUNCTIONS statement in sql. Eg: SHOW FUNCTIONS LIKE "collect*";
-
-As we know Spark gives you the ability to define your own func‐ tions and use them in a distributed manner (UDFs)
-def power3(number:Double):Double = number * number * number spark.udf.register("power3", power3(_:Double):Double)
+```
+def power3(number:Double): Double = number * number * number 
+spark.udf.register("power3", power3(_:Double):Double)
 SELECT count, power3(count) FROM flights
+```
 
-With subqueries, you can specify queries within other queries. This makes it possible for you to specify some sophisticated logic within your SQL. In Spark, there are two fundamental subqueries. Correlated subqueries use some information from the outer scope of the query in order to supplement information in the subquery. Uncorrelated subqueries include no information from the outer scope. Each of these queries can return one (scalar subquery) or more values. Spark also includes support for predicate subqueries, which allow for filtering based on values.
+  - With subqueries, you can specify queries within other queries. This makes it possible for you to specify some sophisticated logic within your SQL. In Spark, there are two fundamental subqueries: 
+    - Correlated subqueries use some information from the outer scope of the query in order to supplement information in the subquery. 
+    - Uncorrelated subqueries include no information from the outer scope. 
+      - Using uncorrelated scalar queries, you can bring in some supplemental information that you might not have previously. For example, if you wanted to include the maximum value as its own column from the entire counts dataset, you could do this (below example check):
+    -  Each of these queries can return one (scalar subquery) or more values. Spark also includes support for predicate subqueries, which allow for filtering based on values.
 
+```
 Uncorrelated predicate subqueries
 Eg: SELECT * FROM flights
 WHERE origin_country_name IN (SELECT dest_country_name FROM flights
@@ -811,18 +758,12 @@ WHERE EXISTS (SELECT 1 FROM flights f2
 WHERE f1.dest_country_name = f2.origin_country_name) AND EXISTS (SELECT 1 FROM flights f2
 WHERE f2.dest_country_name = f1.origin_country_name)
 
-
-Uncorrelated scalar queries
-Using uncorrelated scalar queries, you can bring in some supplemental information that you might not have previously. For example, if you wanted to include the maxi‐ mum value as its own column from the entire counts dataset, you could do this:
+Uncorrelated scalar queries: 
 SELECT *, (SELECT max(count) FROM flights) AS maximum FROM flights
+```
 
-
-etc etc 
-
-
-
-
-Chapter 11: 
+- Chapter 11: 
+  - 
 
 
 
