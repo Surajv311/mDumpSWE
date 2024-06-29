@@ -908,6 +908,237 @@ keyedRDD
 
 
 
+  c15
+
+  Components of Spark (Detail):
+  The Spark driver
+The driver is the process “in the driver seat” of your Spark Application. It is the controller of the execution of a Spark Application and maintains all of the state of the Spark cluster (the state and tasks of the executors). It must interface with the cluster manager in order to actually get physical resources and launch executors.
+At the end of the day, this is just a process on a physical machine that is responsi‐ ble for maintaining the state of the application running on the cluster.
+The Spark executors
+Spark executors are the processes that perform the tasks assigned by the Spark driver. Executors have one core responsibility: take the tasks assigned by the driver, run them, and report back their state (success or failure) and results. Each Spark Application has its own separate executor processes.
+The cluster manager
+The Spark Driver and Executors do not exist in a void, and this is where the clus‐ ter manager comes in. The cluster manager is responsible for maintaining a clus‐ ter of machines that will run your Spark Application(s). Somewhat confusingly, a cluster manager will have its own “driver” (sometimes called master) and “worker” abstractions. The core difference is that these are tied to physical machines rather than processes (as they are in Spark).
+When it comes time to actually run a Spark Application, we request resources from the cluster manager to run it. Depending on how our application is configured, this can include a place to run the Spark driver or might be just resources for the execu‐ tors for our Spark Application. Over the course of Spark Application execution, the cluster manager will be responsible for managing the underlying machines that our application is running on.
+Spark currently supports three cluster managers: a simple built-in standalone cluster manager, Apache Mesos, and Hadoop YARN. However, this list will continue to grow...
+
+An execution mode gives you the power to determine where the aforementioned resources are physically located when you go to run your application. You have three modes to choose from:
+• Cluster mode: Cluster mode is probably the most common way of running Spark Applications. In cluster mode, a user submits a pre-compiled JAR, Python script, or R script to a clus‐ ter manager. The cluster manager then launches the driver process on a worker node inside the cluster, in addition to the executor processes. This means that the cluster manager is responsible for maintaining all Spark Application–related processes.
+• Client mode: Client mode is nearly the same as cluster mode except that the Spark driver remains on the client machine that submitted the application. This means that the client machine is responsible for maintaining the Spark driver process, and the cluster man‐ ager maintains the executor processses. The driver is running on a machine outside of the cluster but that the workers are located on machines in the cluster.
+• Local mode: Local mode is a significant departure from the previous two modes: it runs the entire Spark Application on a single machine. It achieves parallelism through threads on that single machine. This is a common way to learn Spark, to test your applications, or experiment iteratively with local development. However, we do not recommend using local mode for running production applications.
+
+The Life Cycle of a Spark Application (Outside)
+The first step is for you to submit an actual application. This will be a pre-compiled JAR or library. At this point, you are executing code on your local machine and you’re going to make a request to the cluster manager driver node. Here, we are explicitly asking for resources for the Spark driver process only. We assume that the cluster manager accepts this offer and places the driver onto a node in the cluster. The client process that submitted the original job exits and the application is off and running on the cluster.
+To do this, you’ll run something like the following command in your terminal:
+    ./bin/spark-submit \
+      --class <main-class> \
+      --master <master-url> \
+      --deploy-mode cluster \
+      --conf <key>=<value> \
+      ... # other options
+      <application-jar> \
+      [application-arguments]
+
+Now that the driver process has been placed on the cluster, it begins running user code.
+This code must include a SparkSession that initializes a Spark cluster (e.g., driver + executors). The SparkSession will subsequently communicate with the cluster manager asking it to launch Spark executor pro‐ cesses across the cluster. 
+The number of executors and their rele‐ vant configurations are set by the user via the command-line arguments in the original spark-submit call.
+The cluster manager responds by launching the executor processes (assuming all goes well) and sends the relevant information about their locations to the driver process. After everything is hooked up correctly, we have a “Spark Cluster” as you likely think of it today.
+Now that we have a “Spark Cluster,” Spark goes about its merry way executing code. 
+The driver and the workers communicate among them‐ selves, executing code and moving data around. The driver schedules tasks onto each worker, and each worker responds with the status of those tasks and success or fail‐ ure. 
+After a Spark Application completes, the driver processs exits with either success or failure. The cluster manager then shuts down the executors in that Spark cluster for the driver. At this point, you can see the success or failure of the Spark Application by asking the cluster manager for this information.
+
+The Life Cycle of a Spark Application (Inside)
+The SparkSession
+The first step of any Spark Application is creating a SparkSession. In many interactive modes, this is done for you, but in an application, you must do it manually.
+ # Creating a SparkSession in Python
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.master("local").appName("Word Count")\
+        .config("spark.some.config.option", "some-value")\
+        .getOrCreate()
+
+ After you have a SparkSession, you should be able to run your Spark code. From the SparkSession, you can access all of low-level and legacy contexts and configurations accordingly, as well. Note that the SparkSession class was only added in Spark 2.X. Older code you might find would instead directly create a SparkContext and a SQLContext for the structured APIs.
+
+ A SparkContext object within the SparkSession represents the connection to the Spark cluster. This class is how you communicate with some of Spark’s lower-level APIs, such as RDDs. It is commonly stored as the variable sc in older examples and documentation. Through a SparkContext, you can create RDDs, accumulators, and broadcast variables, and you can run code on the cluster.
+For the most part, you should not need to explicitly initialize a SparkContext; you should just be able to access it through the SparkSession.
+
+
+In previous versions of Spark, the SQLContext and HiveContext provided the ability to work with DataFrames and Spark SQL and were commonly stored as the variable sqlContext in examples, documentation, and legacy code. As a historical point, Spark 1.X had effectively two contexts. The SparkContext and the SQLContext. These two each performed different things. The former focused on more fine-grained control of Spark’s central abstractions, whereas the latter focused on the higher-level tools like Spark SQL. In Spark 2.X, the communtiy combined the two APIs into the centralized SparkSession that we have today. However, both of these APIs still exist and you can access them via the SparkSession. It is important to note that you should never need to use the SQLContext and rarely need to use the SparkContext.
+
+After you initialize your SparkSession, it’s time to execute some code.
+
+
+As you saw earlier, Spark code essentially consists of transfor‐ mations and actions. How you build these is up to you—whether it’s through SQL, low-level RDD manipulation, or machine learning algorithms. 
+Say when you run a piece of code, your action triggers one complete Spark job. If you explain() it, will look like:
+    == Physical Plan ==
+    *HashAggregate(keys=[], functions=[sum(id#15L)])
+    +- Exchange SinglePartition
+       +- *HashAggregate(keys=[], functions=[partial_sum(id#15L)])
+          +- *Project [id#15L]
+             +- *SortMergeJoin [id#15L], [id#10L], Inner
+                :- *Sort [id#15L ASC NULLS FIRST], false, 0
+                :  +- Exchange hashpartitioning(id#15L, 200)
+:
+:
+:
++- *Sort [id#10L ASC NULLS FIRST], false, 0
++- *Project [(id#7L * 5) AS id#15L]
+   +- Exchange RoundRobinPartitioning(5)
++- *Range (2, 10000000, step=2, splits=8)
+                   +- Exchange hashpartitioning(id#10L, 200)
+                      +- Exchange RoundRobinPartitioning(6)
+                         +- *Range (2, 10000000, step=4, splits=8)
+
+
+
+In general, there should be one Spark job for one action. Actions always return results. Each job breaks down into a series of stages, the number of which depends on how many shuffle operations need to take place.
+A job breakdown may look like: 
+• Stage 1 with 8 Tasks
+• Stage 2 with 8 Tasks
+• Stage 3 with 6 Tasks
+• Stage 4 with 5 Tasks
+• Stage 5 with 200 Tasks
+• Stage 6 with 1 Task                         
+
+
+
+Stages in Spark represent groups of tasks that can be executed together to compute the same operation on multiple machines. In general, Spark will try to pack as much work as possible (i.e., as many transformations as possible inside your job) into the same stage, but the engine starts new stages after operations called shuffles. A shuffle represents a physical repartitioning of the data—for example, sorting a DataFrame, or grouping data that was loaded from a file by key (which requires sending records with the same key to the same node). This type of repartitioning requires coordinat‐ ing across executors to move data around. Spark starts a new stage after each shuffle, and keeps track of what order the stages must run in to compute the final result.
+
+In the job we looked at earlier, the first two stages correspond to the range that you perform in order to create your DataFrames. By default when you create a DataFrame with range, it has eight partitions. The next step is the repartitioning. This changes the number of partitions by shuffling the data. These DataFrames are shuffled into six partitions and five partitions, corresponding to the number of tasks in stages 3 and 4.
+Stages 3 and 4 perform on each of those DataFrames and the end of the stage repre‐ sents the join (a shuffle). Suddenly, we have 200 tasks. This is because of a Spark SQL configuration. The spark.sql.shuffle.partitions default value is 200, which means that when there is a shuffle performed during execution, it outputs 200 shuffle partitions by default. You can change this value, and the number of output partitions will change.
+
+A good rule of thumb is that the number of partitions should be larger than the num‐ ber of executors on your cluster, potentially by multiple factors depending on the workload.
+
+
+Stages in Spark consist of tasks. Each task corresponds to a combination of blocks of data and a set of transformations that will run on a single executor. If there is one big partition in our dataset, we will have one task. If there are 1,000 little partitions, we will have 1,000 tasks that can be executed in parallel. A task is just a unit of computa‐ tion applied to a unit of data (the partition). Partitioning your data into a greater number of partitions means that more can be executed in parallel.
+
+Execution Details:
+Spark automatically pipelines stages and tasks that can be done together, such as a map operation followed by another map operation. 
+An important part of what makes Spark an “in-memory computation tool” is that unlike the tools that came before it (e.g., MapReduce), Spark performs as many steps as it can at one point in time before writing data to memory or disk. One of the key optimizations that Spark performs is pipelining, which occurs at and below the RDD level. With pipelining, any sequence of operations that feed data directly into each other, without needing to move it across nodes, is collapsed into a single stage of tasks that do all the operations together. For example, if you write an RDD-based program that does a map, then a filter, then another map, these will result in a single stage of tasks that immediately read each input record, pass it through the first map, pass it through the filter, and pass it through the last map function if needed. This pipe‐ lined version of the computation is much faster than writing the intermediate results
+to memory or disk after each step. The same kind of pipelining happens for a Data‐ Frame or SQL computation that does a select, filter, and select.
+
+
+Second, for all shuffle operations, Spark writes the data to stable storage (e.g., disk), and can reuse it across multiple jobs. This is called Shuffle Persistence. 
+When Spark needs to run an operation that has to move data across nodes, such as a reduce-by-key opera‐ tion (where input data for each key needs to first be brought together from many nodes), the engine can’t perform pipelining anymore, and instead it performs a cross- network shuffle. Spark always executes shuffles by first having the “source” tasks (those sending data) write shuffle files to their local disks during their execution stage. Then, the stage that does the grouping and reduction launches and runs tasks that fetch their corresponding records from each shuffle file and performs that computa‐ tion (e.g., fetches and processes the data for a specific range of keys). Saving the shuf‐ fle files to disk lets Spark run this stage later in time than the source stage (e.g., if there are not enough executors to run both at the same time), and also lets the engine re-launch reduce tasks on failure without rerunning all the input tasks.
+One side effect you’ll see for shuffle persistence is that running a new job over data that’s already been shuffled does not rerun the “source” side of the shuffle. Because the shuffle files were already written to disk earlier, Spark knows that it can use them to run the later stages of the job, and it need not redo the earlier ones. In the Spark UI and logs, you will see the pre-shuffle stages marked as “skipped”. This automatic opti‐ mization can save time in a workload that runs multiple jobs over the same data, but of course, for even better performance you can perform your own caching with the DataFrame or RDD cache method, which lets you control exactly which data is saved and where. 
+
+
+chapter 16
+
+- writing spark application
+testing it: Input data resilience, Business logic resilience and evolution, Resilience in output and atomicity
+
+Testing your Spark code using a unit test framework like JUnit or ScalaTest is rela‐ tively easy because of Spark’s local mode—just create a local mode SparkSession as part of your test harness to run it.
+
+different options in spark submit or launching applciation
+
+
+Spark includes a number of different configurations:
+The majority of configurations fall into the fol‐ lowing categories:
+• Application properties
+• Runtime environment
+• Shuffle behavior
+• Spark UI
+• Compression and serialization
+• Memory management
+• Execution behavior
+• Networking
+• Scheduling
+• Dynamic allocation
+• Security
+• Encryption
+• Spark SQL
+• Spark streaming
+• SparkR
+Spark provides three locations to configure the system:
+• Spark properties control most application parameters and can be set by using a
+SparkConf object
+• Java system properties
+• Hardcoded configuration files
+
+
+<put image of application properties> 
+
+Runtime Properties, Execution Properties, Configuring Memory Management, 
+Configuring Shuffle Behavior, Environmental Variables, 
+
+By default, Spark’s scheduler runs jobs in FIFO fashion. If the jobs at the head of the queue don’t need to use the entire cluster, later jobs can begin to run right away, but if the jobs at the head of the queue are large, later jobs might be delayed significantly.
+It is also possible to configure fair sharing between jobs. Under fair sharing, Spark assigns tasks between jobs in a round-robin fashion so that all jobs get a roughly equal share of cluster resources. This means that short jobs submitted while a long job is running can begin receiving resources right away and still achieve good response times without waiting for the long job to finish. This mode is best for multi‐ user settings.
+To enable the fair scheduler, set the spark.scheduler.mode property to FAIR when configuring a SparkContext.
+
+
+The fair scheduler also supports grouping jobs into pools, and setting different sched‐ uling options, or weights, for each pool. This can be useful to create a high-priority pool for more important jobs or to group the jobs of each user together and give users equal shares regardless of how many concurrent jobs they have instead of giving jobs equal shares. This approach is modeled after the Hadoop Fair Scheduler.
+Without any intervention, newly submitted jobs go into a default pool, but jobs pools can be set by adding the spark.scheduler.pool local property to the SparkContext in the thread that’s submitting them. This is done as follows (assuming sc is your SparkContext:
+    sc.setLocalProperty("spark.scheduler.pool", "pool1")
+After setting this local property, all jobs submitted within this thread will use this pool name. The setting is per-thread to make it easy to have a thread run multiple jobs on behalf of the same user. If you’d like to clear the pool that a thread is associ‐ ated with, set it to null.
+
+
+Spark should work similarly with all the supported cluster manag‐ ers; however, customizing the setup means understanding the intricacies of each of the cluster management systems. The hard part is deciding on the cluster manager (or choosing a managed service)
+Spark has three officially supported cluster managers:
+• Standalone mode
+• Hadoop YARN
+• Apache Mesos
+Naturally, each of these cluster managers has an opinionated view toward management, and so there are trade-offs and semantics that you will need to keep in mind. 
+
+There are two high-level options for where to deploy Spark clusters: deploy in an on- premises cluster or in the public cloud. This choice is consequential and is therefore worth discussing.
+
+
+Deploying Spark to an on-premises cluster is sometimes a reasonable option, espe‐ cially for organizations that already manage their own datacenters. As with every‐ thing else, there are trade-offs to this approach. An on-premises cluster gives you full control over the hardware used, meaning you can optimize performance for your specific workload. However, it also introduces some challenges, especially when it comes to data analytics workloads like Spark. First, with on-premises deployment, your cluster is fixed in size, whereas the resource demands of data analytics work‐ loads are often elastic. If you make your cluster too small, it will be hard to launch the occasional very large analytics query or training job for a new machine learning model, whereas if you make it large, you will have resources sitting idle. Second, for on-premises clusters, you need to select and operate your own storage system, such as a Hadoop file system or scalable key-value store. This includes setting up georeplica‐ tion and disaster recovery if required.
+If you are going to deploy on-premises, the best way to combat the resource utiliza‐ tion problem is to use a cluster manager that allows you to run many Spark applica‐ tions and dynamically reassign resources between them, or even allows non-Spark applications on the same cluster. All of Spark’s supported cluster managers allow mul‐ tiple concurrent applications, but YARN and Mesos have better support for dynamic sharing and also additionally support non-Spark workloads. Handling resource shar‐ ing is likely going to be the biggest difference your users see day to day with Spark on-premise versus in the cloud: in public clouds, it’s easy to give each application its own cluster of exactly the required size for just the duration of that job.
+
+
+While early big data systems were designed for on-premises deployment, the cloud is now an increasingly common platform for deploying Spark. The public cloud has several advantages when it comes to big data workloads. First, resources can be launched and shut down elastically, so you can run that occasional “monster” job that takes hundreds of machines for a few hours without having to pay for them all the time. Even for normal operation, you can choose a different type of machine and cluster size for each application to optimize its cost performance—for example, launch machines with Graphics Processing Units (GPUs) just for your deep learning jobs. Second, public clouds include low-cost, georeplicated storage that makes it eas‐ ier to manage large amounts of data.
+Many companies looking to migrate to the cloud imagine they’ll run their applica‐ tions in the same way that they run their on-premises clusters. All the major cloud providers (Amazon Web Services [AWS], Microsoft Azure, Google Cloud Platform [GCP], and IBM Bluemix) include managed Hadoop clusters for their customers, which provide HDFS for storage as well as Apache Spark. This is actually not a great way to run Spark in the cloud, however, because by using a fixed-size cluster and file system, you are not going to be able to take advantage of elasticity. Instead, it is gen‐ erally a better idea to use global storage systems that are decoupled from a specific cluster, such as Amazon S3, Azure Blob Storage, or Google Cloud Storage and spin up machines dynamically for each Spark workload. With decoupled compute and storage, you will be able to pay for computing resources only when needed, scale them up dynamically, and mix different hardware types. Basically, keep in mind that running Spark in the cloud need not mean migrating an on-premises installation to virtual machines: you can run Spark natively against cloud storage to take full advan‐ tage of the cloud’s elasticity, cost-saving benefit, and management tools without hav‐ ing to manage an on-premise computing stack within your cloud environment.
+Several companies provide “cloud-native” Spark-based services, and all installations of Apache Spark can of course connect to cloud storage. Databricks, the company started by the Spark team from UC Berkeley, is one example of a service provider built specifically for Spark in the cloud. 
+
+Spark’s standalone cluster manager is a lightweight platform built specifically for Apache Spark workloads. Using it, you can run multiple Spark Applications on the same cluster. 
+
+The main disadvantage of the standalone mode is that it’s more limited than the other cluster managers—in particular, your cluster can only run Spark. It’s probably the best starting point if you just want to quickly get Spark run‐ ning on a cluster, however, and you do not have experience using YARN or Mesos.
+
+then how to run...
+
+Hadoop YARN is a framework for job scheduling and cluster resource management. Even though Spark is often (mis)classified as a part of the “Hadoop Ecosystem,” in reality, Spark has little to do with Hadoop. Spark does natively support the Hadoop YARN cluster manager but it requires nothing from Hadoop itself.
+You can run your Spark jobs on Hadoop YARN by specifying the master as YARN in the spark-submit command-line arguments. Just like with standalone mode, there are a number of knobs that you are able to tune according to what you would like the cluster to do. The number of knobs is naturally larger than that of Spark’s standalone mode because Hadoop YARN is a generic scheduler for a large number of different execution frameworks.
+
+Configuring Spark on YARN Applications...
+
+Apache Mesos is another clustering system that Spark can run on.
+For the most part, Mesos intends to be a datacenter scale-cluster manager that man‐ ages not just short-lived applications like Spark, but long-running applications like web applications or other resource interfaces. Mesos is the heaviest-weight cluster manager, simply because you might choose this cluster manager only if your organi‐ zation already has a large-scale deployment of Mesos, but it makes for a good cluster manager nonetheless.
+
+Secure Deployment Configurations
+
+Cluster Networking Configurations
+Application Scheduling
+
+
+chapter 18 Monitoring and Debugging
+
+At some point, you’ll need to monitor your Spark jobs to understand where issues are occuring in them.
+Let’s review the components we can monitor:Spark Applications and Jobs, JVM ( JVM utilities such as jstack for providing stack traces, jmap for creating heap-dumps, jstat for report‐ ing time–series statistics, and jconsole for visually exploring various JVM proper‐ ties are useful for those comfortable with JVM internals. You can also use a tool like jvisualvm to help profile Spark jobs. Some of this information is provided in the Spark UI, but for very low-level debugging, the aforementioned tools can come in handy.), OS/Machine(The JVMs run on a host operating system (OS) and it’s important to monitor the state of those machines to ensure that they are healthy. This includes monitoring things like CPU, network, and I/O. These are often reported in cluster-level mon‐ itoring solutions; however, there are more specific tools that you can use, includ‐ ing dstat, iostat, and iotop.), Cluster (Some pop‐ ular cluster-level monitoring tools include Ganglia and Prometheus.), 
+
+
+There are two main things you will want to monitor: the processes running your application (at the level of CPU usage, memory usage, etc.), and the query execution inside it (e.g., jobs and tasks).
+When you’re monitoring a Spark application, you’re definitely going to want to keep an eye on the driver. This is where all of the state of your application lives, and you’ll need to be sure it’s running in a stable manner. If you could monitor only one machine or a single JVM, it would definitely be the driver.
+
+Queries, Jobs, Stages, and Tasks
+
+Spark Logs
+One challenge, however, is that Python won’t be able to integrate directly with Spark’s Java-based logging library. Using Python’s logging module or even simple print statements will still print the results to standard error, however, and make them easy to find.
+To change Spark’s log level, simply run the following command:
+    spark.sparkContext.setLogLevel("INFO")
+
+
+The Spark UI provides a visual way to monitor applications while they are running as well as metrics about your Spark workload, at the Spark and JVM level. In addition to the Spark UI, you can also access Spark’s status and metrics via a REST API. 
+For the most part this API expo‐ ses the same information presented in the web UI, except that it doesn’t include any of the SQL-related information.
+
+Normally, the Spark UI is only available while a SparkContext is running, so how can you get to it after your application crashes or ends? To do this, Spark includes a tool called the Spark History Server that allows you to reconstruct the Spark UI and REST API, provided that the application was configured to save an event log. 
+
+
+Then disucss on debuggin techiniques, errors one may get (OOM, )
+
+ 
+
+
+
+
 
 
 
