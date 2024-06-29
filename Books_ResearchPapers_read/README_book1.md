@@ -763,7 +763,151 @@ SELECT *, (SELECT max(count) FROM flights) AS maximum FROM flights
 ```
 
 - Chapter 11: 
-  - 
+  - We already worked with DataFrames, which are Datasets of type Row, and are available across Spark’s different languages. ***Datasets are a strictly Java Virtual Machine (JVM) language feature that work only with Scala and Java***. Using Datasets, you can define the object that each row in your Dataset will consist of.
+  - We discussed that Spark has types like StringType, BigIntType, Struct Type, and so on. ***Those Spark-specific types map to types available in each of Spark’s languages like String, Integer, and Double.*** When you use the DataFrame API, you do not create strings or integers, but ***Spark manipulates the data for you by manipulating the Row object.***
+  - When you use the Dataset API, for every row it touches, this domain specifies type, ***Spark converts the Spark Row format to the object you specified (a case class or Java class). This conversion slows down your operations but can provide more flexibility. You will notice a hit in performance but this is a far different order of magnitude from what you might see from something like a user-defined function (UDF) in Python, because the performance costs are not as extreme as switching programming languages,*** but it is an important thing to keep in mind.
+  - When to Use Datasets:
+    - When the operation(s) you would like to perform cannot be expressed using DataFrame manipulations
+    - When you want or need ***type-safety***, and you’re willing to accept the cost of performance to achieve it.  Operations that are not valid for their types, say subtracting two string types, will fail at compilation time not at runtime. If correctness and bulletproof code is your highest priority, at the cost of some performance, this can be a great choice for you.
+  - Creating Datasets:
+    - You simply specify your class and then you’ll encode it when you come upon your DataFrame (which is of type Dataset<Row>):
+
+```
+Using java encoders
+import org.apache.spark.sql.Encoders;
+public class Flight implements Serializable{ String DEST_COUNTRY_NAME;
+String ORIGIN_COUNTRY_NAME;
+Long DEST_COUNTRY_NAME;
+}
+Dataset<Flight> flights = spark.read
+.parquet("/data/flight-data/parquet/2010-summary.parquet/")
+.as(Encoders.bean(Flight.class));
+```
+
+  - Other things covered: Action, Transformation, Filtering, Mapping, Joins, Grouping, Aggregations
+  - By specifying a function, we are forcing Spark to evaluate this function on every row in our Dataset. This can be very resource intensive. ***For simple filters it is always preferred to write SQL expressions***. This will greatly reduce the cost of filtering out the data while still allowing you to manipulate it as a Dataset later on.
+
+- Chapter 12: 
+  - Previous part of the book covered Spark’s Structured APIs. ***You should heavily favor these APIs in almost all scenarios.*** That being said, there are times when higher-level manipulation will not meet the business or engineering problem you are trying to solve. For those cases, you might need to use Spark’s lower-level APIs, specifically the Resilient Distributed Dataset (RDD), the SparkContext, and distributed shared variables like accumulators and broadcast variables.
+  - There are two sets of low-level APIs: 
+    - there is one for manipulating distributed data (RDDs), and
+    - for distributing and manipulating distributed shared variables (broadcast variables and accumulators).
+  - When to Use the Low-Level APIs: 
+    - You need some functionality that you cannot find in the higher-level APIs; for example, ***if you need very tight control over physical data placement across the cluster.***
+    - You need to maintain some legacy codebase written using RDDs.
+    - You need to do some custom shared variable manipulation.
+  - ***When you’re calling a DataFrame transformation, it actually just becomes a set of RDD transformations.*** This understanding can make your task easier as you begin debugging more and more complex workloads.
+  - A ***SparkContext*** is the entry point for low-level API functionality. You access it through the SparkSession, which is the tool you use to perform computation across a Spark cluster: spark.sparkContext
+  - RDDs were the primary API in the Spark 1.X series and are still available in 2.X, but they are not as commonly used. 
+  - ***In short, an RDD represents an immutable, partitioned collection of records that can be operated on in parallel. Unlike DataFrames though, where each record is a structured row containing fields with a known schema, in RDDs the records are just Java, Scala, or Python objects of the programmer’s choosing.***
+    - RDDs give you complete control because every record in an RDD is a just a Java or Python object. You can store anything you want in these objects, in any format you want. This gives you great power, but ***not without potential issues. Every manipulation and interaction between values must be defined by hand,*** meaning that you must “reinvent the wheel” for whatever task you are trying to carry out. 
+  - Also, ***optimizations are going to require much more manual work,*** because Spark does not understand the inner structure of your records as it does with the Structured APIs. For instance, Spark’s Structured APIs automatically store data in an optimizied, compressed binary format, so to achieve the same space-efficiency and performance, you’d also need to implement this type of format inside your objects and all the low-level operations to compute over it. Likewise, optimizations like reordering filters and aggregations that occur automatically in Spark SQL need to be implemented by hand. 
+  - Internally, each RDD is characterized by five main properties: 
+    - A list of partitions
+    - A function for computing each split
+    - A list of dependencies on other RDDs
+    - Optionally, a Partitioner for key-value RDDs (e.g., to say that the RDD is hash- partitioned)
+    - Optionally, a list of preferred locations on which to compute each split (e.g., block locations for a Hadoop Distributed File System [HDFS] file)
+  - The RDD APIs are available in Python as well as Scala and Java. For Scala and Java, the performance is for the most part the same, the large costs incurred in manipulating the raw objects. ***Python, however, can lose a substantial amount of performance when using RDDs. Running Python RDDs equates to running Python user-defined functions (UDFs) row by row.***
+  - Because Python doesn’t have Datasets—it has only DataFrames—you will get an RDD of type Row: Eg: spark.range(10).rdd
+  - To create an RDD from a collection, you will need to ***use the parallelize method on a SparkContext (within a SparkSession).***
+    - This turns a single node collection into a parallel collection. When creating this parallel collection, you can also explicitly state the number of partitions into which you would like to distribute this array. In this case below, we are creating two partitions:
+
+```
+myCollection = "Spark The Definitive Guide : Big Data Processing Made Simple".split(" ")
+words = spark.sparkContext.parallelize(myCollection, 2)
+```
+
+  - Then learned about creating RDD from data sources. Then functions like: Transformations (distinct, filter, map, flatmap, sort, random splits), Actions (reduce, count - countApprox, countApproxDistinct, countByValue, countByValueApprox, first, max/min, take), Saving RDD as file.
+  - The same principles apply for caching RDDs as for DataFrames and Datasets. You can either cache or persist an RDD. ***By default, cache and persist only handle data in memory.***
+  - Spark originally grew out of the Hadoop ecosystem, so it has a fairly tight integration with a variety of Hadoop tools. ***A sequenceFile is a flat file consisting of binary key– value pairs.*** It is extensively used in MapReduce as input/output formats.
+  - ***Checkpointing: This feature is not available in Dataframe API. It is the act of saving an RDD to disk so that future references to this RDD point to those intermediate partitions on disk rather than recomputing the RDD from its original source.*** This is similar to caching except that it’s not stored in memory, only disk. This can be helpful when performing iterative computation.
+  - The ***pipe method*** is probably one of Spark’s more interesting methods. With pipe, you can return an RDD created by piping elements to a forked external process. The resulting RDD is computed by executing the given process once per partition. We can use a simple example and pipe each partition to the command wc. Each row will be passed in as a new line, so if we perform a line count, we will get the number of lines, one per partition: words.pipe("wc -l").collect(). In this case, we could say get five lines per partition.
+  - Then learned about: mapPartitions, foreachPartition, ***Glom (It is an interesting function that takes every partition in your dataset and converts them to arrays.*** This can be useful if you’re going to collect the data to the driver and want to have an array for each partition. However, this can cause serious stability issues because if you have large partitions or a large number of partitions, it’s simple to crash the driver).
+
+- Chapter 13: 
+  - Covered advanced topics related to RDDs.
+  - There are many methods on RDDs that require you to put your data in a key–value format. A hint that this is required is that the method will include <some-operation> ByKey. Whenever you see ***ByKey*** in a method name, it means that you can perform this only on a PairRDD type. The easiest way is to just map over your current RDD to a basic key–value structure. This means having two values in each record of your RDD: Eg: words.map(lambda word: (word.lower(), 1))
+  - Other things learned: keyBy, Mapping over Values, Extracting Keys and Values, lookup, sampleByKey. 
+  - You can perform aggregations on plain RDDs or on PairRDDs, depending on the method that you are using. 
+
+```
+Eg:
+chars = words.flatMap(lambda word: word.lower()) KVcharacters = chars.map(lambda letter: (letter, 1)) def maxFunc(left, right):
+return max(left, right) def addFunc(left, right):
+return left + right
+nums = sc.parallelize(range(1,31), 5)
+```
+
+  - Other stuff learned: countByKey, groupByKey, reduceByKey, aggregate, aggregateByKey, combineByKey, foldByKey, ***CoGroups (It give you the ability to group together up to three key–value RDDs together in Scala and two in Python.*** This joins the given values by key. This is effectively just a group-based join on an RDD. When doing this, you can also specify a number of out‐ put partitions or a custom partitioning function to control exactly how this data is distributed across the cluster.)
+
+```
+Example of using CoGroups:
+import random
+distinctChars = words.flatMap(lambda word: word.lower()).distinct() 
+charRDD = distinctChars.map(lambda c: (c, random.random())) 
+charRDD2 = distinctChars.map(lambda c: (c, random.random())) 
+charRDD.cogroup(charRDD2).take(5)
+```
+
+  - Other stuffL RDDs have much the same joins as we saw in the Structured API: Inner Join, fullOuterJoin, leftOuterJoin, rightOuterJoin, cartesian
+    - ***Also: Zip join*** (Note that it isn’t really a join at all, but it does combine two RDDs, so it’s worth labeling it as a join) allows you to “zip” together two RDDs, assuming that they have the same length. This creates a PairRDD. The two RDDs must have the same number of partitions as well as the same number of elements.
+  - With RDDs, you have control over how data is exactly physically distributed across the cluster. 
+    - ***coalesce***: Effectively collapses partitions on the same worker in order to avoid a shuffle of the data when repartitioning.
+    - ***repartition***: Operation allows you to repartition your data up or down but performs a shuffle across nodes in the process. 
+    - ***repartitionAndSortWithinPartitions***: This operation gives you the ability to repartition as well as specify the ordering of each one of those output partitions.
+  - ***Custom Partitioning: This ability is one of the primary reasons you’d want to use RDDs.*** Custom partitioners are not available in the Structured APIs because they don’t really have a logical counterpart. They’re a low-level, implementation detail that can have a significant effect on whether your jobs run successfully. 
+    - The canonical example to motivate custom partition for this operation is PageRank whereby we seek to control the layout of the data on the cluster and avoid shuffles.
+    - In short, the sole goal of custom partitioning is to even out the distribution of your data across the cluster so that you can work around problems like data skew.
+    - To perform custom partitioning you need to implement your own class that extends Partitioner.
+    - Spark has two built-in Partitioners that you can leverage off in the RDD API:
+      - a Hash Partitioner for discrete values and 
+      - a RangePartitioner for continuous values. 
+    - Spark’s Structured APIs will already use these, although we can use the same thing in RDD.
+    - Although the hash and range partitioners are useful, they’re fairly rudimentary. At times, you will need to perform some very low-level partitioning because you’re working with very large data and large key skew. 
+    - ***Key skew*** simply means that some keys have many, many more values than other keys. You want to break these keys as much as possible to improve parallelism and prevent OutOfMemoryErrors during the course of execution.
+    - One instance might be that you need to partition more keys if and only if the key matches a certain format. For instance, we might know that there are two customers in your dataset that always crash your analysis and we need to break them up further than other customer IDs. In fact, these two are so skewed that they need to be operated on alone, whereas all of the others can be lumped into large groups. This is obviously a bit of a caricatured example, but you might see similar situations in your data, as well:
+
+```
+// in Scala
+import org.apache.spark.Partitioner
+class DomainPartitioner extends Partitioner {
+def numPartitions = 3
+def getPartition(key: Any): Int = {
+val customerId = key.asInstanceOf[Double].toInt
+if (customerId == 17850.0 || customerId == 12583.0) {
+return 0 }else{
+return new java.util.Random().nextInt(2) + 1 }
+} }
+keyedRDD
+.partitionBy(new DomainPartitioner).map(_._1).glom().map(_.toSet.toSeq.length) .take(5)
+```
+  
+  - Then we have the ***issue of Kryo serialization.*** 
+    - ***Any object that you hope to parallelize (or function) must be serializable.***
+    - The default serialization can be quite slow. Spark can use the Kryo library (version 2) to serialize objects more quickly. Kryo is significantly faster and more compact than Java serialization (often as much as 10x), but ***does not support all serializable types and requires you to register the classes you’ll use in the program in advance*** for best performance.
+    - You can use Kryo by initializing your job with a SparkConf and setting the value of "spark.serializer" to "org.apache.spark.serializer.KryoSerializer".
+    - The only reason Kryo is not the default is because of the custom registration requirement, but we recommend trying it in any network-intensive application. Since Spark 2.0.0, we internally use Kryo serializer when shuffling RDDs with simple types, arrays of simple types, or string type. Spark automatically includes Kryo serializers for the many commonly used core Scala classes covered in the AllScalaRegistrar from the Twitter chill library. To register your own custom classes with Kryo, use the registerKryoClasses method.
+
+- Chapter 14:
+  - In addition to the Resilient Distributed Dataset (RDD) interface, the second kind of low-level API in Spark is two types of “distributed shared variables”: 
+    - ***Broadcast variables***: Broadcast variables are a way you can share an immutable value efficiently around the cluster without encapsulating that variable in a function closure. The normal way to use a variable in your driver node inside your tasks is to simply reference it in your function closures (e.g., in a map operation), but this can be inefficient, especially for large variables such as a lookup table or a machine learning model. The reason for this is that when you use a variable in a closure, it must be deserialized on the worker nodes many times (one per task). Moreover, if you use the same variable in multiple Spark actions and jobs, it will be re-sent to the workers with every job instead of once. 
+      - ***These variables that are cached on every machine in the cluster instead of serialized with every single task.*** The canonical use case is to pass around a large lookup table that fits in memory on the executors and use that in a function. This value is immutable and is lazily replicated across all nodes in the cluster when we trigger an action: Eg: suppBroadcast = spark.sparkContext.broadcast(supplementalData)
+
+      <>attach image for ref<>
+      
+    - ***Accumulators***: They are a way of updating a value inside of a variety of transformations and ***propagating that value to the driver node in an efficient and fault-tolerant way.*** Accumulators provide a mutable variable that a Spark cluster can safely update on a per-row basis. You can use these for debugging purposes (say to track the values of a certain variable per partition in order to intelligently use it over time) or to create low-level aggregation. Accumulator variables are “added” to only through an associative and commutative operation and can therefore be efficiently supported in parallel. You can use them to implement counters (as in MapReduce) or sums. Spark natively supports accumulators of numeric types, and programmers can add support for new types.
+      - For accumulator updates performed inside actions only, Spark guarantees that each task’s update to the accumulator will be applied only once, meaning that restarted tasks will not update the value. In transformations, you should be aware that each task’s update can be applied more than once if tasks or job stages are reexecuted. Accumulators do not change the lazy evaluation model of Spark. If an accumulator is being updated within an operation on an RDD, its value is updated only once that RDD is actually computed (e.g., when you call an action on that RDD or an RDD that depends on it). Consequently, accumulator updates are not guaranteed to be executed when made within a lazy transformation like map(). Eg: accChina = spark.sparkContext.accumulator(0)
+      - Accumulators can be both named and unnamed. Named accumulators will display their running results in the Spark UI, whereas unnamed ones will not.
+      - Although Spark does provide some default accumulator types, sometimes you might want to build your own custom accumulator. In order to build a custom accumulator you need to subclass the AccumulatorV2 class.
+
+      <>attach image for ref<>
+
+- Chapter 15: 
+  - How spark runs on a cluster: 
+
+
+
 
 
 
