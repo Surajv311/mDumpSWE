@@ -1132,7 +1132,7 @@ For the most part this API expo‐ ses the same information presented in the web
 Normally, the Spark UI is only available while a SparkContext is running, so how can you get to it after your application crashes or ends? To do this, Spark includes a tool called the Spark History Server that allows you to reconstruct the Spark UI and REST API, provided that the application was configured to save an event log. 
 
 
-Then disucss on debuggin techiniques, errors one may get (OOM, )
+Then disucss on debuggin techiniques, errors one may get (OOM, unexpected null, serialization error)
 
  
 
