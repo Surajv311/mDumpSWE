@@ -150,7 +150,8 @@ This addition operation happens because Spark will convert an expression written
   - Columns represent a simple type like an integer or string, a complex type like an array or map, or a null value. A row is nothing more than a record of data.
   - Spark’s language bindings: (for Python type reference, similarly other langauge types)
 
-<>Upload img on Python type inference<>
+![Python inference img 1](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/pythontypeinference1.png)
+![Python inference img 2](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/pythontypeinference2.png)
 
   - ***Overview of Structured API Execution***: 
     - Step 1: Write DataFrame/Dataset/SQL Code and execute it: This code is then submitted to Spark either through the console or via a submitted job. This code then passes through the Catalyst Optimizer, which decides how the code should be executed and lays out a plan for doing so before, finally, the code is run and the result is returned to the user.
@@ -530,7 +531,7 @@ df.select(map(col("Description"), col("InvoiceNo")).alias("complex_map")).select
 You can also explode map types, which will turn them into columns. 
 ```
 
-<>Upload img on explode()<>
+![explode function img](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/explodefun3.png)
 
   - Spark has some unique support for working with JSON data. You can operate directly on strings of JSON in Spark and parse from JSON or extract JSON objects.
 
@@ -916,14 +917,14 @@ keyedRDD
     - ***Broadcast variables***: Broadcast variables are a way you can share an immutable value efficiently around the cluster without encapsulating that variable in a function closure. The normal way to use a variable in your driver node inside your tasks is to simply reference it in your function closures (e.g., in a map operation), but this can be inefficient, especially for large variables such as a lookup table or a machine learning model. The reason for this is that when you use a variable in a closure, it must be deserialized on the worker nodes many times (one per task). Moreover, if you use the same variable in multiple Spark actions and jobs, it will be re-sent to the workers with every job instead of once. 
       - ***These variables that are cached on every machine in the cluster instead of serialized with every single task.*** The canonical use case is to pass around a large lookup table that fits in memory on the executors and use that in a function. This value is immutable and is lazily replicated across all nodes in the cluster when we trigger an action: Eg: suppBroadcast = spark.sparkContext.broadcast(supplementalData)
 
-      <>attach image for ref<>
+![broadcast vars img](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/broadcast_variables4.png)
       
     - ***Accumulators***: They are a way of updating a value inside of a variety of transformations and ***propagating that value to the driver node in an efficient and fault-tolerant way.*** Accumulators provide a mutable variable that a Spark cluster can safely update on a per-row basis. You can use these for debugging purposes (say to track the values of a certain variable per partition in order to intelligently use it over time) or to create low-level aggregation. Accumulator variables are “added” to only through an associative and commutative operation and can therefore be efficiently supported in parallel. You can use them to implement counters (as in MapReduce) or sums. Spark natively supports accumulators of numeric types, and programmers can add support for new types.
       - For accumulator updates performed inside actions only, Spark guarantees that each task’s update to the accumulator will be applied only once, meaning that restarted tasks will not update the value. In transformations, you should be aware that each task’s update can be applied more than once if tasks or job stages are reexecuted. Accumulators do not change the lazy evaluation model of Spark. If an accumulator is being updated within an operation on an RDD, its value is updated only once that RDD is actually computed (e.g., when you call an action on that RDD or an RDD that depends on it). Consequently, accumulator updates are not guaranteed to be executed when made within a lazy transformation like map(). Eg: accChina = spark.sparkContext.accumulator(0)
       - Accumulators can be both named and unnamed. Named accumulators will display their running results in the Spark UI, whereas unnamed ones will not.
       - Although Spark does provide some default accumulator types, sometimes you might want to build your own custom accumulator. In order to build a custom accumulator you need to subclass the AccumulatorV2 class.
 
-      <>attach image for ref<>
+![accumulators imgs](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/accumulatorvariable5.png)
 
 ---------------------------------
 
@@ -1016,7 +1017,7 @@ keyedRDD
     - Java system properties
     - Hardcoded configuration files
 
-<> put image of application properties <>
+![application props img](https://github.com/Surajv311/mDumpSWE/blob/main/Books_ResearchPapers_read/imgs_for_ref/application_properties6.png)
 
   - Other stuff: Runtime Properties, Execution Properties, Configuring Memory Management, Configuring Shuffle Behavior, Environmental Variables...
   - ***By default, Spark’s scheduler runs jobs in FIFO fashion.*** If the jobs at the head of the queue don’t need to use the entire cluster, later jobs can begin to run right away, but if the jobs at the head of the queue are large, later jobs might be delayed significantly.
