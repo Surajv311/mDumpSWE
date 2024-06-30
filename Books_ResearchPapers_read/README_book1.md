@@ -1134,6 +1134,261 @@ Normally, the Spark UI is only available while a SparkContext is running, so how
 
 Then disucss on debuggin techiniques, errors one may get (OOM, unexpected null, serialization error)
 
+
+
+
+
+c19: PERFORMANCE TUNING
+
+There are a variety of different parts of Spark jobs that you might want to optimize, and it’s valuable to be specific. Following are some of the areas:
+• Code-level design choices (e.g., RDDs versus DataFrames)
+• Data at rest
+• Joins
+• Aggregations
+• Data in flight
+• Individual application properties
+• Inside of the Java Virtual Machine (JVM) of an executor
+• Worker nodes
+• Cluster and deployment properties
+(And many more)
+
+
+Scala versus Java versus Python versus R
+This question is nearly impossible to answer in the general sense because a lot will depend on your use case. 
+ Spark’s Structured APIs are consistent across languages in terms of speed and stability. 
+
+ DataFrames versus SQL versus Datasets versus RDDs
+This question also comes up frequently. The answer is simple. Across all languages, DataFrames, Datasets, and SQL are equivalent in speed. This means that if you’re using DataFrames in any of these languages, performance is equal. However, if you’re going to be defining UDFs, you’ll take a performance hit writing those in Python or R, and to some extent a lesser performance hit in Java and Scala. If you want to opti‐ mize for pure performance, it would behoove you to try and get back to DataFrames and SQL as quickly as possible. Although all DataFrame, SQL, and Dataset code com‐ piles down to RDDs, Spark’s optimization engine will write “better” RDD code than you can manually and certainly do it with orders of magnitude less effort. Addition‐ ally, you will lose out on new optimizations that are added to Spark’s SQL engine every release.
+Lastly, if you want to use RDDs, we definitely recommend using Scala or Java. If that’s not possible, we recommend that you restrict the “surface area” of RDDs in your application to the bare minimum. That’s because when Python runs RDD code, it’s serializes a lot of data to and from the Python process. This is very expensive to run over very big data and can also decrease stability.
+
+
+When you’re working with custom data types, you’re going to want to serialize them using Kryo because it’s both more compact and much more efficient than Java serialization.
+
+
+Cluster Configurations
+This area has huge potential benefits but is probably one of the more difficult to pre‐ scribe because of the variation across hardware and use cases. 
+
+Cluster/application sizing and sharing, Dynamic allocation(Spark provides a mechanism to dynamically adjust the resources your application occupies based on the workload, spark.dynamicAllocation.enabled to true)
+
+Scheduling: Scheduling optimizations do involve some research and experimentation, and unfortunately there are not super- quick fixes beyond setting spark.scheduler.mode to FAIR to allow better sharing of resources across multiple users, or setting --max-executor-cores, which specifies the maximum number of executor cores that your application will need.
+
+Data at Rest: More often that not, when you’re saving data it will be read many times as other folks in your organization access the same datasets in order to run different analyses. Mak‐ ing sure that you’re storing your data for effective reads later on is absolutely essential to successful big data projects.
+This involves choosing your storage system, choosing your data format, and taking advantage of features such as data partitioning in some storage formats.
+
+File-based long-term data storage
+Generally you should always favor structured, binary types to store your data, espe‐ cially when you’ll be accessing it frequently. Although files like “CSV” seem well- structured, they’re very slow to parse, and often also full of edge cases and pain points. 
+The most efficient file format you can generally choose is Apache Parquet. Parquet stores data in binary files with column- oriented storage, and also tracks some statistics about each file that make it possible to quickly skip data not needed for a query. It is well integrated with Spark through the built-in Parquet data source.
+
+
+Splittable file types and compression
+Whatever file format you choose, you should make sure it is “splittable”, which means that different tasks can read different parts of the file in parallel. 
+When we read in the file, all cores were able to do part of the work. That’s because the file was splittable. If we didn’t use a splittable file type— say something like a malformed JSON file—we’re going to need to read in the entire file on a single machine, greatly reducing parallelism.
+The main place splittability comes in is compression formats. A ZIP file or TAR archive cannot be split, which means that even if we have 10 files in a ZIP file and 10
+cores, only one core can read in that data because we cannot parallelize access to the ZIP file. This is a poor use of resources. In contrast, files compressed using gzip, bzip2, or lz4 are generally splittable if they were written by a parallel processing framework like Hadoop or Spark. 
+
+Table partitioning
+
+Table partitioning refers to storing files in separate directories based on a key, such as the date field in the data. Storage managers like Apache Hive support this concept, as do many of Spark’s built-in data sources. Partitioning your data correctly allows Spark to skip many irrelevant files when it only requires data with a specific range of keys. For instance, if users frequently filter by “date” or “customerId” in their queries, partition your data by those columns. This will greatly reduce the amount of data that end users must read by most queries, and therefore dramatically increase speed.
+The one downside of partitioning, however, is that if you partition at too fine a granu‐ larity, it can result in many small files, and a great deal of overhead trying to list all the files in the storage system.
+
+Bucketing
+bucketing your data allows Spark to “pre-partition” data according to how joins or aggregations are likely to be performed by readers. This can improve performance and stability because data can be consistently distributed across partitions as opposed to skewed into just one or two. For instance, if joins are frequently performed on a column immediately after a read, you can use bucketing to ensure that the data is well parti‐ tioned according to those values. This can help prevent a shuffle before a join and therefore help speed up data access. Bucketing generally works hand-in-hand with partitioning as a second way of physically splitting up data.
+
+
+The number of files
+If there are lots of small files, you’re going to pay a price listing and fetching each of those individual files. For instance, if you’re reading a data from Hadoop Distributed File System (HDFS), this data is managed in blocks that are up to 128 MB in size (by default). This means if you have 30 files, of 5 MB each, you’re going to have to potentially request 30 blocks, even though the same data could have fit into 2 blocks (150 MB total).
+Having lots of small files is going to make the scheduler work much harder to locate the data and launch all of the read tasks. This can increase the network and scheduling overhead of the job. Having fewer large files eases the pain off the scheduler but it will also make tasks run longer. In this case, though, you can always launch more tasks than there are input files if you want more parallelism—Spark will split each file across multiple tasks assuming you are using a splittable format. In general, we recommend sizing your files so that they each con‐ tain at least a few tens of megatbytes of data.
+
+To control how many records go into each file, you can specify the maxRecordsPerFile option to the write operation.
+
+
+Data locality 
+Another aspect that can be important in shared cluster environments is data locality. Data locality basically specifies a preference for certain nodes that hold certain data, rather than having to exchange these blocks of data over the network. If you run your storage system on the same nodes as Spark, and the system supports locality hints, Spark will try to schedule tasks close to each input block of data. For example HDFS storage provides this option. There are several configurations that affect locality, but it will generally be used by default if Spark detects that it is using a local storage sys‐ tem. 
+
+Statistics collection
+Spark includes a cost-based query optimizer that plans queries based on the proper‐ ties of the input data when using the structured APIs. However, to allow the cost- based optimizer to make these sorts of decisions, you need to collect (and maintain) statistics about your tables that it can use. There are two kinds of statistics: table-level and column-level statistics. 
+Statistics collection is available only on named tables, not on arbitrary DataFrames or RDDs.
+To collect table-level statistics, you can run the following command:
+    ANALYZE TABLE table_name COMPUTE STATISTICS
+To collect column-level statistics, you can name the specific columns:
+    ANALYZE TABLE table_name COMPUTE STATISTICS FOR
+    COLUMNS column_name1, column_name2, ...
+Column-level statistics are slower to collect, but provide more information for the cost-based optimizer to use about those data columns. Both types of statistics can help with joins, aggregations, filters, and a number of other potential things
+
+Shuffle Configurations
+Configuring Spark’s external shuffle service
+can often increase performance because it allows nodes to read shuffle data from remote machines even when the executors on those machines are busy (e.g., with garbage collection). 
+
+In addition, for RDD-based jobs, the serialization format has a large impact on shuf‐ fle performance—always prefer Kryo over Java serialization.
+
+
+Memory Pressure and Garbage Collection
+During the course of running Spark jobs, the executor or driver machines may strug‐ gle to complete their tasks because of a lack of sufficient memory or “memory pres‐ sure.” This may occur when an application takes up too much memory during execution or when garbage collection runs too frequently or is slow to run as large numbers of objects are created in the JVM and subsequently garbage collected as they are no longer used. One strategy for easing this issue is to ensure that you’re using the Structured APIs as much as possible. These will not only increase the efficiency with which your Spark jobs will execute, but it will also greatly reduce memory pressure because JVM objects are never realized and Spark SQL simply performs the computa‐ tion on its internal format.
+
+To further tune garbage collection, you first need to understand some basic informa‐ tion about memory management in the JVM:
+• Java heap space is divided into two regions: Young and Old. The Young genera‐ tion is meant to hold short-lived objects whereas the Old generation is intended for objects with longer lifetimes.
+• The Young generation is further divided into three regions: Eden, Survivor1, and Survivor2.
+Here’s a simplified description of the garbage collection procedure:
+1. When Eden is full, a minor garbage collection is run on Eden and objects that are alive from Eden and Survivor1 are copied to Survivor2.
+2. The Survivor regions are swapped.
+3. If an object is old enough or if Survivor2 is full, that object is moved to Old.
+4. Finally, when Old is close to full, a full garbage collection is invoked. This involves tracing through all the objects on the heap, deleting the unreferenced ones, and moving the others to fill up unused space, so it is generally the slowest garbage collection operation.
+The goal of garbage collection tuning in Spark is to ensure that only long-lived cached datasets are stored in the Old generation and that the Young generation is suf‐ ficiently sized to store all short-lived objects. This will help avoid full garbage collec‐ tions to collect temporary objects created during task execution. 
+
+You can specify garbage col‐ lection tuning flags for executors by setting spark.executor.extraJavaOptions in a job’s configuration. And more details...
+
+
+Direct Performance Enhancements
+Parallelism
+The first thing you should do whenever trying to speed up a specific stage is to increase the degree of parallelism. In general, we recommend having at least two or three tasks per CPU core in your cluster if the stage processes a large amount of data. You can set this via the spark.default.parallelism property as well as tuning the spark.sql.shuffle.partitions according to the number of cores in your cluster.
+
+Improved Filtering
+Another frequent source of performance enhancements is moving filters to the earli‐ est part of your Spark job that you can. 
+
+
+Repartitioning and Coalescing
+Repartition calls can incur a shuffle. However, doing some can optimize the overall execution of a job by balancing data across the cluster, so they can be worth it. In gen‐ eral, you should try to shuffle the least amount of data possible. For this reason, if you’re reducing the number of overall partitions in a DataFrame or RDD, first try coalesce method, which will not perform a shuffle but rather merge partitions on the same node into one partition.
+
+Custom partitioning
+
+
+User-Defined Functions (UDFs)
+In general, avoiding UDFs is a good optimization opportunity. UDFs are expensive because they force representing data as objects in the JVM and sometimes do this multiple times per record in a query. You should try to use the Structured APIs as much as possible to perform your manipulations simply because they are going to perform the transformations in a much more efficient manner than you can do in a high-level language. 
+
+Temporary Data Storage (Caching)
+In applications that reuse the same datasets over and over, one of the most useful optimizations is caching. Caching will place a DataFrame, table, or RDD into tempo‐ rary storage (either memory or disk) across the executors in your cluster, and make subsequent reads faster. Although caching might sound like something we should do all the time, it’s not always a good thing to do. That’s because caching data incurs a serialization, deserialization, and storage cost. For example, if you are only going to process a dataset once (in a later transformation), caching it will only slow you down.
+Caching is a lazy operation, meaning that things will be cached only as they are accessed. The RDD API and the Structured API differ in how they actually perform caching, 
+When we cache an RDD, we cache the actual, physical data (i.e., the bits). The bits. When this data is accessed again, Spark returns the proper data. This is done through the RDD reference. However, in the Structured API, caching is done based on the physical plan. This means that we effectively store the physical plan as our key (as opposed to the object reference) and perform a lookup prior to the execution of a Structured job.
+
+
+
+Joins
+Joins are a common area for optimization. 
+
+equi-joins are the easi‐ est for Spark to optimize at this point and therefore should be preferred wherever possible. Beyond that, simple things like trying to use the filtering ability of inner joins by changing join ordering can yield large speedups. Additionally, using broad‐ cast join hints can help Spark make intelligent planning decisions when it comes to creating query plans
+voiding Cartesian joins or even full outer joins is often low-hanging fruit for stability and optimizations because these can often be optimized into different filtering style joins when you look at the entire
+data flow instead of just that one particular job area. 
+
+
+Aggregations
+For the most part, there are not too many ways that you can optimize specific aggre‐ gations beyond filtering data before the aggregation having a sufficiently high number of partitions. However, if you’re using RDDs, controlling exactly how these aggrega‐ tions are performed (e.g., using reduceByKey when possible over groupByKey) can be very helpful and improve the speed and stability of your code.
+
+
+Broadcast Variables
+We touched on broadcast joins and variables in previous chapters, and these are a good option for optimization. The basic premise is that if some large piece of data will be used across multiple UDF calls in your program, you can broadcast it to save just a single read-only copy on each node and avoid re-sending this data with each job.
+
+
+
+chapter 20: Stream Processing Fundamentals
+Apache Spark has a long history of high-level support for streaming. In 2012, the project incorporated Spark Streaming and its DStreams API, one of the first APIs to enable stream processing using high-level functional operators like map and reduce. Hundreds of organizations now use DStreams in production for large real- time applications, often processing terabytes of data per hour. Much like the Resilient Distributed Dataset (RDD) API, however, the DStreams API is based on relatively low-level operations on Java/Python objects that limit opportunities for higher-level optimization. Thus, in 2016, the Spark project added Structured Streaming, a new streaming API built directly on DataFrames that supports both rich optimizations and significantly simpler integration with other DataFrame and Dataset code. The Structured Streaming API was marked as stable in Apache Spark 2.2.
+
+
+Stream processing is the act of continuously incorporating new data to compute a result. In stream processing, the input data is unbounded and has no predetermined beginning or end. It simply forms a series of events that arrive at the stream process‐ ing system (e.g., credit card transactions, clicks on a website, or sensor readings from Internet of Things [IoT] devices). User applications can then compute various queries over this stream of events (e.g., tracking a running count of each type of event or aggregating them into hourly windows). The application will output multiple ver‐ sions of the result as it runs, or perhaps keep it up to date in an external “sink” system such as a key-value store.
+
+Although streaming and batch processing sound different, in practice, they often need to work together. For example, streaming applications often need to join input data against a dataset written periodically by a batch job, and the output of streaming jobs is often files or tables that are queried in batch jobs.
+
+six common use cases with varying requirements from the underlying stream processing system:
+
+Notifications and alerting
+Real-time reporting
+Incremental ETL
+Update data to serve in real time
+Real-time decision making
+Online machine learning
+
+
+stream processing is essential in two cases. First, stream processing enables lower latency: when your application needs to respond quickly (on a timescale of minutes, seconds, or milliseconds), you will need a streaming system that can keep state in memory to get acceptable performance. Many of the decision making and alerting use cases we described fall into this camp. Sec‐ ond, stream processing can also be more efficient in updating a result than repeated batch jobs, because it automatically incrementalizes the computation. For example, if we want to compute web traffic statistics over the past 24 hours, a naively imple‐ mented batch job might scan all the data each time it runs, always processing 24 hours’ worth of data. In contrast, a streaming system can remember state from the
+previous computation and only count the new data. 
+
+To summarize, the challenges
+Processing out-of-order data based on application timestamps (also called event time)
+• Maintaining large amounts of state
+• Supporting high-data throughput
+• Processing each event exactly once despite machine failures
+• Handling load imbalance and stragglers
+• Responding to events at low latency
+• Joining with external data in other storage systems
+• Determining how to update output sinks as new events arrive
+• Writing data transactionally to output systems
+• Updating your application’s business logic at runtime
+
+Stream Processing Design Points
+Record-at-a-Time Versus Declarative APIs
+The simplest way to design a streaming API would be to just pass each event to the application and let it react using custom code. Streaming that provide this kind of record-at-a-time API just give the user a collection of “plumbing” to connect together into an application. 
+with a record-at-a-time API, you are responsible for tracking state over longer time periods, dropping it after some time to clear up space, and responding differently to duplicate events after a failure.
+Programming these systems correctly can be quite challenging. At its core, low-level APIs require deep expertise to be develop and maintain.As a result, many newer streaming systems provide declarative APIs, where your application specifies what to compute but not how to compute it in response to each new event and how to recover from failure. Spark’s original DStreams API, for exam‐ ple, offered functional API based on operations like map, reduce and filter on streams. Internally, the DStream API automatically tracked how much data each operator had processed, saved any relevant state reliably, and recovered the computation from fail‐ ure when needed. Systems such as Google Dataflow and Apache Kafka Streams pro‐ vide similar, functional APIs. Spark’s Structured Streaming actually takes this concept even further, switching from functional operations to relational (SQL-like) ones that enable even richer automatic optimization of the execution without programming effort.
+
+
+Event Time Versus Processing Time
+For the systems with declarative APIs, a second concern is whether the system natively supports event time. Event time is the idea of processing data based on time‐ stamps inserted into each record at the source, as opposed to the time when the record is received at the streaming application (which is called processing time). In particular, when using event time, records may arrive to the system out of order (e.g., if they traveled back on different network paths), and different sources may also be out of sync with each other (some records may arrive later than other records for the same event time). If your application collects data from remote sources that may be delayed, such as mobile phones or IoT devices, event-time processing is crucial: without it, you will miss important patterns when some data is late. In contrast, if your application only processes local events (e.g., ones generated in the same datacen‐ ter), you may not need sophisticated event-time processing.
+When using event-time, several issues become common concerns across applications, including tracking state in a manner that allows the system to incorporate late events, and determining when it is safe to output a result for a given time window in event time (i.e., when the system is likely to have received all the input up to that point). Because of this, many declarative systems, including Structured Streaming, have “native” support for event time integrated into all their APIs, so that these concerns can be handled automatically across your whole program.
+
+
+Continuous Versus Micro-Batch Execution
+In continuous processing-based systems, each node in the sys‐ tem is continually listening to messages from other nodes and outputting new updates to its child nodes.
+Continuous processing has the advantage of offering the lowest possible latency when the total input rate is relatively low, because each node responds immediately to a new message. However, continuous processing systems generally have lower maximum throughput, because they incur a significant amount of overhead per-record (e.g., call‐ ing the operating system to send a packet to a downstream node). In addition, conti‐ nous systems generally have a fixed topology of operators that cannot be moved at runtime without stopping the whole system, which can introduce load balancing issues.
+In contrast, micro-batch systems wait to accumulate small batches of input data (say, 500 ms’ worth), then process each batch in parallel using a distributed collection of tasks, similar to the execution of a batch job in Spark. Micro-batch systems can often achieve high throughput per node because they leverage the same optimizations as batch systems (e.g., vectorized processing), and do not incur any extra per-record overhead.
+
+Thus, they need fewer nodes to process the same rate of data. Micro-batch systems can also use dynamic load balancing techniques to handle changing workloads (e.g., increasing or decreasing the number of tasks). The downside, however, is a higher base latency due to waiting to accumulate a micro-batch. 
+
+chapter 21: spartk stream basics
+
+The main idea behind Structured Streaming is to treat a stream of data as a table to which data is continuously appended. The job then periodically checks for new input data, process it, updates some internal state located in a state store if needed, and updates its result. A cornerstone of the API is that you should not have to change your query’s code when doing batch or stream processing—you should have to spec‐ ify only whether to run that query in a batch or streaming fashion.
+Internally, Struc‐
+tured Streaming will automatically figure out how to “incrementalize” your query, i.e., update its result efficiently whenever new data arrives, and will run it in a fault- tolerant fashion.
+
+Core Concepts
+Structured Streaming maintains the same concept of transformations and actions that we have seen throughout this book.
+
+Structured Streaming supports several input sources for reading in a streaming fash‐ ion. As of Spark 2.2, the supported input sources are as follows:
+• Apache Kafka 0.10
+• Files on a distributed file system like HDFS or S3 (Spark will continuously read new files in a directory)
+• A socket source for testing
+
+Just as sources allow you to get data into Structured Streaming, sinks specify the desti‐ nation for the result set of that stream. Sinks and the execution engine are also responsible for reliably tracking the exact progress of data processing. Here are the supported output sinks as of Spark 2.2:
+• Apache Kafka 0.10
+• Almost any file format
+• A foreach sink for running arbitary computation on the output records
+• A console sink for testing
+• A memory sink for debugging
+
+Defining a sink for our Structured Streaming job is only half of the story. We also need to define how we want Spark to write data to that sink. For instance, do we only want to append new information? Do we want to update rows as we receive more information about them over time (e.g., updating the click count for a given web page)? Do we want to completely overwrite the result set every single time (i.e. always write a file with the complete click counts for all pages)? To do this, we define an output mode, similar to how we define output modes in the static Structured APIs.
+The supported output modes are as follows:
+• Append (only add new records to the output sink)
+• Update (update changed records in place)
+• Complete (rewrite the full output)
+One important detail is that certain queries, and certain sinks, only support certain output modes.
+
+
+Whereas output modes define how data is output, triggers define when data is output —that is, when Structured Streaming should check for new input data and update its result. By default, Structured Streaming will look for new input records as soon as it has finished processing the last group of input data, giving the lowest latency possible for new results. However, this behavior can lead to writing many small output files when the sink is a set of files. Thus, Spark also supports triggers based on processing time (only look for new data at a fixed interval). In the future, other types of triggers may also be supported.
+
+
+Structured Streaming also has support for event-time processing (i.e., processing data based on timestamps included in the record that may arrive out of order).
+
+
+Event-time means time fields that are embedded in your data. This means that rather than processing data according to the time it reaches your system, you process it according to the time that it was generated, even if records arrive out of order at the streaming application due to slow uploads or network delays. Expressing event-time processing is simple in Structured Streaming. Because the system views the input data as a table, the event time is just another field in that table, and your application can do grouping, aggregation, and windowing using standard SQL operators. However, under the hood, Structured Streaming can take some special actions when it knows that one of your columns is an event-time field, including optimizing query execu‐ tion or determining when it is safe to forget state about a time window. Many of these actions can be controlled using watermarks. Watermarks are a feature of streaming systems that allow you to specify how late they expect to see data in event time. For example, in an application that processes logs from mobile devices, one might expect logs to be up to 30 minutes late due to upload delays. Systems that support event time, including Structured Streaming, usually allow setting watermarks to limit how long they need to remember old data. Water‐ marks can also be used to control when to output a result for a particular event time window (e.g., waiting until the watermark for it has passed).
+
+
+
+then some live examples of code....
+
+
+
+chapter 22: 
+
+
+One of the more difficult operations in record-at-a-time systems is removing dupli‐ cates from the stream. Almost by definition, you must operate on a batch of records at a time in order to find duplicates—there’s a high coordination overhead in the pro‐ cessing system. Deduplication is an important tool in many applications, especially when messages might be delivered multiple times by upstream systems. A perfect example of this are Internet of Things (IoT) applications that have upstream produc‐ ers generating messages in nonstable network environments, and the same message might end up being sent multiple times. Your downstream applications and aggrega‐ tions should be able to assume that there is only one of each message.
+Essentially, Structured Streaming makes it easy to take message systems that provide at-least-once semantics, and convert them into exactly-once by dropping duplicate messages as they come in, based on arbitrary keys. To de-duplicate data, Spark will maintain a number of user specified keys and ensure that duplicates are ignored.
+
+Just like other stateful processing applications, you need to specify a watermark to ensure that the maintained state does not grow infinitely over the course of your stream.
+
+event time and statefule processing
+
+
+
+later ML part...
+
+
  
 
 
