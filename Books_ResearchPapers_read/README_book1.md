@@ -1016,7 +1016,7 @@ keyedRDD
     - Java system properties
     - Hardcoded configuration files
 
-<put image of application properties> 
+<> put image of application properties <>
 
   - Other stuff: Runtime Properties, Execution Properties, Configuring Memory Management, Configuring Shuffle Behavior, Environmental Variables...
   - ***By default, Spark’s scheduler runs jobs in FIFO fashion.*** If the jobs at the head of the queue don’t need to use the entire cluster, later jobs can begin to run right away, but if the jobs at the head of the queue are large, later jobs might be delayed significantly.
