@@ -42,6 +42,8 @@ Table of contents (rough overview):
     - [Control Plane vs Data Plane](https://github.com/Surajv311/mDumpSWE/tree/main/ControlPlane-DataPlane)
     - [Opensource\_Github\_repos\_knowledge\_extraction](https://github.com/Surajv311/mDumpSWE/tree/main/Opensource-Repos-KT)
     - [Info\_Miscellaneous](https://github.com/Surajv311/mDumpSWE/tree/main/Info-Miscellaneous)
+    - [Books_ResearchPapers_read](https://github.com/Surajv311/mDumpSWE/tree/main/Books_ResearchPapers_read)
+    - [videosInsightful](https://github.com/Surajv311/mDumpSWE/tree/main/videosInsightful)
 
  
 ------------------------
