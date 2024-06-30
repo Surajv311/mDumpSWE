@@ -2,4 +2,4 @@
 
 #### Interesting points/notes: 
 
-- 
+- Note: 
