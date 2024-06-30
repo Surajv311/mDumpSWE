@@ -1,5 +1,6 @@
 ## I Heart Logs (Jay Kreps)
 
-#### Interesting points/notes: 
+#### Interesting points/notes:
 
-- Note: 
+- 
+- 
