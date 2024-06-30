@@ -2,4 +2,5 @@
 
 #### Interesting points/notes: 
 
+- (Research paper link: https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)
 - 
