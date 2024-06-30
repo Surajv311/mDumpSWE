@@ -2,5 +2,5 @@
 
 #### Interesting points/notes:
 
-- 
+- read until pg 35... 
 - 
