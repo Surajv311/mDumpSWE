@@ -32,7 +32,7 @@ Table of contents (rough overview):
     - [Webhooks\_APIs\_Websockets](https://github.com/Surajv311/mDumpSWE/tree/main/Webhooks-APIs-Sockets)
     - [HTTP](https://github.com/Surajv311/mDumpSWE/tree/main/HTTP)
     - [Docker](https://github.com/Surajv311/mDumpSWE/tree/main/Docker)
-    - [TCP vs UDP](https://github.com/Surajv311/mDumpSWE/tree/main/TCP-UDP)
+    - [TCP-UDP-HTTP](https://github.com/Surajv311/mDumpSWE/tree/main/TCP-UDP-HTTP)
     - [gRPC\_REST\_GraphQL](https://github.com/Surajv311/mDumpSWE/tree/main/gRPC-REST-GraphQL)
     - [JSON vs Protobuf](https://github.com/Surajv311/mDumpSWE/tree/main/JSON-Protobuf)
     - [Git](https://github.com/Surajv311/mDumpSWE/tree/main/Git)
