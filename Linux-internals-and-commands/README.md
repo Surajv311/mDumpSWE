@@ -28,6 +28,8 @@
 - `screen -ls`: Lists currently running screen sessions. screen command in Linux provides the ability to launch and use multiple shell sessions from a single ssh session.
 - `screen -S vikas`: Starts a new screen session with the name vikas.
 - `find ~ -name aws_credentials`: Searches for files named aws_credentials in the user's home directory (~).
+  - `find / -name "requirements.txt" 2>/dev/null`: Searches for file from root directory. The /dev/null command suppresses error messages about directories you don't have permission to read.
+  - `find . -name "requirements.txt"`: Command will search for the file starting from the current directory (.) and look through all subdirectories.
 - `grep -iR AWS_KEY *`: Searches recursively (-R) for occurrences of AWS_KEY in files in the current directory and its subdirectories (*).
 - `exit`: Exits the current shell or session.
 - `grep -iR access <path>`: Searches recursively for occurrences of access in files within the specified path.
