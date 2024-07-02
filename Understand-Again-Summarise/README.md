@@ -7,6 +7,7 @@ https://www.geeksforgeeks.org/scp-command-in-linux-with-examples/
 
 
 Spark domain: 
+https://stackoverflow.com/questions/77266953/number-of-files-generated-by-spark
 https://www.reddit.com/r/dataengineering/comments/te0m0x/pandas_on_spark_vs_pyspark_dataframe/
 https://medium.com/analytics-vidhya/horizontal-parallelism-with-pyspark-d05390aa1df5: 
 As soon as we call with the function multiple tasks will be submitted in parallel to spark executor from pyspark-driver at the same time and spark executor will execute the tasks in parallel provided we have enough cores
