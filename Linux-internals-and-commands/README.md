@@ -52,6 +52,7 @@
 - `history`: Provides a chronological list of previously executed commands
 - `bash`: bash is a command interpreter, a shell, a program with an interface that interprets the commands that you put into it.
 - `pstree`: To know how many sub-shells deep you are. 
+- `netstat`: The network statistics command is a networking tool used for troubleshooting and configuration, that can also serve as a monitoring tool for connections over the network.
 
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
