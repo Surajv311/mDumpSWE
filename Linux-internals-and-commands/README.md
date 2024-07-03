@@ -53,7 +53,8 @@
 - `bash`: bash is a command interpreter, a shell, a program with an interface that interprets the commands that you put into it.
 - `pstree`: To know how many sub-shells deep you are. 
 - `netstat`: The network statistics command is a networking tool used for troubleshooting and configuration, that can also serve as a monitoring tool for connections over the network.
-
+- `ps aux`: Similar to `ps -ef`. Displays information about running processes. 
+- `last`: This command in Linux is used to display the history of last logged in users.
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
 
@@ -63,6 +64,24 @@ Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/784
   - The power-on self-test (POST) checks the hardware before fully turning on the system.
   - The boot loader locates the operating system kernel, loads it into memory, and starts running it.
   - Systemd is the parent of all other processes on Linux and handles various tasks to get the system booted and ready to use.
+
+- [How to get process details from its PID](https://stackoverflow.com/questions/29105448/get-process-info-from-proc)
+  - To get this info: `cd /proc` in the linux machine then: 
+  - ```
+    /proc/cpuinfo: Information about the processor, such as its type, make, model, and performance.
+    /proc/[pid]/cmdline: This holds the complete command line for the process, unless the whole process has been swapped out, or unless the process is a zombie. In either of these later cases, there is nothing in this file: i.e. a read on this file will return 0 characters. The command line arguments appear in this file as a set of null-separated strings, with a further null byte after the last string.
+    /proc/[pid]/cwd: This is a link to the current working directory of the process.
+    /proc/[pid]/environ: This file contains the environment for the process. The entries are separated by null characters, and there may be a null character at the end.
+    /proc/[pid]/exe: The exe file is a symbolic link containing the actual path name of the executed command. The exe symbolic link can be dereferenced normally – attempting to open exe will open the executable. You can even type /proc/[pid]/exe to run another copy of the same process as [pid].
+    /proc/[pid]/fd: This is a subdirectory containing one entry for each file which the process has opened, named by its file descriptor, and which is a symbolic link to the actual file (as the exe entry does). Thus, 0 is standard input, 1 standard output, 2 standard error, etc.
+    /proc/[pid]/maps: A file containing the currently mapped memory regions and their access permissions.
+    /proc/[pid]/mem: The mem file provides a means to access the process memory pages, using open, fseek and read commands.
+    /proc/[pid]/root: This is a link to the root directory which is seen by the process. This root directory is usually “/”, but it can be changed by the chroot command.
+    /proc/[pid]/stat: This file provides status information about the process. This is used by the Process Show utility. It is defined in fs/proc/array.c source file and may differ from one distribution to another.
+    /proc/devices: List of device drivers configured into the currently running kernel.
+    /proc/dma: Shows which DMA channels are being used at the moment.
+    etc etc... (check hyperlink)
+    ``` 
 
 ----------------------------------------------------------------------
 
