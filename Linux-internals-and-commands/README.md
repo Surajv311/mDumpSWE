@@ -62,7 +62,8 @@
 
 who
 last
-cmp
+cmp <> <> 
+cp <> <>
 sh test_file.sh 
 
 chmod a+x test_file.sh - a+x means
