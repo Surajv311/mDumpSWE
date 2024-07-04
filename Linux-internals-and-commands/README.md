@@ -7,12 +7,13 @@
 - `grep -l "unix" *` (or) `grep -l "unix" f1.txt f2.txt f3.xt f4.txt`: Display the file names that matches the pattern
 - `grep -w "unix" geekfile.txt`: Checking for the whole words in a file
 - `cat <file_name>`: View file content
-- `:q!`: Exit vim terminal 
-- `:wq!`: Save and exit vim terminal 
-- `:%d`: Clear all contents of a file 
-- `:set nu`: Will put index numbers in file opened via vim
-- `vi ~/.bash_profile`: Opens the .bash_profile file in the vi text editor. This file typically contains settings and configurations for the Bash shell.
-- `vi .bash_history`: Opens the .bash_history file in the vi text editor. This file contains a history of commands that have been executed in the current user's Bash shell.
+- Vim terminal: 
+  - `:q!`: Exit vim terminal 
+  - `:wq!`: Save and exit vim terminal 
+  - `:%d`: Clear all contents of a file 
+  - `:set nu`: Will put index numbers in file opened via vim
+  - `vi ~/.bash_profile`: Opens the .bash_profile file in the vi text editor. This file typically contains settings and configurations for the Bash shell.
+  - `vi .bash_history`: Opens the .bash_history file in the vi text editor. This file contains a history of commands that have been executed in the current user's Bash shell.
 - `fdisk -l`: The fdisk command is used for disk partitioning and disk management on Unix-like systems. The -l option lists information about all available disks and their partitions. This command is typically used to view the current disk layout and partitioning scheme of the system.
 - `ps -ef`: The ps command is used to display information about running processes on Unix-like systems. The -ef options stand for "everyone" (-e) and "full-format" (-f), which together instruct ps to display information about all processes in a detailed format. This includes information such as the process ID (PID), the terminal associated with the process, the user running the process, CPU and memory usage, and the command being executed.
 - `ls -l <dir path else it lists current path files>`: Lists files and directories in the specified directory (or the current directory if none is specified) with detailed information, including permissions, ownership, size, and modification date.
@@ -55,6 +56,27 @@
 - `netstat`: The network statistics command is a networking tool used for troubleshooting and configuration, that can also serve as a monitoring tool for connections over the network.
 - `ps aux`: Similar to `ps -ef`. Displays information about running processes. 
 - `last`: This command in Linux is used to display the history of last logged in users.
+- `ssh -i`: To ssh into a machine. '-i' is identity_file which selects a file from which the identity (private key) for public key authentication is read. 
+- `ping -c 1 $(hostname)`: To get IP address of the machine
+- 
+
+who
+last
+cmp
+sh test_file.sh 
+
+chmod a+x test_file.sh - a+x means
+chmod a-x test_file.sh - a-x means 
+
+sudo apt-get install iftop
+sudo dmesg
+clear
+sudo kill -9 335793
+date
+sudo ls -l /proc/330046/fd/1 or 2 or 3 
+
+vim :set nu, 
+other vim commands also keep a track
 
 Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
 
@@ -84,24 +106,4 @@ Note: [Shell scripts best practices _al](https://stackoverflow.com/questions/784
     ``` 
 
 ----------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
