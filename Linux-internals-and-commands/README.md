@@ -75,6 +75,8 @@ sudo kill -9 335793
 date
 sudo ls -l /proc/330046/fd/1 or 2 or 3 
 
+cd /proc/324049 -> then tail -f fd
+
 vim :set nu, 
 other vim commands also keep a track
 
