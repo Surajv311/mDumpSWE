@@ -25,6 +25,7 @@
 - `whoami`: Displays the username of the current user.
 - `which python`: Displays path where executable file of python is located.
 - `top`: Displays real-time information about system processes, including CPU and memory usage.
+  - In your keyboard if you press button 'c' after running top command - it will display the stats in detailed manner. 
 - `set | grep AWS_KEY`: Displays environment variables (set) and filters the output to show lines containing AWS_KEY using grep.
 - `screen -ls`: Lists currently running screen sessions. screen command in Linux provides the ability to launch and use multiple shell sessions from a single ssh session.
 - `screen -S vikas`: Starts a new screen session with the name vikas.
