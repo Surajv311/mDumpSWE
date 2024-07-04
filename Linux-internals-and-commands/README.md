@@ -78,6 +78,8 @@ sudo ls -l /proc/330046/fd/1 or 2 or 3
 
 cd /proc/324049 -> then tail -f fd
 
+cat  /home/circleci/etl-pipes/deploy/ansible/roles/simpl_lib/tasks/main.yml | head -88 | tail -1
+
 vim :set nu, 
 other vim commands also keep a track
 
