@@ -61,6 +61,81 @@
 - `ping -c 1 $(hostname)`: To get IP address of the machine
 - 
 
+top command - click c, 2, 3 , 4... 
+
+
+
+
+top -c 
+
+ubuntu@ip-10-80-10-5:/tmp$ sudo du -sh /*
+
+ubuntu@ip-10-80-10-5:/tmp$ sudo fdisk -l
+
+
+
+
+
+root       17600   17599  0 Jul04 pts/2    00:00:00 ssh ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+root       18951   18950  0 Jul04 pts/4    00:00:00 ssh ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+root       20173   20172  0 Jul04 pts/6    00:00:00 ssh -o ConnectTimeout=120 -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+root       21226   21225  0 Jul04 pts/8    00:00:00 ssh -o ConnectTimeout=120 -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+root       43894   43893  0 08:24 pts/10   00:00:00 ssh -o ConnectTimeout=120 -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+root       45222   45221  0 08:38 pts/12   00:00:00 ssh -o ConnectTimeout=120 -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed && exit
+root       47036   47035  0 09:22 pts/14   00:00:00 ssh -o ConnectTimeout=120 -o ServerAliveInterval=60 -o ServerAliveCountMax=10 ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+ubuntu     47270   42931  0 09:34 pts/3    00:00:00 grep --color=auto pip
+
+
+
+
+pid and ppid ....
+17600 17599.....
+
+ubuntu@ip-10-80-10-5:/tmp$ ps -ef | grep 17599
+root       17599   17598  0 Jul04 pts/2    00:00:06 /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+root       17600   17599  0 Jul04 pts/2    00:00:00 ssh ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+ubuntu     47422   42931  0 09:41 pts/3    00:00:00 grep --color=auto 17599
+ubuntu@ip-10-80-10-5:/tmp$ ps -ef | grep 17600
+root       17600   17599  0 Jul04 pts/2    00:00:00 ssh ubuntu@10.80.10.5 pip install -r /tmp/requirements.txt --ignore-installed
+ubuntu     47424   42931  0 09:41 pts/3    00:00:00 grep --color=auto 17600
+ubuntu@ip-10-80-10-5:/tmp$ ps -ef | grep 17598
+root       17598   17597  0 Jul04 pts/2    00:00:00 /bin/sh -c echo BECOME-SUCCESS-ajehwmoeqrbnefnxsyzfglmuqbkerlqz ; /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+root       17599   17598  0 Jul04 pts/2    00:00:06 /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+ubuntu     47429   42931  0 09:41 pts/3    00:00:00 grep --color=auto 17598
+ubuntu@ip-10-80-10-5:/tmp$ ps -ef | grep 17597
+root       17597   17596  0 Jul04 pts/2    00:00:00 sudo -H -S -n -u root /bin/sh -c echo BECOME-SUCCESS-ajehwmoeqrbnefnxsyzfglmuqbkerlqz ; /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+root       17598   17597  0 Jul04 pts/2    00:00:00 /bin/sh -c echo BECOME-SUCCESS-ajehwmoeqrbnefnxsyzfglmuqbkerlqz ; /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+ubuntu     47467   42931  0 09:43 pts/3    00:00:00 grep --color=auto 17597
+ubuntu@ip-10-80-10-5:/tmp$ ps -ef | grep 17596
+root       17596   17595  0 Jul04 pts/1    00:00:00 sudo -H -S -n -u root /bin/sh -c echo BECOME-SUCCESS-ajehwmoeqrbnefnxsyzfglmuqbkerlqz ; /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+root       17597   17596  0 Jul04 pts/2    00:00:00 sudo -H -S -n -u root /bin/sh -c echo BECOME-SUCCESS-ajehwmoeqrbnefnxsyzfglmuqbkerlqz ; /usr/bin/python3 /home/ubuntu/.ansible/tmp/ansible-tmp-1720107928.4152038-772178-155392337109202/AnsiballZ_command.py
+ubuntu     47469   42931  0 09:43 pts/3    00:00:00 grep --color=auto 17596
+
+
+
+circleci@ip-10-82-5-141:/proc/775490/fd$ watch -n 1 "ps -ef | grep ansible-playbook"
+
+watch -n 1 "ps -ef | grep ssh"
+
+
+airflow - fail
+last commit
+old: 
+last_merge_commit=$(git log --merges -n 1 --pretty=format:"%H")
+sha=$(echo $last_merge_commit)
+	ansible_vault: 
+		- old value - authentication error 
+		- new value - working
+			- latest changes are not getting reflected eg: dag update 
+
+new: 
+sha=`git rev-parse HEAD`
+	ansible_vault: 
+		- old value - work 
+		- new value - fail 
+			- latest changes i am able to see (double check)
+
+
 who
 last
 cmp <> <> 
