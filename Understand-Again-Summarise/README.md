@@ -2,7 +2,7 @@
 # Understand-Again-Summarise
 
 Misc:
-?
+https://www.chiark.greenend.org.uk/~sgtatham/quasiblog/coroutines-philosophy/
 
 Linux: 
 https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
