@@ -1,10 +1,7 @@
 
 # Understand-Again-Summarise
 
-Misc: 
-https://www.geeksforgeeks.org/what-is-dev-null-in-linux/
-https://www.geeksforgeeks.org/scp-command-in-linux-with-examples/
-
+Misc:
 
 Spark domain: 
 https://stackoverflow.com/questions/77266953/number-of-files-generated-by-spark
@@ -68,6 +65,8 @@ Custom Executors for Blocking Operations: For operations that cannot be made non
 Memory Management: aiohttp implements various memory management techniques to minimize the footprint and avoid fragmentation. This includes efficient use of memory pools and careful management of object lifecycles to reduce garbage collection overhead.
 By building on top of asyncio and adding these layers of optimizations and specialized handling, aiohttp is able to achieve higher performance for HTTP-related tasks than using asyncio directly. These enhancements allow aiohttp to handle a large number of concurrent HTTP requests more efficiently, making it a preferred choice for web applications and services that require high throughput and low latency.
 
+Linux: 
+https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
 
 Pyspark Window functions - Learn about it - Google
 https://spoddutur.github.io/spark-notes/distribution_of_executors_cores_and_memory_for_spark_application.html
@@ -76,17 +75,8 @@ https://sparkbyexamples.com/spark/spark-tune-executor-number-cores-and-memory/
 https://community.cloudera.com/t5/Support-Questions/How-to-decide-spark-submit-configurations/m-p/226197
 https://www.linkedin.com/pulse/apache-spark-things-keep-mind-while-setting-up-executors-deka
 
-
-Linux domain:
-https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
-Commands: 
-cat /opt/node_exporter/scheduler_status.sh
-ls -lrt
-tail -f /var/log/syslog
-:set nu
-screen
-watch -n 1 "ps -ef | grep -i ansible"
-ps -ef | grep -i ansible
+Go Memory model: 
+https://go.dev/ref/mem
 
 Misc (websites, linkedin, medium blogs, etc etc need to read) domain: 
 https://news.ycombinator.com/
