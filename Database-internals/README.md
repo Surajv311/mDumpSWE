@@ -41,7 +41,7 @@
     - be in 2NF 
     - have no transitive partial dependency
 
-[Normalization in tables 1,2,3 nf](https://www.freecodecamp.org/news/database-normalization-1nf-2nf-3nf-table-examples/)
+[Normalization in tables 1,2,3 nf _al](https://www.freecodecamp.org/news/database-normalization-1nf-2nf-3nf-table-examples/)
 
 - Cardinality: Simply put, it refers to uniqueness of data contained in a column. Say, a column has lot of duplicated data (eg: "true" or "false"), it has low cardinality. Similarly, say having "id" of employees, would mean having high cardinality in id column. Cardinality can have effect on query performance. 
 
@@ -60,7 +60,7 @@
     - (Disadvantage): You'll need to update your application logic to work with shards, which could result in complex SQL queries. Data distribution can become lopsided in a shard.Joining data from multiple shards is more complex. Sharding adds more hardware and additional complexity.
   - Denormalization: Denormalization attempts to improve read performance at the expense of some write performance. Redundant copies of the data are written in multiple tables to avoid expensive joins. Some RDBMS such as PostgreSQL and Oracle support materialized views which handle the work of storing redundant information and keeping redundant copies consistent. In most systems, reads can heavily outnumber writes 100:1 or even 1000:1. A read resulting in a complex database join can be very expensive, spending a significant amount of time on disk operations.
     - (Disadvantage): Data is duplicated. Constraints can help redundant copies of information stay in sync, which increases complexity of the database design. A denormalized database under heavy write load might perform worse than its normalized counterpart.
-  - SQL Tuning: [Refer the link](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#sql-tuning)
+  - SQL Tuning: [Refer the link _al](https://github.com/donnemartin/system-design-primer?tab=readme-ov-file#sql-tuning)
     - Tighten up the schema, Use good indices, Avoid expensive joins, Partition tables, Tune the query cache
   - NoSQL is a collection of data items represented in a key-value store, document store, wide column store, or a graph database. Data is denormalized, and joins are generally done in the application code. Most NoSQL stores lack true ACID transactions and favor eventual consistency.
     - BASE is often used to describe the properties of NoSQL databases. In comparison with the CAP Theorem, BASE chooses availability over consistency.

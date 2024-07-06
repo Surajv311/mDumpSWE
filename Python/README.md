@@ -239,7 +239,7 @@ Multiple threads within a ThreadPool are subject to the global interpreter lock 
 
 The GIL only affects threads within a single process. The multiprocessing module is in fact an alternative to threading that lets Python programs use multiple cores. [Python GIL _vl](https://www.youtube.com/watch?v=XVcRQ6T9RHo), [Does Py need GIL _vl](https://www.youtube.com/watch?v=EYgDP8cYlLo&ab_channel=CodePersist)
 
-Note: Deepen your understanding on multi-threading in Python despite GIL either by hovering over to [Running multi-thread code in Pyspark in Spark README section](https://github.com/Surajv311/mDumpSWE/tree/main/Spark) or directly the [ref blog](https://superfastpython.com/threadpoolexecutor-vs-gil/).
+Note: Deepen your understanding on multi-threading in Python despite GIL either by hovering over to [Running multi-thread code in Pyspark in Spark README section _al](https://github.com/Surajv311/mDumpSWE/tree/main/Spark) or directly the [ref blog _al](https://superfastpython.com/threadpoolexecutor-vs-gil/).
 
 #### Function annotations
 
