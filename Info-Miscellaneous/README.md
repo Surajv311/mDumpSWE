@@ -146,6 +146,17 @@ print(total)
   - Furthermore, modern CPUs are very good at accessing contiguous blocks of memory. Iterating over a single contiguous block of memory to add up two thousand ints will be much, much faster than doing the same over a thousand disjointed sections of memory.
 - [psycopg2 leaking memory after large query _al](https://stackoverflow.com/questions/17199113/psycopg2-leaking-memory-after-large-query): Instead of `cursor = conn.cursor()`, use `cursor = conn.cursor(name="my_cursor_name")`
 - When we say data loaded to memory - means RAM, and loaded to disk - means harddisk. 
+- To get the recent commit in git, below 2 ways could give the details: 
+  - Eg: 
+  ```
+  way1: 
+  last_merge_commit=$(git log --merges -n 1 --pretty=format:"%H")
+  sha=$(echo $last_merge_commit)
+  
+  way2: 
+  sha=`git rev-parse HEAD`
+  ```
+- 
 
 ----------------------------------------------------------------------
 

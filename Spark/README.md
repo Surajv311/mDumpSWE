@@ -222,8 +222,97 @@ myF_udf =  F.udf(myF, StringType())
   - Avoiding excessive nesting: Deeply nested subqueries or derived tables can be difficult to read and maintain, and can also impact query performance. Look for opportunities to simplify your query by using JOINs, temporary tables, or other techniques.
   - Utilizing query execution plans: Analyze and understand the query execution plan to identify potential bottlenecks and areas for improvement. This can help you optimize your query and achieve better performance.
   - Testing and monitoring: Regularly test and monitor your queries to ensure they are performing optimally. Identify slow-running queries and make necessary adjustments to maintain the performance of your database system.
-  -
 
+- [Difference between "predicate pushdown" and "projection pushdown" in Spark _al](https://stackoverflow.com/questions/58235076/what-is-the-difference-between-predicate-pushdown-and-projection-pushdown): Predicate refers to the where/filter clause which affects the amount of rows returned. Projection refers to the selected columns. For example: If your filters pass only 5% of the rows, only 5% of the table will be passed from the storage to Spark instead of the full table; If your projection selects only 3 columns out of 10, then less columns will be passed from the storage to Spark and if your storage is columnar (e.g. Parquet, not Avro) and the non selected columns are not a part of the filter, then these columns won't even have to be read.
+- [Spark writes at least 1 file per partition _al](https://stackoverflow.com/questions/77266953/number-of-files-generated-by-spark).
+- [Pyspark is faster than pandas on a single node machine _al](https://www.databricks.com/blog/2018/05/03/benchmarking-apache-spark-on-a-single-node-machine.html). Also its better to use pyspark for large datasets as it offers more functionality than pandas. 
+- Running multi-thread code in Pyspark: 
+  - As soon as we call the function executing code via multi-threading then multiple tasks will be submitted in parallel to spark driver which would later relay down the work to spark executors provided the driver and executor have enough cores. So, if a driver has 64 cores, then the most optimal count of tasks it can submit to executors/workers is 64, similarly for workers doing the work.
+  - Question comes: What about GIL in Python, with our current scenario, only 1 thread would pass the GIL lock and driver would get only 1 thread; So 1 task which the driver will then pass on to the workers; It's conflicting to see we won't really achieve parallelism in this case; But that's not the case for all scenarios:
+    - The presence of the GIL in Python impacts the ThreadPoolExecutor. The ThreadPoolExecutor maintains a fixed-sized pool of worker threads that supports concurrent tasks, but the presence of the GIL means that most tasks will not run in parallel. You may recall that concurrency is a general term that suggests an order independence between tasks, e.g. they can be completed at any time or at the same time. Parallel might be considered a subset of concurrency and explicitly suggests that tasks are executed simultaneously. The GIL means that worker threads cannot run in parallel, in most cases. Specifically, in cases where the target task functions are CPU-bound tasks. These are tasks that are limited by the speed of the CPU in the system, such as working no data in memory or calculating something. Nevertheless, worker threads can run in parallel in some special circumstances, one of which is when an IO task is being performed. These are tasks that involve reading or writing from an external resource. 
+    - Examples include: Reading or writing a file from the hard drive; Reading or writing to standard output, input, or error (stdin, stdout, stderr); Printing a document; Downloading or uploading a file; Querying a server; Querying a database; Taking a photo or recording a video; And so much more.
+    - When a Python thread executes a blocking IO task, it will release the GIL and allow another Python thread to execute. This still means that only one Python thread can execute Python bytecodes at any one time. But it also means that we will achieve seemingly parallel execution of tasks if tasks perform blocking IO operations.
+    - Hence in our case, if say we fire spark sql queries to a db using multi-threading, since it would be more of a blocking i/o call, we would be able to achieve/observe multi-threading in pyspark.
+  - [Useful ref 1 _al](https://medium.com/analytics-vidhya/horizontal-parallelism-with-pyspark-d05390aa1df5), [Useful ref 2 _al](https://superfastpython.com/threadpoolexecutor-vs-gil/)
+
+- Distribution of Executors, Cores and Memory for a Spark Application:
+  - An executor is a Spark process responsible for executing tasks on a specific node in the cluster. Each executor is assigned a fixed number of cores and a certain amount of memory. The number of executors determines the level of parallelism at which Spark can process data.
+  - Generally, Having more executors allows for better parallelism and resource utilization; Each executor can work on a subset of data independently, which can lead to increased processing speed; However, it’s important to strike a balance between the number of executors and the available cluster resources. If the number of executors is too high, it can lead to excessive memory usage and increased overhead due to task scheduling; Inefficient executor allocation can result in the underutilization of cluster resources.
+  - The number of cores refers to the total number of processing units available on the machines in your Spark cluster. It represents the parallelism level at which Spark can execute tasks. Each core can handle one concurrent task. Increasing the number of cores allows; Spark to execute more tasks simultaneously, which can improve the overall throughput of your application. However, adding too many cores can also introduce overhead due to task scheduling and inter-node communication, especially if the cluster resources are limited.
+  - Configuring the number of cores and executors in Apache Spark depends on several factors, including: The characteristics of your workload; The available cluster resources, and Specific requirements of your application. While there is no one-size-fits-all approach, here are some general guidelines to help you configure these parameters effectively (after that an example for better understanding):
+    - The number of executors should be equal to the number of cores on each node in the cluster. If there are more cores than nodes, then the number of executors should be equal to the number of nodes.
+    - The amount of memory allocated to each executor should be based on the size of the data that will be processed by that executor. It is important to leave some memory available for the operating system and other processes. A good starting point is to allocate 1GB of memory per executor.
+    - The number of partitions used for shuffle operations should be equal to the number of executors.
+  - Let’s try to understand how to decide on the Spark number of executors and cores to be configured in a cluster. For our better understanding Let’s say you have a Spark cluster with 16 nodes, each having 8 cores and 32 GB of memory and your dataset size is relatively large, around 1 TB, and you’re running complex computations on it.
+    - For the above cluster configuration we have:
+      - Available Resources:
+        - Total cores in the cluster = 16 nodes * 8 cores per node = 128 cores
+        - Total memory in the cluster = 16 nodes * 32 GB per node = 512 GB
+      - Workload Characteristics: 
+        - Large dataset size and complex computations suggest that you need a high level of parallelism to efficiently process the data. 
+        - Let’s assume that you want to allocate 80% of the available resources to Spark.
+    - Tiny Executor Configuration:
+      - One way of configuring Spark Executor and its core is setting minimal configuration for the executors and incrementing it based on the application performance.
+      - Executor Memory and Cores per Executor: Considering having 1 core per executor: 
+        - Number of executors per node=8,
+        - Executor-memory=32/8=4GB
+      - Calculating the Number of Executors: To calculate the number of executors, divide the available memory by the executor memory:
+        - Total memory available for Spark = 80% of 512 GB = 410 GB
+        - Number of executors = Total memory available for Spark / Executor memory = 410 GB / 4 GB ≈ 102 executors
+        - Number of executors per node = Total Number of Executors/ Number of Nodes = 102/16 ≈ 6 Executors/Node
+      - So, in this example, you would configure Spark with 102 executors, each executor having 1 core and 4 GB of memory.
+      - Pros: 
+        - Resource Efficiency: Tiny executors consume less memory and fewer CPU cores compared to larger configurations.
+        - Increased Task Isolation: With tiny executors, each task runs in a more isolated environment. This isolation can prevent interference between tasks, reducing the chances of resource contention and improving the stability of your Spark application.
+        - Task Granularity: Tiny executor configurations can be beneficial if your workload consists of a large number of small tasks. With smaller executors, Spark can allocate resources more precisely, ensuring that each task receives sufficient resources without excessive overprovisioning.
+      - Cons: 
+        - Increased Overhead: Using tiny executors can introduce higher overhead due to the increased number of executor processes and task scheduling.
+        - Limited Parallelism: Tiny executors have fewer cores, limiting the level of parallelism in your Spark application.
+        - Potential Bottlenecks: In a tiny executor configuration, if a single task takes longer to execute than others, it can become a bottleneck for the entire application.
+        - Memory Overhead: Although tiny executors consume less memory individually, the overhead of multiple executor processes can add up. This can lead to increased memory usage for managing the executor processes, potentially reducing the available memory for actual data processing.
+    - Fat Executor Configuration:
+      - The other way of configuring Spark Executor and its core is setting the maximum utility configuration i.e. having only one Executor per node and optimizing it based on the application performance.
+      - Executor Memory and Cores per Executor: Considering having 8 cores per executor,
+        - Number of executors per node= number of cores for a node/ number of cores for an executor = 8/8 = 1,
+        - Executor-memory=32/1= 32GB
+      - Calculating the Number of Executors: To calculate the number of executors, divide the available memory by the executor memory:
+        - Total memory available for Spark = 80% of 512 GB = 410 GB
+        - Number of executors = Total memory available for Spark / Executor memory = 410 GB / 32 GB ≈ 12 executors
+        - Number of executors per node = Total Number of Executors/ Number of Nodes = 12/16 ≈ 1 Executors/Node
+      - So, in this example, you would configure Spark with 16 executors, each executor having 8 core and 32 GB of memory.
+      - Pros: 
+        - Increased Parallelism: Fat executor configurations allocate more CPU cores and memory to each executor, resulting in improved processing speed and throughput.
+        - Reduced Overhead: With fewer executor processes to manage, a fat executor configuration can reduce the overhead of task scheduling, inter-node communication, and executor coordination. This can lead to improved overall performance and resource utilization.
+        - Enhanced Data Locality: Larger executor memory sizes can accommodate more data partitions in memory, reducing the need for data shuffling across the cluster.
+        - Improved Performance for Complex Tasks:. By allocating more resources to each executor, you can efficiently handle complex computations and large-scale data processing.
+      - Cons: 
+        - Resource Overallocation: Using fat executors can result in overallocation of resources, especially if the cluster does not have sufficient memory or CPU cores.
+        - Reduced Task Isolation: With larger executor configurations, tasks have fewer executor processes to run on. This can increase the chances of resource contention and interference between tasks, potentially impacting the stability and performance of your Spark application.
+        - Longer Startup Times: Fat executor configurations require more resources and may have longer startup times compared to smaller configurations.
+        - Difficulty in Resource Sharing: Fat executors may not be efficient when sharing resources with other applications or services running on the same cluster. It can limit the flexibility of resource allocation and hinder the ability to run multiple applications concurrently.
+    - Balanced Executor Configuration: 
+      - Spark founder Databricks after several trail and error testing the spark Executor and cores configuration, they recommends to have 2-5 cores per executor as the best initial efficient configuration for running the application smoothly.
+      - Executor Memory and Cores per Executor: Considering having 3 cores per executor, Leaving 1 core per node for daemon processes
+        - Number of executors per node= (number of cores for a node – core for daemon process)/ number of cores for an executor = 7/3 ≈ 2,
+        - Executor-memory=Total memory per node/ number executors per node = 32/2= 16GB
+      - Calculating the Number of Executors: To calculate the number of executors, divide the available memory by the executor memory:
+        - Total memory available for Spark = 80% of 512 GB = 410 GB
+        - Number of executors = Total memory available for Spark / Executor memory = 410 GB / 16 GB ≈ 32 executors
+        - Number of executors per node = Total Number of Executors/ Number of Nodes = 32/16 = 2 Executors/Node
+      - So, in this example, you would configure Spark with 32 executors, each executor having 3 core and 16 GB of memory.
+      - Pros: 
+        - Optimal Resource Utilization: A balanced executor configuration aims to evenly distribute resources across the cluster. This allows for efficient utilization of both CPU cores and memory, maximizing the overall performance of your Spark application.
+        - Reasonable Parallelism: By allocating a moderate number of cores and memory to each executor, a balanced configuration strikes a balance between parallelism and resource efficiency. It can provide a good compromise between the high parallelism of small executors and the resource consumption of large executors.
+        - Flexibility for Multiple Workloads: A balanced configuration allows for accommodating a variety of workloads. It can handle both small and large datasets, as well as diverse computational requirements, making it suitable for environments where multiple applications or different stages of data processing coexist.
+        - Reduced Overhead: Compared to larger executor configurations, a balanced configuration typically involves fewer executor processes. This can reduce the overhead of task scheduling, inter-node communication, and executor coordination, leading to improved performance and lower resource consumption.
+      - Cons: 
+        - Limited Scaling: A balanced executor configuration may not scale as effectively as configurations with a higher number of cores or executors. In scenarios where the workload or dataset size significantly increases, a balanced configuration may reach its limit, potentially leading to longer processing times or resource contention.
+        - Trade-off in Task Isolation: While a balanced configuration can provide a reasonable level of task isolation, it may not offer the same level of isolation as smaller executor configurations. In cases where tasks have distinct resource requirements or strict isolation requirements, a balanced configuration may not be the most suitable choice.
+        - Task Granularity: In situations where the workload consists of a large number of small tasks, a balanced executor configuration may not offer the same level of fine-grained task allocation as smaller executor configurations. This can lead to suboptimal resource allocation and potentially impact performance.
+        - Complexity in Resource Management: Maintaining a balanced executor configuration across a dynamic cluster can be challenging. As the cluster size and resource availability change, it may require frequent adjustments to ensure the configuration remains balanced, which can add complexity to cluster management.
+  - Resources: [spark-tune-executor _al](https://sparkbyexamples.com/spark/spark-tune-executor-number-cores-and-memory/), [Spark Executor Core & Memory Explained _vl](https://www.youtube.com/watch?v=PP7r_L-HB50), [Distribution of Executors, Cores and Memory for a Spark Application _al](https://spoddutur.github.io/spark-notes/distribution_of_executors_cores_and_memory_for_spark_application.html)
+
+- PySpark Window function performs statistical operations such as rank, row number, etc. on a group, frame, or collection of rows and returns results for each row individually.
 
 
 
