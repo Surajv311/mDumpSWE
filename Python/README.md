@@ -81,7 +81,20 @@ if __name__ == "__main__":
 [asyncio gather _al](https://www.educative.io/answers/what-is-asynciogather), 
 [asyncio python _al](https://superfastpython.com/python-asyncio/)
 
-- Note: If you don't use await in an async function in Python, the function will still be executed, but it won't pause the execution flow to wait for the result of the coroutine it calls. This can lead to unexpected behavior if you rely on the result of the coroutine or if you expect certain operations to be completed before proceeding.
+- Note: 
+  - If you don't use await in an async function in Python, the function will still be executed, but it won't pause the execution flow to wait for the result of the coroutine it calls. This can lead to unexpected behavior if you rely on the result of the coroutine or if you expect certain operations to be completed before proceeding.
+  - aiohttp is faster than native asyncio (from gpt): Technical aspects of why aiohttp can be faster than using native asyncio directly for HTTP-related tasks:
+    - Optimized Event Loop Integration: aiohttp integrates tightly with the asyncio event loop but adds additional optimizations tailored for HTTP traffic. This includes optimized handling of I/O events specifically for HTTP connections, reducing the overhead associated with generic event loop operations.
+    - HTTP Parsing and Serialization: aiohttp utilizes efficient C-extensions for parsing and serializing HTTP messages. This low-level optimization ensures that the CPU cycles are minimized for these critical operations. The use of http_parser (a C library) allows for faster parsing compared to pure Python implementations.
+    - Efficient Buffer Management: aiohttp implements advanced buffer management techniques to handle incoming and outgoing HTTP data. This includes strategies such as pooling buffers to reduce memory allocation overhead and using memoryviews to avoid unnecessary data copying.
+    - Connection Pooling: aiohttp provides built-in connection pooling which allows for the reuse of TCP connections for multiple HTTP requests. This reduces the overhead of establishing new TCP connections, which involves several round trips and can be a significant bottleneck in high-throughput scenarios.
+    - Custom I/O Handling: aiohttp has custom implementations for I/O operations, leveraging asyncio's transport and protocol abstractions but with optimizations for typical HTTP workloads. For example, it uses SelectorEventLoop efficiently to manage multiple socket connections concurrently.
+    - Zero-Copy Sendfile Support: aiohttp can leverage the sendfile system call (where supported by the operating system), which allows for zero-copy file transfers directly from disk to network socket. This significantly reduces CPU usage and increases throughput for serving static files.
+    - Concurrency Control: aiohttp includes mechanisms for controlling concurrency and limiting the number of simultaneous connections or requests, which helps prevent resource exhaustion and maintains performance under load. This is implemented through semaphore-based controls that are more sophisticated than basic asyncio primitives.
+    - Protocol-Specific Optimizations: aiohttp optimizes the handling of specific HTTP features such as chunked transfer encoding, keep-alive connections, and HTTP/1.1 pipelining. These optimizations ensure that common patterns in HTTP communication are handled with minimal overhead.
+    - Custom Executors for Blocking Operations: For operations that cannot be made non-blocking, aiohttp provides mechanisms to offload them to separate threads or processes using custom executors. This integration ensures that the main event loop remains responsive, which is crucial for handling high concurrency.
+    - Memory Management: aiohttp implements various memory management techniques to minimize the footprint and avoid fragmentation. This includes efficient use of memory pools and careful management of object lifecycles to reduce garbage collection overhead.
+  - By building on top of asyncio and adding these layers of optimizations and specialized handling, aiohttp is able to achieve higher performance for HTTP-related tasks than using asyncio directly. These enhancements allow aiohttp to handle a large number of concurrent HTTP requests more efficiently, making it a preferred choice for web applications and services that require high throughput and low latency.
 
 #### concurrent.futures.ThreadPoolExecutor library
 
@@ -225,6 +238,8 @@ Hence in short,
 Multiple threads within a ThreadPool are subject to the global interpreter lock (GIL), whereas multiple child processes in the Pool are not subject to the GIL.
 
 The GIL only affects threads within a single process. The multiprocessing module is in fact an alternative to threading that lets Python programs use multiple cores. [Python GIL _vl](https://www.youtube.com/watch?v=XVcRQ6T9RHo), [Does Py need GIL _vl](https://www.youtube.com/watch?v=EYgDP8cYlLo&ab_channel=CodePersist)
+
+Note: Deepen your understanding on multi-threading in Python despite GIL either by hovering over to [Running multi-thread code in Pyspark in Spark README section](https://github.com/Surajv311/mDumpSWE/tree/main/Spark) or directly the [ref blog](https://superfastpython.com/threadpoolexecutor-vs-gil/).
 
 #### Function annotations
 

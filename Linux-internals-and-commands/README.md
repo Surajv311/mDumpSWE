@@ -121,20 +121,81 @@
 
 
 Note:
+
 - [Shell scripts best practices _al](https://stackoverflow.com/questions/78497/design-patterns-or-best-practices-for-shell-scripts)
+
 - [How a Linux system boots up, from the power button being pressed to the operating system being loaded _vl](https://www.youtube.com/watch?v=XpFsMB6FoOs): 
   - The boot process starts with the BIOS or UEFI, which prepares the computer’s hardware for action.
   - UEFI offers faster boot times and better security features compared to BIOS.
   - The power-on self-test (POST) checks the hardware before fully turning on the system.
   - The boot loader locates the operating system kernel, loads it into memory, and starts running it.
   - Systemd is the parent of all other processes on Linux and handles various tasks to get the system booted and ready to use.
-- Vim terminal: 
-  - `:q!`: Exit vim terminal 
-  - `:wq!`: Save and exit vim terminal 
-  - `:%d`: Clear all contents of a file 
-  - `:set nu`: Will put index numbers in file opened via vim
-  - `vi ~/.bash_profile`: Opens the .bash_profile file in the vi text editor. This file typically contains settings and configurations for the Bash shell.
-  - `vi .bash_history`: Opens the .bash_history file in the vi text editor. This file contains a history of commands that have been executed in the current user's Bash shell.
+
+- Vim terminal: Useful commands: 
+  - Exiting Vim
+    - `:q!`: Exit Vim terminal without saving
+    - `:wq!`: Save and exit Vim terminal
+  - Editing Files
+    - `:%d`: Clear all contents of a file
+    - `:set nu`: Add line numbers to the file
+  - Navigating Files
+    - `gg`: Move to the first line of the file
+    - `G`: Move to the last line of the file
+    - `gg=G`: Reindent the whole file
+    - `gv`: Reselect the last visual selection
+    - `^`: Move to the first non-blank character of the line
+    - `g_`: Move to the last non-blank character of the line
+    - `gf`: Jump to the file name under the cursor
+  - Manipulating Text
+    - `xp`: Swap characters forward
+    - `Xp`: Swap characters backward
+    - `yyp`: Duplicate the current line
+    - `yapP`: Duplicate the current paragraph
+    - `dat`: Delete around an HTML tag, including the tag
+    - `dit`: Delete inside an HTML tag, excluding the tag
+    - `w`: Move one word to the right
+    - `b`: Move one word to the left
+    - `dd`: Delete the current line
+    - `<<`: Outdent the current line
+    - `>>`: Indent the current line
+    - `~`: Toggle the case of the current character
+    - `gUw`: Uppercase until the end of the word
+    - `gUiw`: Uppercase the entire word
+    - `gUU`: Uppercase the entire line
+    - `gu$`: Lowercase until the end of the line
+    - `da"`: Delete the next double-quoted string
+    - `+`: Move to the first non-whitespace character of the next line
+    - `S`: Delete the current line and go into insert mode
+    - `I`: Insert at the beginning of the line
+    - `ci"`: Change what's inside the next double-quoted string
+    - `ca{`: Change inside the curly braces (try `[`, `(`, etc.)
+    - `vaw`: Visually select a word
+    - `dap`: Delete the whole paragraph
+    - `r`: Replace a character
+  - Navigating Changes
+    - `[`: Jump to the beginning of the last yanked text
+    - `]`: Jump to the end of the last yanked text
+    - `g;`: Jump to the last change you made
+    - `g,`: Jump back forward through the change list
+  - Repeating Commands
+    - `&`: Repeat the last substitution on the current line
+    - `g&`: Repeat the last substitution on all lines
+  - Additional Commands
+    - `:%s/old/new/g`: Replace all occurrences of "old" with "new" in the file
+    - `u`: Undo the last action
+    - `Ctrl+r`: Redo the last undone action
+    - `%`: Move to the matching parenthesis, bracket, or brace
+    - `*`: Search forward for the word under the cursor
+    - `#`: Search backward for the word under the cursor
+    - `f{char}`: Move forward to the next occurrence of {char}
+    - `F{char}`: Move backward to the previous occurrence of {char}
+    - `t{char}`: Move forward until before the next occurrence of {char}
+    - `T{char}`: Move backward until before the previous occurrence of {char}
+    - `/{pattern}`: Search forward for the {pattern}
+    - `?{pattern}`: Search backward for the {pattern}
+    - `n`: Repeat the last search in the same direction
+    - `N`: Repeat the last search in the opposite direction
+
 - [File descriptors _al](https://stackoverflow.com/questions/5256599/what-are-file-descriptors-explained-in-simple-terms): 
   - In simple words, when you open a file, the operating system creates an entry to represent that file and store the information about that opened file. So if there are 100 files opened in your OS then there will be 100 entries in OS (somewhere in kernel). These entries are represented by integers like (...100, 101, 102....). This entry number is the file descriptor. So it is just an integer number that uniquely represents an opened file for the process. If your process opens 10 files then your Process table will have 10 entries for file descriptors. Similarly, when you open a network socket, it is also represented by an integer and it is called Socket Descriptor.
   - Other way: When you open a file, OS creates a stream to that file and connect that stream to opened file, the descriptor in fact represents that stream. Similarly there are some default streams created by OS. These streams are connected to your terminal instead of files. So when you write something in terminal it goes to stdin stream and OS. And when you write "ls" command on terminal, the OS writes the output to stdout stream. stdout stream is connected to your monitor terminal so you can see the output there.
@@ -152,6 +213,7 @@ Note:
   - /dev/null is a virtual device, which has a special property: Any data written to /dev/null vanishes or disappears. Because of this characteristic, it is also called bitbucket or blackhole.
   - Eg: `echo "helloworld" > /dev/null`; Then if you do: `cat /dev/null`; You won't get any output. 
   - It is mainly used to discard standard output and standard error from an output.
+
 - 
 
 
