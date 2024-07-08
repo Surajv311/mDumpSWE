@@ -66,7 +66,7 @@ Java gives you a choice. If you want to access resources of a particular host th
 
 -----
 
-Learning java book quick review: 
+Learning java book quick review:
 The Java programming language, developed at Sun Microsystems under the guidance of Net luminaries James Gosling and Bill Joy, is designed to be a machine-independent programming language that is both safe enough to traverse networks and powerful enough to replace native executable code.
 Initially, most of the enthusiasm for Java centered around its capabilities for building embedded applications for the World Wide Web; these applications are called applets. Applets could be independent programs in themselves, or sophisticated frontends to programs running on a server. More recently, interest has shifted to other areas. With Java 2, Java has the most sophisticated toolkit for building graphical user interfaces. 
 Java is both a compiled and an interpreted language. Java source code is turned into simple binary instructions, much like ordinary microprocessor machine code. However, whereas C or C++ source is refined to native instructions for a particular model of processor, Java source is compiled into a universal format—instructions for a virtual machine.
@@ -206,6 +206,79 @@ In many real-world applications, the performance of Java applications running on
 
 Conclusion
 While the JVM adds an extra layer of abstraction, its benefits in terms of platform independence, security, memory management, and runtime optimizations make it a powerful and versatile execution environment. The initial performance overhead of interpretation is mitigated by JIT compilation and other optimizations, leading to high-performance applications in practice.
+--------------------
+
+(back to book)
+
+The fundamental unit of Java code is the class. As in other object-oriented languages, classes are application components that hold executable code and data. Compiled Java classes are distributed in a universal binary format that contains Java byte-code and other class information. Classes can be maintained discretely and stored in files or archives on a local system or on a network server. Classes are located and loaded dynamically at runtime, as they are needed by an application.
+
+Java has a number of fundamental classes that contain architecture-dependent methods. These native methods serve as the gateway between the Java virtual machine and the real world. They are implemented in a natively compiled language on the host platform. They provide access to resources such as the network, the windowing system, and the host filesystem. The rest of Java is written entirely in Java, and is therefore portable. This includes fundamental Java utilities like the Java compiler and Sun's HotJava web browser, which are also Java applications and are therefore available on all Java platforms.
+
+Historically, interpreters have been considered slow, but because the Java interpreter runs compiled byte-code, Java is a relatively fast interpreted language. More importantly, Java has also been designed so that software implementations of the runtime system can optimize their performance by compiling byte-code to native machine code on the fly. This is called just-in-time compilation. Sun claims that with just-in-time compilation, Java code can execute nearly as fast as native compiled code and maintain its transportability and security. There is only one true performance hit that compiled Java code will always suffer for the sake of security — array bounds checking. But on the other hand, some of the basic design features of Java place more information in the hands of the compiler, which allows for certain kinds of optimizations not possible in C or C++.
+The latest twist in compilation techniques is a new virtual machine that Sun calls HotSpot. The problem with a traditional just-in-time compilation is that optimizing code takes time, and is extremely important for good performance on modern computer hardware. So a just-in-time compiler can produce decent results, but can never afford to take the time necessary to do a good job of optimization. HotSpot uses a trick called "adaptive compilation" to solve this problem. If you look at what programs actually spend their time doing, it turns out that they spend almost all
+of their time executing a relatively small part of the code again and again. The chunk of code that is executed repeatedly may only be a small percent of the total program, but its behavior determines the program's overall performance.
+To take advantage of this fact, HotSpot starts out as a normal Java byte code interpreter, but with a difference: it measures (profiles) the code as it is executing, to see what parts are being executed repeatedly. Once it knows which parts of the code are crucial to the performance, HotSpot compiles those sections—and only those sections—into true machine code. Since it only compiles a small portion of the program into machine code, it can afford to take the time necessary to optimize those portions. The rest of the program may not need to be compiled at all—just interpreted—saving memory and time.
+The technology for doing this is very complex, but the idea is essentially simple: optimize the parts of the program that need to go fast, and don't worry about the rest. Another advantage of using an adaptive compiler at runtime is that it can make novel kinds of optimizations that a static (compile time only) compiler cannot dream of.
+
+--
+detour: 
+
+The Compiler and Interpreter, both have similar works to perform. Interpreters and Compilers convert the Source Code (HLL) to Machine Code (understandable by Computer).
+A compiler translates code written in a high-level programming language into a lower-level language like assembly language, object code and machine code (binary 1 and 0 bits). It converts the code ahead of time before the program runs.
+An interpreter translates the code line-by-line when the program is running. Interpreters, more often than not are smaller than compilers. 
+Compilers can contain interpreters for optimization reasons like faster performance and smaller memory footprint.
+4 Types of Interpreters
+Bytecode interpreter
+Threaded code interpreter
+Abstract syntax tree interpreter
+Justin-in-time compilation
+10 Types of Compilers
+Cross-compiler
+Native compiler
+Bootstrap compiler
+Decompiler
+Source-to-source compiler
+Language rewriter
+Bytecode compiler
+Just-in-time compiler
+AOT compilation
+Assembler
+
+
+Java is an OOP programming language while Java Script is an OOP scripting language. Java creates applications that run in a virtual machine or browser while JavaScript code is run on a browser only. 
+Java is a statically typed language; JavaScript is dynamic.
+Java is class-based; JavaScript is prototype-based.
+Java constructors are special functions that can only be called at object creation; JavaScript "constructors" are just standard functions.
+Java requires all non-block statements to end with a semicolon; JavaScript inserts semicolons at the ends of certain lines.
+Java uses block-based scoping; JavaScript uses function-based scoping.
+Java has an implicit this scope for non-static methods, and implicit class scope; JavaScript has implicit global scope.
+
+
+Scripting languages are generally interpreted. Programming languages are typically compiled. This means that scripting languages are executed directly by the interpreter, while programming languages are first translated into machine code by the compiler before being executed.
+Programming languages create exe file, scripting languages don't.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
