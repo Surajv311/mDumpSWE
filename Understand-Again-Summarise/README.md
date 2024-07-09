@@ -6,6 +6,7 @@ https://www.chiark.greenend.org.uk/~sgtatham/quasiblog/coroutines-philosophy/
 
 Linux: 
 https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
+To list all users in a Linux system, you can read the /etc/passwd file. Each line in this file represents a user account, and the first field in each line is the username.
 
 Go Memory model: 
 https://go.dev/ref/mem
