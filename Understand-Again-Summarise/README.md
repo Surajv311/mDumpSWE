@@ -6,66 +6,6 @@ https://www.chiark.greenend.org.uk/~sgtatham/quasiblog/coroutines-philosophy/
 
 Linux: 
 https://unix.stackexchange.com/questions/727101/why-do-processes-on-linux-crash-if-they-use-a-lot-of-memory-yet-still-less-than
-To list all users in a Linux system, you can read the /etc/passwd file. Each line in this file represents a user account, and the first field in each line is the username.
-tcpdump
-
-tail -f pip-installation.log 
-pip install -r /tmp/requirements.txt --ignore-installed | tee /tmp/pip-installation.log
-ctrl a to go to beginngin of a command in terminal 
-
-
-
-
-This method uses the lit() function to add a constant value to all rows in a DataFrame.
-In the context of programming, a literal refers to a fixed value that is directly represented in the code. Literals are used to represent different data types, such as numbers, strings, booleans, and more.
-
-
-
-cat /etc/sudoers
-cat /etc/group
-ctrl + a in terminal - it will go to first place/alphabet of the commadn 
-
-Comparatively, git reset , moves both the HEAD and branch refs to the specified commit.
-https://people.freebsd.org/~lstewart/articles/cpumemory.pdf
-
-ggVG selects all content. gg moves to first line. V starts visual mode. G jumps to last line thereby selecting from first to last line
-
-
-df_schema = StructType([
-    StructField('a', StringType(), True),
-    StructField('b', StringType(), True),
-    StructField('c', LongType(), True)
-])
-
-result_schema = StructType([
-    StructField('a', FloatType(), True),
-    StructField('b', StringType(), True),
-    StructField('c', LongType(), True)
-])
-
-spark = SparkSession.builder.getOrCreate()
-data = [('fgjfobjfobfd', "hello", 123)]
-df = spark.createDataFrame(data, df_schema)
-df.show()
-
-print('-----------------')
-
-result = spark.createDataFrame([], result_schema)
-result = result.union(df)
-result.show()
-https://stackoverflow.com/questions/50639233/pyspark-column-dtype-changes-in-performing-union
-
-
-
-https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
-
-
-
-
-
-
-
-
 
 Go Memory model: 
 https://go.dev/ref/mem

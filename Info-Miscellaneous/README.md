@@ -156,6 +156,7 @@ print(total)
   way2: 
   sha=`git rev-parse HEAD`
   ```
+- In the context of programming, a literal refers to a fixed value that is directly represented in the code. Literals are used to represent different data types, such as numbers, strings, booleans, and more.
 - 
 
 ----------------------------------------------------------------------
