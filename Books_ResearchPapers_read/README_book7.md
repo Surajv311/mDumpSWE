@@ -14,8 +14,18 @@
     - The latest twist in compilation techniques is a new virtual machine that Sun calls ***HotSpot***. The problem with a traditional just-in-time compilation is that optimizing code takes time, and is extremely important for good performance on modern computer hardware. So a just-in-time compiler can produce decent results, but can never afford to take the time necessary to do a good job of optimization. HotSpot uses a trick called "adaptive compilation" to solve this problem. If you look at what programs actually spend their time doing, it turns out that they spend almost all of their time executing a relatively small part of the code again and again. The chunk of code that is executed repeatedly may only be a small percent of the total program, but its behavior determines the program's overall performance.
     - To take advantage of this fact, HotSpot starts out as a normal Java byte code interpreter, but with a difference: it measures (profiles) the code as it is executing, to see what parts are being executed repeatedly. Once it knows which parts of the code are crucial to the performance, HotSpot compiles those sections—and only those sections—into true machine code. Since it only compiles a small portion of the program into machine code, it can afford to take the time necessary to optimize those portions. The rest of the program may not need to be compiled at all—just interpreted—saving memory and time.
     - The technology for doing this is very complex, but the idea is essentially simple: optimize the parts of the program that need to go fast, and don't worry about the rest. Another advantage of using an adaptive compiler at runtime is that it can make novel kinds of optimizations that a static (compile time only) compiler cannot dream of.
-  - 
+  - Java is a new language, but it draws on many years of programming experience with other languages in its choice of features.
+  - Java doesn't have a preprocessor, so it doesn't have macros, #define statements, or conditional source compilation.
+  - Etc etc...
 
+- Chapter 2: A First Application
+  - If you run a sample java program in file say: HelloJava1.java; Upon compilation it produces the Java byte-code binary class file HelloJava1.class. This class file, is then fed to interpretor which runs the java program. 
+  - The main( ) method is simply an entry point for an application. It's a piece of code that you want to be run when the application first starts.
+  - A class is a blueprint for a part of an application; it lists methods and variables that go into making up that part. Many individual working copies of a given class can exist while an application is active. These individual incarnations are called instances of the class, or objects. 
+  - Etc etc...
+
+- Chapter 3: Tools of the Trade
+  - 
 
 --------------------------------
 
