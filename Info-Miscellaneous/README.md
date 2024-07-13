@@ -157,27 +157,56 @@ print(total)
   sha=`git rev-parse HEAD`
   ```
 - In the context of programming, a literal refers to a fixed value that is directly represented in the code. Literals are used to represent different data types, such as numbers, strings, booleans, and more.
+- Differences in way C/C++ and Java code executed?: 
+  - C/C++ Code Execution:
+    - Compilation: When you write C/C++ code, it is compiled by a compiler into machine code (also called native code). This machine code is specific to the architecture of the computer's CPU (e.g., x86, ARM). 
+      - Understand that: Machine code compiled for one architecture cannot be executed directly on a different architecture. For example, a program compiled for an x86 CPU will not run on an ARM CPU because the instruction sets are different.
+      - Compatibility Layers: Some systems provide compatibility layers that allow executables compiled for one OS to run on another, provided the underlying CPU architecture is the same. For example, Wine on Linux can run Windows applications compiled for x86.
+      - Emulators: Emulation software can simulate one CPU architecture on another, allowing machine code compiled for one type of processor to run on a different type. For instance, QEMU can emulate various CPU architectures, enabling execution of machine code designed for ARM on an x86 processor, albeit with a performance penalty.
+      - Cross-Compilation: If you need to run C/C++ code on multiple architectures, the typical approach is to use cross-compilation. These are compilers that run on one architecture but generate machine code for another. For example, you can use an x86 machine to cross-compile a program for ARM.
+      - Using VMs and containers is another aspect.
+    - Execution: This machine code is executed directly by the computer's processor. Because it is compiled to run on a specific hardware architecture, it is very efficient but also hardware-dependent. 
+  - Java Code Execution:
+    - Compilation: When you write Java code, it is compiled by the Java compiler (javac) into bytecode, ***which is a platform-independent intermediate representation. This bytecode is not specific to any particular CPU architecture***.
+    - JVM (Java Virtual Machine): 
+      - Interpretation: The JVM can execute bytecode by interpreting it, which means reading and executing each instruction one at a time. This is why the JVM is often referred to as an interpreter.
+      - ***Just-In-Time Compilation (JIT)***: Modern JVMs also use a technique called Just-In-Time (JIT) compilation. During execution, the JVM can compile frequently executed bytecode into native machine code for the host CPU. This native code is then executed directly by the CPU, improving performance.
+        - It helps improve the performance of interpreted languages by dynamically compiling parts of the bytecode into native machine code at runtime.
+        - JIT compilation combines the benefits of both interpreted and compiled languages. It involves compiling bytecode into native machine code on the fly, during program execution. This allows for optimizations based on the actual runtime behavior of the application.
+        - How it works: 
+          - Bytecode Execution: When you run a Java program, the JVM starts by interpreting the bytecode. This means it reads and executes the bytecode instructions one at a time. 
+          - Hotspot Detection: The JVM monitors the execution of the bytecode and identifies "hotspots" – parts of the code that are executed frequently. These hotspots are good candidates for JIT compilation because they can benefit the most from optimization. 
+          - Compilation: Once a hotspot is identified, the JVM's JIT compiler compiles that part of the bytecode into native machine code. This machine code can be executed directly by the CPU, which is much faster than interpreting the bytecode. 
+          - Optimization: The JIT compiler can apply various optimizations that are only possible because it knows the actual runtime behavior of the application. For example, it can inline functions, optimize loops, and eliminate dead code. 
+          - Execution: After compilation, the JVM replaces the interpreted bytecode with the compiled native code. Subsequent executions of that code run much faster because they are now running as optimized native code.
+      - Specialized Java Hardware: While the JVM is typically implemented as a software layer running on top of an operating system, there have been efforts to create hardware that can execute Java bytecode directly. These specialized chips are not common but theoretically possible.
+      - The Java Virtual Machine (JVM) indeed adds an additional layer between your Java code and the underlying hardware, which may initially seem to make execution slower. However, the JVM provides several key benefits that outweigh this initial overhead: Platform Independence, Write Once-Run Anywhere, Security, Memory allocation and Garbage collection.
+  - Hence; Hardware Dependence: C/C++ is directly compiled to machine code specific to the hardware, leading to efficient but hardware-dependent executables. Java is compiled to bytecode, which is hardware-independent, and relies on the JVM to handle execution.
+  - JVM as an Interpreter: The JVM interprets bytecode, allowing Java to be platform-independent. It can also compile bytecode to native code at runtime for better performance.
+  - Abstracted Execution: The JVM abstracts the underlying hardware and OS, providing a consistent execution environment across different platforms.
+- Interpretation vs. Compilation?:
+  - Interpreted Languages: Each line of code is read and executed one at a time by an interpreter. This can be slower because the interpretation process adds overhead.
+  - Compiled Languages: The entire program is compiled into native machine code before execution, leading to faster runtime performance since the machine code runs directly on the CPU.
+  - The Compiler and Interpreter, both have similar works to perform. Interpreters and Compilers convert the Source Code (HLL) to Machine Code (understandable by Computer).
+  - A compiler translates code written in a high-level programming language into a lower-level language like assembly language, object code and machine code (binary 1 and 0 bits). It converts the code ahead of time before the program runs.
+  - An interpreter translates the code line-by-line when the program is running. Interpreters, more often than not are smaller than compilers. 
+  - Compilers can contain interpreters for optimization reasons like faster performance and smaller memory footprint.
+  - 4 Types of Interpreters: Bytecode interpreter, Threaded code interpreter, Abstract syntax tree interpreter, Justin-in-time compilation. 
+  - 10 Types of Compilers: Cross-compiler, Native compiler, Bootstrap compiler, Decompiler, Source-to-source compiler, Language rewriter, Bytecode compiler, Just-in-time compiler, AOT compilation, Assembler.
+- Java vs JS?: 
+  - Java is an OOP programming language while Java Script is an OOP scripting language. 
+  - Java creates applications that run in a virtual machine or browser while JavaScript code is run on a browser only. 
+  - Java is a statically typed language; JavaScript is dynamic.
+  - Java is class-based; JavaScript is prototype-based.
+  - Java constructors are special functions that can only be called at object creation; JavaScript "constructors" are just standard functions.
+  - Java requires all non-block statements to end with a semicolon; JavaScript inserts semicolons at the ends of certain lines.
+  - Java uses block-based scoping; JavaScript uses function-based scoping.
+  - Java has an implicit this scope for non-static methods, and implicit class scope; JavaScript has implicit global scope.
+- Scripting langs vs Programming langs: Scripting languages are generally interpreted. Programming languages are typically compiled. This means that scripting languages are executed directly by the interpreter, while programming languages are first translated into machine code by the compiler before being executed. Programming languages create exe file, scripting languages don't.
 - 
 
+
+
 ----------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
