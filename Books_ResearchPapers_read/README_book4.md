@@ -60,85 +60,34 @@ public class NativeMethodExample {
 }
 ```
 
-- 
-A Java application can use two types of class loaders: a "primordial" class loader and class loader objects. 
-
-Because of class loader objects, you donít have to know at compile-time all the classes that may ultimately take part in a running Java application. They enable you to dynamically extend a Java application at run-time. As it runs, your application can determine what extra classes it needs and load them through one or more class loader objects. Because you write the class loader in Java, you can load classes in any manner.
-
-The Java class file helps make Java suitable for networks mainly in the areas of platform-independence and network-mobility. Its role in platform independence is serving as a binary form for Java programs that is expected by the Java Virtual Machine but independent of underlying host platforms. This approach breaks with the tradition followed by languages such as C or C++. Programs written in these languages are most often compiled and linked into a single binary executable file specific to a particular hardware platform and operating system. In general, a binary executable file for one platform wonít
-work on another. The Java class file, by contrast, is a binary file that can be run on any hardware platform and operating system that hosts the Java Virtual Machine.
-When you compile and link a C++ program, the executable binary file you get is specific to a particular target hardware platform and operating system because it contains machine language specific to the target processor. A Java compiler, by contrast, translates the instructions of the Java source files into bytecodes, the "machine language" of the Java Virtual Machine.
-In addition to processor-specific machine language, another platform-dependent attribute of a traditional binary executable file is the byte order of integers. In executable binary files for the Intel X86 family of processors, for example, the byte order is little-endian, or lower order byte first. In executable files for the PowerPC chip, however, the byte order is big-endian, or higher order byte first. In a Java class file, byte order is big-endian irrespective of what platform generated the file and independent of whatever platforms may eventually use it.
+  - A Java application can use two types of class loaders: a "primordial" class loader and class loader objects. Because of class loader objects, you don't have to know at compile-time all the classes that may ultimately take part in a running Java application. They enable you to dynamically extend a Java application at run-time. As it runs, your application can determine what extra classes it needs and load them through one or more class loader objects. Because you write the class loader in Java, you can load classes in any manner.
+    - The Java class file helps make Java suitable for networks mainly in the areas of platform-independence and network-mobility. Its role in platform independence is serving as a binary form for Java programs that is expected by the Java Virtual Machine but independent of underlying host platforms. This approach breaks with the tradition followed by languages such as C or C++. Programs written in these languages are most often compiled and linked into a single binary executable file specific to a particular hardware platform and operating system. In general, a binary executable file for one platform won't work on another. The Java class file, by contrast, is a binary file that can be run on any hardware platform and operating system that hosts the Java Virtual Machine. When you compile and link a C++ program, the executable binary file you get is specific to a particular target hardware platform and operating system because it contains machine language specific to the target processor. A Java compiler, by contrast, translates the instructions of the Java source files into bytecodes, the "machine language" of the Java Virtual Machine. In addition to processor-specific machine language, another platform-dependent attribute of a traditional binary executable file is the byte order of integers. In executable binary files for the Intel X86 family of processors, for example, the byte order is little-endian, or lower order byte first. In executable files for the PowerPC chip, however, the byte order is big-endian, or higher order byte first. In a Java class file, byte order is big-endian irrespective of what platform generated the file and independent of whatever platforms may eventually use it.
 
 <add image 9 > <> <>
 
-The graphical user interface library of the Java API, called the Abstract Windows Toolkit (or AWT), is designed to facilitate the creation of user interfaces that work on all platforms. 
+  - The graphical user interface library of the Java API, called the Abstract Windows Toolkit (or AWT), is designed to facilitate the creation of user interfaces that work on all platforms. 
+  - One more way Java prevents you from inadvertently corrupting memory is through automatic garbage collection. Java has a new operator, just like C++, that you use to allocate memory on the heap for a new object. But unlike C++, Java has no corresponding delete operator, which C++ programmers use to free the memory for an object that is no longer needed by the program. In Java, you merely stop referencing an object, and at some later time, the garbage collector will reclaim the memory occupied by the object. You can be more productive in Java in part because you don't have to chase down memory corruption bugs.
+  - When the Java program runs, a virtual machine loads the class files and executes the bytecodes they contain. When running on a virtual machine that interprets bytecodes, a Java program may be 10 to 30 times slower than an equivalent C++ program compiled to native machine code. This performance degradation is primarily a tradeoff in exchange for platform independence. Instead of compiling a Java program to platform-specific native machine code, you compile it to platform independent Java bytecodes. Native machine code can run fast, but only on the native platform. Java bytecodes (when interpreted) run slowly, but can be executed on any platform that hosts the Java Virtual Machine. Fortunately, other techniques can improve the performance of bytecode execution. For example, just-in-time compiling can speed up program execution 7 to 10 times over interpreting. 
+  - Java programs can run slower than an equivalent C++ program for many reasons:
+    - Interpreting bytecodes is 10 to 30 times slower than native execution.
+    - Just-in-time compiling bytecodes can be 7 to 10 times faster than interpreting, but still not quite as
+  fast as native execution.
+    - Java programs are dynamically linked.
+    - The Java Virtual Machine may have to wait for class files to download across a network.
+    - Array bounds are checked on each array access. 
+    - All objects are created on the heap (no objects are created on the stack). 
+    - All uses of object references are checked at run-time for null . 
+    - All reference casts are checked at run-time for type safety. 
+    - The garbage collector is likely less efficient (though often more effective) at managing the heap than you could be if you managed it directly as in C++. 
+    - Primitive types in Java are the same on every platform, rather than adjusting to the most efficient size on each platform as in C++. 
+    - Strings in Java are always UNICODE. When you really need to manipulate just an ASCII string, a Java program will be slightly less efficient than an equivalent C++ program.
+  - Programs often spend 80 or 90 percent of their time in 10 to 20 percent of the code. To be most effective, you should focus your optimization efforts on just the 10 to 20 percent of the code that really matters to execution speed.
 
-Another way Java prevents you from inadvertently corrupting memory is through automatic garbage collection. Java has a new operator, just like C++, that you use to allocate memory on the heap for a new object. But unlike C++, Java has no corresponding delete operator, which C++ programmers use to free the memory for an object that is no longer needed by the program. In Java, you merely stop referencing an object, and at some later time, the garbage collector will reclaim the memory occupied by the object.
-You can be more productive in Java in part because you donít have to chase down memory corruption bugs.
+--------------------------------
 
-When the Java program runs, a virtual machine loads the class files and executes the
-bytecodes they contain. When running on a virtual machine that interprets bytecodes, a Java program may be 10 to 30 times slower than an equivalent C++ program compiled to native machine code.
-This performance degradation is primarily a tradeoff in exchange for platform independence. Instead of compiling a Java program to platform-specific native machine code, you compile it to platform independent Java bytecodes. Native machine code can run fast, but only on the native platform. Java bytecodes (when interpreted) run slowly, but can be executed on any platform that hosts the Java Virtual Machine.
-Fortunately, other techniques can improve the performance of bytecode execution. For example, just-in- time compiling can speed up program execution 7 to 10 times over interpreting. 
-
-
-
-
-Java programs can run slower than an equivalent C++ program for many reasons:
-l Interpreting bytecodes is 10 to 30 times slower than native execution.
-l Just-in-time compiling bytecodes can be 7 to 10 times faster than interpreting, but still not quite as
-fast as native execution.
-l Java programs are dynamically linked.
-l The Java Virtual Machine may have to wait for class files to download across a network.
-l Array bounds are checked on each array access.
-l All objects are created on the heap (no objects are created on the stack).
-l All uses of object references are checked at run-time for null .
-l All reference casts are checked at run-time for type safety.
-l The garbage collector is likely less efficient (though often more effective) at managing the heap
-than you could be if you managed it directly as in C++.
-l Primitive types in Java are the same on every platform, rather than adjusting to the most efficient
-size on each platform as in C++.
-l Strings in Java are always UNICODE. When you really need to manipulate just an ASCII string, a
-Java program will be slightly less efficient than an equivalent C++ program.
-
-One area in which you can expect improvement over time is in the execution speed of Java programs. Sun, for example, is currently working on a technology they call "hot-spot compiling," which is a hybrid of interpreting and just-in- time compiling. 
-
-Programs often spend 80 or 90 percent of their time in 10 to 20 percent of the code. To be most effective, you should focus your optimization efforts on just the 10 to 20 percent of the code that really matters to execution speed.
-
-
-chapter 2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Chapter 2: Platform independence
+  - One of the key reasons Java technology is useful in a networked environment is that Java makes it possible to create binary executables that will run unchanged on multiple platforms. This is important in a networked environment because networks usually interconnect many different kinds of computers and devices. An internal network at a medium-sized company might connect Macintoshes in the art department, UNIX workstations in engineering, and PCs running Windows everywhere else. Also, various kinds of embedded devices, such as printers, scanners, and fax machines, would typically be connected to the same network. Although this arrangement enables various kinds of computers and devices within the company to share data, it requires a great deal of administration. Such a network presents a system administrator with the task of keeping different platform-specific editions of programs up to date on many different kinds of computers. Programs that can run without change on any networked computer, regardless of the computerís type, make the system administratorís job simpler, especially if those programs can actually be delivered across the network.
+  - 
 
 
 --------------------------------
