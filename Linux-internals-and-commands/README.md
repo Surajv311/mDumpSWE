@@ -10,6 +10,7 @@
 - `head <file>` Displays the first parts of files, with the syntax, head [options] [file_name].
 - `tail <file>`: Displays the last N number of lines of the given input.
   - `tail -f /var/log/syslog`: It only shows the last part of the logs, where problems usually lie. tail will continue watching the log file and print out the next line written to the file.
+  - If you do: `pip install -r /tmp/requirements.txt --ignore-installed | tee /tmp/pip_installation.log` - It will install pip requirements packages as well as output the process in `pip_installation.log` file. You can watch this log file using tail command: `tail -f pip_installation.log`
 - `cat <file_name>`: View file content
   - Eg: `cat <file> | head -88 | tail -1`: To display the 88th line of a file 
 - `fdisk -l`: The fdisk command is used for disk partitioning and disk management on Unix-like systems. The -l option lists information about all available disks and their partitions. This command is typically used to view the current disk layout and partitioning scheme of the system.
@@ -102,6 +103,7 @@
 - `cmp <source path file> <destination path file>`: It is used to compare the two files byte by byte and helps you to find out whether the two files are identical or not.
 - `cp <source path file> <destination path file>`: Command creates a copy of the source_file at the specified destination.
 - `sh test_file.sh `: To run a shell script. sh is the bourne shell. There are several shells, of which bourne is the old standard, installed on all unix systems, and generally the one you can guarantee will exist. The shell is the command interpreter that takes your input, provides output back to the screen, to the correct files, etc, and provides all the basic built-in commands you need to manage jobs, kill, test expressions, etc. Your command above is saying to run that shell-script using the bourne shell. Different shells use different syntax, so using the correct shell is a requirement. The first line of the shell should also define which to use: #!/bin/sh says use /bin/sh.
+  - The -c option in the sh command is used to execute a command or a series of commands provided as an argument to the -c option. Eg: `sh -c "command1; command2; command3"`
 - `chmod a+x test_file.sh`: The chmod a+x command in Linux adds the execute permission to a file for all users (owner, group, and others). All [chmod commands _al](https://www.geeksforgeeks.org/chmod-command-linux/).
   - [File permissions control _al](https://www.freecodecamp.org/news/file-permissions-in-linux-chmod-command-explained/) which actions can be performed by which users. Read, Write, and Execute are the three actions possible for every file. Three important commands you'll use when managing file permissions: chmod (Change mode), chown (Change ownership), chgrp (Change group).
   - Users are classified under three broad categories: Normal users, Groups, and Others. Linux allows users to set permissions at a very granular level. You can secure your file or directory in every possible location of a file system.
@@ -117,6 +119,11 @@
 - `scp <file/host> <file/host>`: scp (secure copy) command in Linux system is used to copy file(s) between servers in a secure way. The SCP command or secure copy allows the secure transferring of files between the local host and the remote host or between two remote hosts. It uses the same authentication and security as it is used in the Secure Shell (SSH) protocol. SCP is known for its simplicity, security, and pre-installed availability.
   - `scp user@remotehost:/home/user/file_name`: Securely copy a file from remote machine to our local machine
   - `scp [file_name] remoteuser@remotehost:/remote/directory`: Securely copy a file from a local machine to a remote machine
+- `cat /etc/passwd`: To list all users in a Linux system you can read the file (as seen). Each line in this file represents a user account, and the first field in each line is the username.
+- `cat /etc/group`: The /etc/group file is a configuration file on Unix-like systems that stores the group information for the system. It contains a list of groups, each with a unique group name and a list of users who are members of that group.
+- `cat /etc/sudoers`: The /etc/sudoers file is a configuration file on Unix-like systems that specifies which users or groups are allowed to run commands with superuser (root) privileges using the sudo command.
+- `tcpdump`: It is used to capture, filter, and analyze network traffic such as TCP/IP packets going through your system.
+- In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: Ctrl + A in keyboard. 
 - 
 
 
@@ -195,6 +202,7 @@ Note:
     - `?{pattern}`: Search backward for the {pattern}
     - `n`: Repeat the last search in the same direction
     - `N`: Repeat the last search in the opposite direction
+    - `Shift + v`: Visual editor mode
 
 - [File descriptors _al](https://stackoverflow.com/questions/5256599/what-are-file-descriptors-explained-in-simple-terms): 
   - In simple words, when you open a file, the operating system creates an entry to represent that file and store the information about that opened file. So if there are 100 files opened in your OS then there will be 100 entries in OS (somewhere in kernel). These entries are represented by integers like (...100, 101, 102....). This entry number is the file descriptor. So it is just an integer number that uniquely represents an opened file for the process. If your process opens 10 files then your Process table will have 10 entries for file descriptors. Similarly, when you open a network socket, it is also represented by an integer and it is called Socket Descriptor.
