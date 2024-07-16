@@ -123,9 +123,9 @@
 - `cat /etc/group`: The /etc/group file is a configuration file on Unix-like systems that stores the group information for the system. It contains a list of groups, each with a unique group name and a list of users who are members of that group.
 - `cat /etc/sudoers`: The /etc/sudoers file is a configuration file on Unix-like systems that specifies which users or groups are allowed to run commands with superuser (root) privileges using the sudo command.
 - `tcpdump`: It is used to capture, filter, and analyze network traffic such as TCP/IP packets going through your system.
-- In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: Ctrl + A in keyboard. 
+- In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: `Ctrl + a` in keyboard. 
+- In terminal, if you want to retrace and use a command previously/historically used, click `Ctrl + r` in keyboard and search the command in terminal, for further historical instance, click `Ctrl + r` again and again. 
 - 
-
 
 Note:
 
