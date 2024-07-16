@@ -326,7 +326,12 @@ result = result.union(df)
 ## above code works even though the schema field is different
 ```
 
+- [Difference between Hive internal tables and external tables? _al](https://stackoverflow.com/questions/17038414/difference-between-hive-internal-tables-and-external-tables):
+  - Hive has a relational database on the master node it uses to keep track of state. For instance, when you CREATE TABLE FOO(foo string) LOCATION 'hdfs://tmp/';, this table schema is stored in the database.
+  - If you have a partitioned table, the partitions are stored in the database(this allows hive to use lists of partitions without going to the file-system and finding them, etc). These sorts of things are the 'metadata'. When you drop an internal table, it drops the data, and it also drops the metadata.
+  - When you drop an external table (create it like CREATE EXTERNAL TABLE FOO(foo string) LOCATION 'hdfs://tmp/';), it only drops the meta data. That means hive is ignorant of that data now. It does not touch the data itself.
 - 
+
 
 ----------------------------------------------------------------------
 
