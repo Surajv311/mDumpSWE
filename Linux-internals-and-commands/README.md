@@ -114,6 +114,12 @@
 - `sudo dmesg`: All the messages received from the kernel ring buffer is displayed when we execute the command “dmesg”, here only the latest messages will be shown.
   - The kernel ring buffer can be thought of as a log file, but for the kernel itself. However, unlike other log files, it's stored in memory rather than in a disk file.
 - `sudo apt-get install iftop`: apt-get (Advanced Packaging Tool) is a command-line tool that helps in handling packages in Linux.
+  - Similarly to uninstall: 
+    - `apt-get remove iftop`: will remove the binaries, but not the configuration or data files of the package packagename. It will also leave dependencies installed with it on installation time untouched.
+    - `apt-get purge iftop`: will remove about everything regarding the package packagename, but not the dependencies installed with it on installation. Both commands are equivalent. Particularly useful when you want to 'start all over' with an application because you messed up the configuration. However, it does not remove configuration or data files residing in users home directories, usually in hidden folders there. There is no easy way to get those removed as well.
+    - `apt-get autoremove`: removes orphaned packages, i.e. installed packages that used to be installed as an dependency, but aren't any longer. Use this after removing a package which had installed dependencies you're no longer interested in.
+    - `aptitude remove iftop`: will also attempt to remove other packages which were required by packagename on but are not required by any remaining packages. Note that aptitude only remembers dependency information for packages that it has installed.
+    - [etc, etc... _al](https://askubuntu.com/questions/187888/what-is-the-correct-way-to-completely-remove-an-application) 
 - `clear`: Clear the terminal screen in Linux
 - `date`: Displays date in UTC in linux
 - `scp <file/host> <file/host>`: scp (secure copy) command in Linux system is used to copy file(s) between servers in a secure way. The SCP command or secure copy allows the secure transferring of files between the local host and the remote host or between two remote hosts. It uses the same authentication and security as it is used in the Secure Shell (SSH) protocol. SCP is known for its simplicity, security, and pre-installed availability.
