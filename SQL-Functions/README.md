@@ -269,7 +269,25 @@ Output:
 Explanation: Joe is the only employee who earns more than his manager.
 SELECT e2.name as Employee FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerID WHERE e1.salary < e2.salary
 
-Q2 
+Write a solution to find the second highest salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
+Input: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+Output: 
++---------------------+
+| SecondHighestSalary |
++---------------------+
+| 200                 |
++---------------------+
+SELECT MAX(Salary) AS SecondHighestSalary FROM Employee E2 WHERE E2.Salary < (SELECT MAX(Salary) FROM Employee)
+
+
 
 
 ----------------------------------------------------------------------
