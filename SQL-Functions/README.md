@@ -2,7 +2,6 @@
 # SQL Functions
 
 
-- Joins in SQL: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN. Syntax: `SELECT table1.column1,table1.column2,table2.column1,.... FROM table1 JOIN table2 ON table1.matching_column = table2.matching_column;`. Here, table1: First table, table2: Second table, matching_column: Column common to both the tables.
 - Order of execution in SQL: 
 
 ```
@@ -26,6 +25,7 @@ Example for SQL Syntax, Aggregate, Window functions;
 First: SQL Syntax, Aggregate Functions:
 
 - `SELECT column1, column2, ... FROM table_name;`
+  - This also works: SELECT table_name.column1, table_name.column2, ... FROM table_name;
 - `SELECT column1, column2, ... FROM table_name WHERE condition;`
 - `SELECT column1, column2, ... FROM table_name ORDER BY column1 [ASC|DESC], column2 [ASC|DESC], ...;`
 - `SELECT column1, aggregate_function(column2) FROM table_name GROUP BY column1;`
@@ -58,7 +58,14 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
 - `SELECT column1, column2, ... FROM table_name LIMIT offset, row_count;`
   - Eg: select * from cycles_table limit 10 offset 5; This query selects all columns from the cycles_table, limiting the results to 10 rows starting from the sixth row (offset 5).
 - `SELECT DISTINCT column1, column2, ... FROM table_name;`
-- `SELECT column1, column2, ... FROM table1 JOIN table2 ON table1.column = table2.column;`
+- `SELECT column1, column2, ... FROM table1 JOIN table2 ON table1.column = table2.column;` - Note the table1 and table2. 
+  - INNER JOIN: Returns records that have matching values in both tables.
+  - LEFT JOIN: Returns all records from the left table and the matched records from the right table. The result is NULL from the right side if there is no match.
+  - RIGHT JOIN: Returns all records from the right table and the matched records from the left table. The result is NULL from the left side if there is no match.
+  - FULL JOIN: Returns all records when there is a match in either left or right table. The result is NULL from the side where there is no match.
+  - CROSS/CARTESIAN JOIN: Returns the Cartesian product of the two tables, i.e., it returns all possible combinations of rows from the two tables.
+  - SELF JOIN: A regular join but the table is joined with itself.
+  - NATURAL JOIN: A type of INNER JOIN where the join is implicitly based on all columns in the two tables that have the same name.
 - `INSERT INTO table_name (column1, column2, ...) VALUES (value1, value2, ...);`
   - Eg: INSERT INTO employees (first_name, last_name, email, department) VALUES ('John', 'Doe', 'john.doe@example.com', 'IT');
 - `UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;`
@@ -72,6 +79,15 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
   - Eg: SELECT first_name, last_name, salary FROM employees WHERE salary BETWEEN 50000 AND 80000;
 - `SELECT column1, column2, ... FROM table_name WHERE column IS NULL;`
 - `SELECT column1, column2, ... FROM table_name WHERE column IS NOT NULL;`
+- `CREATE TABLE table_name( column1 datatype, column2 datatype, column3 datatype, PRIMARY KEY( one or more columns ) );`
+- `CREATE UNIQUE INDEX index_name ON table_name ( column1, column2,...columnN);`
+- `TRUNCATE TABLE table_name;`
+- `ALTER TABLE table_name [ADD|DROP|MODIFY] column_name [data_ype];`
+- `ALTER TABLE table_name RENAME TO new_table_name;`
+- `CREATE DATABASE database_name;`
+- `DROP DATABASE database_name;`
+- `USE database_name;`
+- `COMMIT;` and/or `ROLLBACK;`
 
 Second: Window Functions:
 
@@ -171,7 +187,7 @@ Output:
 
 ----------------------------------------------------------------------
 
-- SQL UPSERT command: It’s “update” and “insert.” In the context of relational databases, an upsert is a database operation that will update an existing row if a specified value already exists in a table, and insert a new row if the specified value doesn't already exist.
+- SQL UPSERT command: It’s “update” and “insert”. In the context of relational databases, an upsert is a database operation that will update an existing row if a specified value already exists in a table, and insert a new row if the specified value doesn't already exist.
 - SQL clause "GROUP BY 1" mean: It means to group by the first column of your result set regardless of what it's called. You can do the same with ORDER BY.
 - SQL CHECK constraint: It is used to specify the condition that must be validated in order to insert data into a table. Eg: 
 
