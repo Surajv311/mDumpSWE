@@ -90,6 +90,8 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
 - `ALTER TABLE table_name [ADD|DROP|MODIFY] column_name [data_ype];`
   - `ALTER TABLE table_name RENAME TO new_table_name;`
   - You can also alter table to add keys, constraints, etc. 
+- `SELECT COALESCE(NULL, NULL, 'Hi', NULL, 'go') from table;`
+  - The COALESCE() function returns the first non-null value in a list.
 - `CREATE DATABASE database_name;`
 - `DROP DATABASE database_name;`
 - `USE database_name;`
@@ -286,6 +288,42 @@ Output:
 | 200                 |
 +---------------------+
 SELECT MAX(Salary) AS SecondHighestSalary FROM Employee E2 WHERE E2.Salary < (SELECT MAX(Salary) FROM Employee)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
