@@ -247,7 +247,7 @@ FROM cte_quantity;
 
 ----------------------------------------------------------------------
 
-### SQL Questions:
+### SQL Questions: (From leetcode, open source repos, websites, etc.)
 
 Write a solution to find the employees who earn more than their managers.
 Input: 
