@@ -80,14 +80,21 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
 - `SELECT column1, column2, ... FROM table_name WHERE column IS NULL;`
 - `SELECT column1, column2, ... FROM table_name WHERE column IS NOT NULL;`
 - `CREATE TABLE table_name( column1 datatype, column2 datatype, column3 datatype, PRIMARY KEY( one or more columns ) );`
-- `CREATE UNIQUE INDEX index_name ON table_name ( column1, column2,...columnN);`
+- `CREATE INDEX index_name ON table_name ( column1, column2,...columnN);`
+  - Indexes are special lookup tables that the database search engine can use to speed up data retrieval. An index is a pointer to data in a table.
+  - We have simple, unique, composite indexes, etc. 
+- `SELECT column1, column2 FROM table1 UNION SELECT column1, column2 FROM table2;`
+  - The SQL UNION clause is used to combine the results of two or more SELECT statements into a single result set. The UNION operator selects only distinct values by default, meaning it removes duplicates. If you want to include duplicates, you can use the UNION ALL operator. We also have other clauses like Intersect, Except, etc. 
 - `TRUNCATE TABLE table_name;`
+- `CREATE VIEW view_name AS SELECT column1, column2..... FROM table_name WHERE [condition];`
 - `ALTER TABLE table_name [ADD|DROP|MODIFY] column_name [data_ype];`
-- `ALTER TABLE table_name RENAME TO new_table_name;`
+  - `ALTER TABLE table_name RENAME TO new_table_name;`
+  - You can also alter table to add keys, constraints, etc. 
 - `CREATE DATABASE database_name;`
 - `DROP DATABASE database_name;`
 - `USE database_name;`
-- `COMMIT;` and/or `ROLLBACK;`
+- `COMMIT;` and/or `ROLLBACK;`, etc. 
+- We have SQL date functions like: DAYOFMONTH(), CURRENT_TIMESTAMP(), DATEDIFF(), etc.
 
 Second: Window Functions:
 
