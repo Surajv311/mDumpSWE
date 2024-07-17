@@ -224,7 +224,7 @@ FROM cte_quantity;
 
 ----------------------------------------------------------------------
 
-SQL Questions:
+### SQL Questions:
 
 Write a solution to find the employees who earn more than their managers.
 Input: 
@@ -246,7 +246,7 @@ Output:
 Explanation: Joe is the only employee who earns more than his manager.
 SELECT e2.name as Employee FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerID WHERE e1.salary < e2.salary
 
-Q2
+Q2 
 
 
 ----------------------------------------------------------------------
