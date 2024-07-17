@@ -19,6 +19,8 @@ ORDER BY [...]
 - Aggregate Functions in sql: COUNT(), SUM(), AVG(), MIN(), MAX().
 - Window/ Analytic Functions in sql: ORDER BY, PARTITION BY, RANK(), DENSE_RANK(), ROW_NUMBER(), LEAD(), LAG(). [Window functions sql example _vl](https://www.youtube.com/watch?v=Ww71knvhQ-s&ab_channel=techTFQ). 
 
+----------------------------------------------------------------------
+
 Example for SQL Syntax, Aggregate, Window functions;
 
 First: SQL Syntax, Aggregate Functions:
@@ -166,6 +168,8 @@ Output:
 | Charlie |   Sales   |      1       |
 |  David  |   Sales   |      2       |
 |   Eve   | Marketing |      1       |
+
+----------------------------------------------------------------------
 
 - SQL UPSERT command: It’s “update” and “insert.” In the context of relational databases, an upsert is a database operation that will update an existing row if a specified value already exists in a table, and insert a new row if the specified value doesn't already exist.
 - SQL clause "GROUP BY 1" mean: It means to group by the first column of your result set regardless of what it's called. You can do the same with ORDER BY.
