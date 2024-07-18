@@ -289,6 +289,15 @@ Output:
 | 200                 |
 +---------------------+
 SELECT MAX(Salary) AS SecondHighestSalary FROM Employee E2 WHERE E2.Salary < (SELECT MAX(Salary) FROM Employee)
+or 
+select (select distinct Salary from Employee order by salary desc limit 1 offset 1) as SecondHighestSalary; Note that SELECT DISTINCT(salary) from Employee order by salary DESC LIMIT 1 OFFSET N is the main logic here. 
+or 
+SELECT CASE WHEN COUNT(*) = 0 THEN NULL ELSE Salary END AS SecondHighestSalary
+FROM (
+  SELECT Salary, DENSE_RANK() OVER(ORDER BY Salary DESC) AS rnk
+  FROM Employee
+) as base 
+WHERE rnk = 2
 
 Write a solution to find all customers who never order anything.
 Input: 
