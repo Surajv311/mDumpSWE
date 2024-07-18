@@ -66,6 +66,7 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
   - CROSS/CARTESIAN JOIN: Returns the Cartesian product of the two tables, i.e., it returns all possible combinations of rows from the two tables.
   - SELF JOIN: A regular join but the table is joined with itself.
   - NATURAL JOIN: A type of INNER JOIN where the join is implicitly based on all columns in the two tables that have the same name.
+  - Other eg, we can have multiple conditions in ON statement: SELECT t1.column1, t1.column2, t2.column3, t2.column4 FROM table1 t1 INNER JOIN table2 t2 ON t1.key1 = t2.key1 AND t1.key2 = t2.key2 AND t1.date BETWEEN '2022-01-01' AND '2022-12-31'.
 - `INSERT INTO table_name (column1, column2, ...) VALUES (value1, value2, ...);`
   - Eg: INSERT INTO employees (first_name, last_name, email, department) VALUES ('John', 'Doe', 'john.doe@example.com', 'IT');
 - `UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;`
@@ -88,8 +89,8 @@ Post running query: `SELECT department, AVG(salary) FROM employees GROUP BY depa
 - `TRUNCATE TABLE table_name;`
 - `CREATE VIEW view_name AS SELECT column1, column2..... FROM table_name WHERE [condition];`
 - `ALTER TABLE table_name [ADD|DROP|MODIFY] column_name [data_ype];`
-  - `ALTER TABLE table_name RENAME TO new_table_name;`
-  - You can also alter table to add keys, constraints, etc. 
+  - Other eg: ALTER TABLE table_name RENAME TO new_table_name;
+  - You can also alter table to add primary keys, constraints, etc. 
 - `SELECT COALESCE(NULL, NULL, 'Hi', NULL, 'go') from table;`
   - The COALESCE() function returns the first non-null value in a list.
 - `CREATE DATABASE database_name;`
