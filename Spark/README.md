@@ -67,7 +67,6 @@ scala>  DF.repartition($”country”).write.mode(“overwrite”).partitionBy(�
 Useful links:
 [Data partitioning spark _al](https://medium.com/@dipayandev/everything-you-need-to-understand-data-partitioning-in-spark-487d4be63b9c), [Spark repartition vs coalesce _al](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce)
 
-
 Now, when you have a small dataset, then to run spark jobs for testing on them, in short you could use: [Spark Jobs on Small Test Datasets _al](https://luminousmen.com/post/how-to-speed-up-spark-jobs-on-small-test-datasets)
 
 ```
@@ -86,6 +85,8 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
 - **Broadcast Join** is an optimization technique in the PySpark SQL engine that is used to join two DataFrames. This technique is ideal for joining a large DataFrame with a smaller one. With broadcast join, PySpark broadcast the smaller DataFrame to all executors and the executor keeps this DataFrame in memory and the larger DataFrame is split and distributed across all executors so that PySpark can perform a join without shuffling any data from the larger DataFrame as the data required for join colocated on every executor. [Normal vs Broadcast join _al](https://www.linkedin.com/pulse/apache-spark-101-shuffle-join-vs-broadcast-joins-shanoj-kumar-v-g779c/)
 
 - **Salting** is a technique used in Apache Spark to evenly distribute data across partitions. It involves adding a random or unique identifier (called a "salt") to each record before performing operations like grouping or joining. This helps avoid data skew and improves parallelism in data processing.
+
+- How to handle skewed data in Spark: Data skew occurs when some partitions have significantly more data than others, leading to performance bottlenecks. Strategies to handle skewed data include - Salting, Repartitioning, Broadcast Variables.
 
 - Spark uses two engines to optimize and run the queries - Catalyst and Tungsten, in that order. Catalyst basically generates an optimized physical query plan from the logical query plan by applying a series of transformations like predicate pushdown, column pruning, and constant folding on the logical plan. This optimized query plan is then used by Tungsten to generate optimized code, that resembles hand written code, by making use of Whole-stage Codegen functionality introduced in Spark 2.0. This functionality has improved Spark's efficiency by a huge margin from Spark 1.6, which used the traditional Volcano Iterator Model. [Spark engine _al](https://www.linkedin.com/pulse/catalyst-tungsten-apache-sparks-speeding-engine-deepak-rajak/)
 
