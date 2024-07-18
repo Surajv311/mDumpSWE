@@ -208,7 +208,6 @@ myF_udf =  F.udf(myF, StringType())
   - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. These subqueries can be more efficient, especially when dealing with extensive subquery results.
   - Regularly maintain your database to ensure optimal performance: Rebuild indexes periodically to maintain their efficiency; Use VACUUM and ANALYZE commands to manage table data and update query planner statistics; 
   - Common Table Expressions (CTEs) provide a way to create temporary result sets within a query. They can enhance the readability and maintainability of complex queries. While not always an optimisation technique, CTEs can help organise your query for better performance analysis and troubleshooting. CTE is a named temporary result set that can be referenced within a SELECT, INSERT, UPDATE, or DELETE statement. It is defined using the WITH keyword and is useful for recursive queries, subquery replacement, and code reusability.
-  - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. 
   - For applications making frequent database connections, use connection pooling to minimise the overhead of establishing and closing connections.
   - Partitioning can significantly improve query performance by limiting the amount of data that needs to be scanned.
   - Using SELECT DISTINCT to remove duplicates from query results can be resource-intensive. If possible, design your data model to prevent duplicates, or use GROUP BY when you genuinely need to aggregate data.
