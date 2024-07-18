@@ -328,6 +328,44 @@ SELECT name AS Customers FROM Customers WHERE Customers.id NOT IN (SELECT Custom
 or
 SELECT c.name AS Customers FROM Customers c LEFT JOIN Orders o ON c.id=o.customerId WHERE o.customerId IS NULL;
 
+Write a solution to report all the duplicate emails. Note that it's guaranteed that the email field is not NULL.
+Input: 
+Person table:
++----+---------+
+| id | email   |
++----+---------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+---------+
+Output: 
++---------+
+| Email   |
++---------+
+| a@b.com |
++---------+
+select email as Email from Person group by email having count(email)>1
+or
+SELECT Email FROM (SELECT Email, COUNT(Email) AS CNT FROM Person GROUP BY Email) WHERE CNT > 1
+
+Write a solution to find all dates' Id with higher temperatures compared to its previous dates (yesterday).
+Input: 
+Weather table:
++----+------------+-------------+
+| id | recordDate | temperature |
++----+------------+-------------+
+| 1  | 2015-01-01 | 10          |
+| 2  | 2015-01-02 | 25          |
+| 3  | 2015-01-03 | 20          |
+| 4  | 2015-01-04 | 30          |
++----+------------+-------------+
+Output: 
++----+
+| id |
++----+
+| 2  |
+| 4  |
++----+
 
 
 

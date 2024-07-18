@@ -317,7 +317,7 @@ collectDF.take(5) # take works with an Integer count collectDF.show() # this pri
 collectDF.collect()
 ```
   - There’s an additional way of collecting rows to the driver in order to iterate over the entire dataset. The method toLocalIterator collects partitions to the driver as an iterator. This method allows you to iterate over the entire dataset partition-by- partition in a serial manner: collectDF.toLocalIterator()
-  - ***Any collection of data to the driver can be a very expensive opera‐ tion! If you have a large dataset and call collect, you can crash the driver. If you use toLocalIterator and have very large partitions, you can easily crash the driver node and lose the state of your application. This is also expensive because we can operate on a one-by-one basis, instead of running computation in parallel.***
+  - ***Any collection of data to the driver can be a very expensive operation! If you have a large dataset and call collect, you can crash the driver. If you use toLocalIterator and have very large partitions, you can easily crash the driver node and lose the state of your application. This is also expensive because we can operate on a one-by-one basis, instead of running computation in parallel.***
 
 ---------------------------------
 
