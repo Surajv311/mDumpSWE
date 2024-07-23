@@ -1178,7 +1178,7 @@ keyedRDD
 ---------------------------------
 
 - Chapter 21: Structured Streaming Basics
-  - The main idea behind Structured Streaming is to treat a stream of data as a table to which data is continuously appended. The job then periodically checks for new input data, process it, updates some internal state located in a state store if needed, and updates its result. A cornerstone of the API is that you should not have to change your query’s code when doing batch or stream processing—you should have to spec‐ ify only whether to run that query in a batch or streaming fashion.
+  - The main idea behind Structured Streaming is to treat a stream of data as a table to which data is continuously appended. The job then periodically checks for new input data, process it, updates some internal state located in a state store if needed, and updates its result. A cornerstone of the API is that you should not have to change your query’s code when doing batch or stream processing — you should have to specify only whether to run that query in a batch or streaming fashion.
   - Internally, Structured Streaming will automatically figure out how to “incrementalize” your query, i.e., update its result efficiently whenever new data arrives, and will run it in a fault-tolerant fashion.
   - Core Concepts: 
     - Structured Streaming maintains the same concept of transformations and actions that we have seen throughout this book.
