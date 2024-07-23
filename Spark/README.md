@@ -314,7 +314,7 @@ myF_udf =  F.udf(myF, StringType())
   - Resources: [spark-tune-executor _al](https://sparkbyexamples.com/spark/spark-tune-executor-number-cores-and-memory/), [Spark Executor Core & Memory Explained _vl](https://www.youtube.com/watch?v=PP7r_L-HB50), [Distribution of Executors, Cores and Memory for a Spark Application _al](https://spoddutur.github.io/spark-notes/distribution_of_executors_cores_and_memory_for_spark_application.html)
 
 - PySpark Window function performs statistical operations such as rank, row number, etc. on a group, frame, or collection of rows and returns results for each row individually.
-- If you do a union in pyspark: Spark will simply append the dataframes, it will not append by using columns names.If you are using union then you should make sure the columns in the dataframe appear in same order because the appending appears to be happening in the order they appear.
+- If you do a union in pyspark: Spark will simply append the dataframes, it will not append by using columns names. If you are using union then you should make sure the columns in the dataframe appear in same order because the appending appears to be happening in the order they appear.
 
 ```
 df_schema = StructType([StructField('a', StringType(), True),])
