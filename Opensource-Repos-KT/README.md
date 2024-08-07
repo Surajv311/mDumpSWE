@@ -93,7 +93,7 @@
 - A port number is a way to identify a specific process to which an internet or other network message is to be forwarded when it arrives at a server.
 - Message/Task queue, Monoliths, Microservices, ACID-BASE, Cache, Sharding, Architectures, etc. also covered in the repo. 
 
-#### [surajvm1/LearningMicroservices - Major points](https://github.com/surajvm1/LearningMicroservices/tree/dev/feat1)
+#### [surajvm1/LearningMicroservices - Major points _al](https://github.com/surajvm1/LearningMicroservices/tree/dev/feat1)
 
 - k6, ab can be used for API load testing. 
   - Commands which we can run to grant permissions to a new user on a db/table: 

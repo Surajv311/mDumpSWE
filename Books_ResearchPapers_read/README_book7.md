@@ -25,7 +25,7 @@
   - Etc etc...
 
 - Chapter 3: Tools of the Trade
-  - 
+  -  
 
 --------------------------------
 
