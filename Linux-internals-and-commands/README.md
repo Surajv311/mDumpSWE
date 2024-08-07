@@ -132,7 +132,7 @@
 - `tcpdump`: It is used to capture, filter, and analyze network traffic such as TCP/IP packets going through your system.
 - In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: `Ctrl + a` in keyboard. 
 - In terminal, if you want to retrace and use a command previously/historically used, click `Ctrl + r` in keyboard and search the command in terminal, for further historical instance, click `Ctrl + r` again and again. 
-- 
+- `cat date_2024_08_04_data.csv | wc -l`: 'wc' stands for word count. In given command we count the no. of lines in the file. 
 
 Note:
 
