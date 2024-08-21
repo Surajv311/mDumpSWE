@@ -232,11 +232,44 @@ FROM cte_quantity;
   - If the query has not got any specific ordering, it returns the first 10 rows it receives. But if there is a "WHERE ..." or "ORDER BY ..." clause, it must first get the full resultset and then fetch the first 10 rows. [Limit clause _al](https://dba.stackexchange.com/a/62444)
 - ORDER BY: sort the data in ascending or descending order; GROUP BY: arrange identical data into groups. It allows you to perform aggregation functions on non-grouped columns (such as SUM, COUNT, AVG, etc).
 - PARTITION BY and GROUP BY difference: PARTITION BY is analytic, while GROUP BY is aggregate. In order to use PARTITION BY, you have to contain it with an OVER clause.
-  - GROUP BY modifies the entire query, like: `select customerId, count(*) as orderCount from Orders group by customerId`
-    - GROUP BY normally reduces the number of rows returned by rolling them up and calculating averages or sums for each row.
-  - But PARTITION BY just works on a window function, like ROW_NUMBER(): `select row_number() over (partition by customerId order by orderId) as OrderNumberForThisCustomer from Orders`
-    - PARTITION BY does not affect the number of rows returned, but it changes how a window function's result is calculated.
-  - [SQL Window Functions good reference 1 _vl](https://www.youtube.com/watch?v=Ww71knvhQ-s), [SQL Window Functions good reference 2 _vl](https://www.youtube.com/watch?v=KwEjkpFltjc)
+  - GROUP BY modifies the entire query, like: `select customerId, count(*) as orderCount from Orders group by customerId`. GROUP BY normally reduces the number of rows returned by rolling them up and calculating averages or sums for each row.
+  - But PARTITION BY just works on a window function, like ROW_NUMBER(): `select row_number() over (partition by customerId order by orderId) as OrderNumberForThisCustomer from Orders`. PARTITION BY does not affect the number of rows returned, but it changes how a window function's result is calculated.
+  - [SQL Window Functions good reference 1 _vl](https://www.youtube.com/watch?v=Ww71knvhQ-s), [SQL Window Functions good reference 2 _vl](https://www.youtube.com/watch?v=KwEjkpFltjc), [Group by, Partition by difference](https://stackoverflow.com/questions/2404565/what-is-the-difference-between-partition-by-and-group-by)
+
+```
+Consider a table named TableA with the following values:
+id  firstname                   lastname                    Mark
+-------------------------------------------------------------------
+1   arun                        prasanth                    40
+2   ann                         antony                      45
+3   sruthy                      abc                         41
+6   new                         abc                         47
+1   arun                        prasanth                    45
+1   arun                        prasanth                    49
+2   ann                         antony                      49
+
+Example for Group By: select SUM(Mark)marksum,firstname from TableA group by id,firstName: 
+Result:
+marksum  firstname
+----------------
+94      ann                      
+134     arun                     
+47      new                      
+41      sruthy   
+
+Example for Partition By: SELECT SUM(Mark) OVER (PARTITION BY id) AS marksum, firstname FROM TableA
+Result:
+marksum firstname 
+-------------------
+134     arun                     
+134     arun                     
+134     arun                     
+94      ann                      
+94      ann                      
+41      sruthy                   
+47      new  
+```
+
 - [SQL Query plan internals _al](https://www.red-gate.com/simple-talk/databases/sql-server/performance-sql-server/execution-plan-basics/)
 - Scalar vs Predicate Queries: 
   - Scalar: A scalar subquery is a subquery that returns exactly one value (one row with one column). This type of subquery is often used in places where a single value is expected, such as in the SELECT clause, WHERE clause, or HAVING clause.
