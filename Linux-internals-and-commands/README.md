@@ -124,6 +124,7 @@
 - `clear`: Clear the terminal screen in Linux
 - `date`: Displays date in UTC in linux
 - `scp <file/host> <file/host>`: scp (secure copy) command in Linux system is used to copy file(s) between servers in a secure way. The SCP command or secure copy allows the secure transferring of files between the local host and the remote host or between two remote hosts. It uses the same authentication and security as it is used in the Secure Shell (SSH) protocol. SCP is known for its simplicity, security, and pre-installed availability.
+  - Eg: `sp -r circleci@13.120.15.80:/home/repo/file/values.yml migrated_values.vml`
   - `scp user@remotehost:/home/user/file_name`: Securely copy a file from remote machine to our local machine
   - `scp [file_name] remoteuser@remotehost:/remote/directory`: Securely copy a file from a local machine to a remote machine
 - `cat /etc/passwd`: To list all users in a Linux system you can read the file (as seen). Each line in this file represents a user account, and the first field in each line is the username.
@@ -135,6 +136,7 @@
 - `cat date_2024_08_04_data.csv | wc -l`: 'wc' stands for word count. In given command we count the no. of lines in the file. 
 - Run gunzip zip/unzip command(s) and tar file commands: 
   - `gunzip originalGeoIP2-City.tar.gz` (unzip file) -> `tar -xvf originalGeoIP2-City.tar` (decompress tar file) -> `tar -cvf gunzipTarGeoIP2-City.tar GeoIP2-City_20230512/` (compress folder to tar file) -> `gzip gunzipTarGeoIP2-City.tar` (zip back)
+- `md5sum file.yml`: The MD5 sum of a file is a 32-character hexadecimal number that verifies a file's integrity. It's commonly used to check if a file has changed due to a disk error, faulty transfer, or other reasons.
 
 Note:
 
