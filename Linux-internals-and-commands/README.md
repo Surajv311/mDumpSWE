@@ -34,6 +34,7 @@
 - `find ~ -name aws_credentials`: Searches for files named aws_credentials in the user's home directory (~).
   - `find / -name "requirements.txt" 2>/dev/null`: Searches for file from root directory. The /dev/null command suppresses error messages about directories you don't have permission to read.
   - `find . -name "requirements.txt"`: Command will search for the file starting from the current directory (.) and look through all subdirectories.
+  - `find / -type d -name "efs"`: Command will search for a directory with name "efs".
 - `grep -iR AWS_KEY *`: Searches recursively (-R) for occurrences of AWS_KEY in files in the current directory and its subdirectories (*).
 - `exit`: Exits the current shell or session.
 - `grep -iR access <path>`: Searches recursively for occurrences of access in files within the specified path.
@@ -114,18 +115,28 @@
 - `sudo dmesg`: All the messages received from the kernel ring buffer is displayed when we execute the command “dmesg”, here only the latest messages will be shown.
   - The kernel ring buffer can be thought of as a log file, but for the kernel itself. However, unlike other log files, it's stored in memory rather than in a disk file.
 - `sudo apt-get install iftop`: apt-get (Advanced Packaging Tool) is a command-line tool that helps in handling packages in Linux.
+  - Similarly to uninstall: 
+    - `apt-get remove iftop`: will remove the binaries, but not the configuration or data files of the package packagename. It will also leave dependencies installed with it on installation time untouched.
+    - `apt-get purge iftop`: will remove about everything regarding the package packagename, but not the dependencies installed with it on installation. Both commands are equivalent. Particularly useful when you want to 'start all over' with an application because you messed up the configuration. However, it does not remove configuration or data files residing in users home directories, usually in hidden folders there. There is no easy way to get those removed as well.
+    - `apt-get autoremove`: removes orphaned packages, i.e. installed packages that used to be installed as an dependency, but aren't any longer. Use this after removing a package which had installed dependencies you're no longer interested in.
+    - `aptitude remove iftop`: will also attempt to remove other packages which were required by packagename on but are not required by any remaining packages. Note that aptitude only remembers dependency information for packages that it has installed.
+    - [etc, etc... _al](https://askubuntu.com/questions/187888/what-is-the-correct-way-to-completely-remove-an-application) 
 - `clear`: Clear the terminal screen in Linux
 - `date`: Displays date in UTC in linux
 - `scp <file/host> <file/host>`: scp (secure copy) command in Linux system is used to copy file(s) between servers in a secure way. The SCP command or secure copy allows the secure transferring of files between the local host and the remote host or between two remote hosts. It uses the same authentication and security as it is used in the Secure Shell (SSH) protocol. SCP is known for its simplicity, security, and pre-installed availability.
+  - Eg: `sp -r circleci@13.120.15.80:/home/repo/file/values.yml migrated_values.vml`
   - `scp user@remotehost:/home/user/file_name`: Securely copy a file from remote machine to our local machine
   - `scp [file_name] remoteuser@remotehost:/remote/directory`: Securely copy a file from a local machine to a remote machine
 - `cat /etc/passwd`: To list all users in a Linux system you can read the file (as seen). Each line in this file represents a user account, and the first field in each line is the username.
 - `cat /etc/group`: The /etc/group file is a configuration file on Unix-like systems that stores the group information for the system. It contains a list of groups, each with a unique group name and a list of users who are members of that group.
 - `cat /etc/sudoers`: The /etc/sudoers file is a configuration file on Unix-like systems that specifies which users or groups are allowed to run commands with superuser (root) privileges using the sudo command.
 - `tcpdump`: It is used to capture, filter, and analyze network traffic such as TCP/IP packets going through your system.
-- In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: Ctrl + A in keyboard. 
-- 
-
+- In terminal, if you type a long command, and want to move the cursor to first alphabet/position, press: `Ctrl + a` in keyboard. 
+- In terminal, if you want to retrace and use a command previously/historically used, click `Ctrl + r` in keyboard and search the command in terminal, for further historical instance, click `Ctrl + r` again and again. 
+- `cat date_2024_08_04_data.csv | wc -l`: 'wc' stands for word count. In given command we count the no. of lines in the file. 
+- Run gunzip zip/unzip command(s) and tar file commands: 
+  - `gunzip originalGeoIP2-City.tar.gz` (unzip file) -> `tar -xvf originalGeoIP2-City.tar` (decompress tar file) -> `tar -cvf gunzipTarGeoIP2-City.tar GeoIP2-City_20230512/` (compress folder to tar file) -> `gzip gunzipTarGeoIP2-City.tar` (zip back)
+- `md5sum file.yml`: The MD5 sum of a file is a 32-character hexadecimal number that verifies a file's integrity. It's commonly used to check if a file has changed due to a disk error, faulty transfer, or other reasons.
 
 Note:
 
@@ -221,6 +232,30 @@ Note:
   - /dev/null is a virtual device, which has a special property: Any data written to /dev/null vanishes or disappears. Because of this characteristic, it is also called bitbucket or blackhole.
   - Eg: `echo "helloworld" > /dev/null`; Then if you do: `cat /dev/null`; You won't get any output. 
   - It is mainly used to discard standard output and standard error from an output.
+
+- [Linux Directory Structure _al](https://linuxhandbook.com/linux-directory-structure/)
+  - / – The root directory: Everything, all the files and directories, in Linux are located under ‘root’ represented by ‘/’. 
+  - /bin – Binaries: The ‘/bin’ directly contains the executable files of many basic shell commands like ls, cp, cd etc. Mostly the programs are in binary format here and accessible by all the users in the Linux system.
+  - /dev – Device files: This directory only contains special files, including those relating to the devices. These are virtual files, not physically on the disk. Some interesting examples of these files are:
+    - /dev/null: can be sent to destroy any file or string
+    - /dev/zero: contains an infinite sequence of 0
+    - /dev/random: contains an infinite sequence of random values
+  - /etc – Configuration files: The /etc directory contains the core configuration files of the system, use primarily by the administrator and services, such as the password file and networking files. If you need to make changes in system configuration (for example, changing the hostname), the etc folder is where you’ll find the respective files.
+  - /usr – User binaries and program data: In ‘/usr’ go all the executable files, libraries, source of most of the system programs. For this reason, most of the files contained therein is readonly (for the normal user)
+  - /home – User personal data: Home directory contains personal directories for the users. The home directory contains the user data and user-specific configuration files. As a user, you’ll put your personal files, notes, programs etc in your home directory. When you create a user on your Linux system, it’s a general practice to create a home directory for the user. Suppose your Linux system has two users, Alice and Bob. They’ll have a home directory of their own at locations /home/alice and /home/bob. Do note that Bob won’t have access to /home/alice and vice versa. 
+  - /lib – Shared libraries: Libraries are basically codes that can be used by the executable binaries. The /lib directory holds the libraries needed by the binaries in /bin and /sbin directories. Libraries needed by the binaries in the /usr/bin and /usr/sbin are located in the directory /usr/lib.
+  - /sbin – System binaries: This is similar to the /bin directory. The only difference is that it contains the binaries that can only be run by root or a sudo user. You can think of the ‘s’ in ‘sbin’ as super or sudo.
+  - /tmp – Temporary files: As the name suggests, this directory holds temporary files. Many applications use this directory to store temporary files. Even you can use directory to store temporary files. But do note that the contents of the /tmp directories are deleted when your system restarts. Some Linux system also delete files old files automatically so don’t store anything important here.
+  - /var – Variable data files: Var, short for variable, is where programs store runtime information like system logging, user tracking, caches, and other files that system programs create and manage. The files stored here are NOT cleaned automatically and hence it provides a good place for system administrators to look for information about their system behavior. For example, if you want to check the login history in your Linux system, just check the content of the file in /var/log/wtmp.
+  - /boot – Boot files: The ‘/boot’ directory contains the files of the kernel and boot image, in addition to LILO and Grub. It is often advisable that the directory resides in a partition at the beginning of the disc.
+  - /proc – Process and kernel files: The ‘/proc’ directory contains the information about currently running processes and kernel parameters. The content of the proc directory is used by a number of tools to get runtime system information. For example, if you want to check processor information in Linux, you can simply refer to the file /proc/cpuinfo. You want to check memory usage of your Linux system, just look at the content of /proc/meminfo file.
+  - /opt – Optional software: Traditionally, the /opt directory is used for installing/storing the files of third-party applications that are not available from the distribution’s repository. The normal practice is to keep the software code in opt and then link the binary file in the /bin directory so that all the users can run it.
+  - /root – The home directory of the root: There is /root directory as well and it works as the home directory of the root user. So instead of /home/root, the home of root is located at /root. Do not confuse it with the root directory (/).
+  - /media – Mount point for removable media: When you connect a removable media such as USB disk, SD card or DVD, a directory is automatically created under the /media directory for them. You can access the content of the removable media from this directory.
+  - /mnt – Mount directory: This is similar to the /media directory but instead of automatically mounting the removable media, mnt is used by system administrators to manually mount a filesystem.
+  - /srv – Service data: The /srv directory contains data for services provided by the system. For example, if you run a HTTP server, it’s a good practice to store the website data in the /srv directory.
+
+- 
 
 - 
 

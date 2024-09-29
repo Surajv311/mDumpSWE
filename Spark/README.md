@@ -67,7 +67,6 @@ scala>  DF.repartition($”country”).write.mode(“overwrite”).partitionBy(�
 Useful links:
 [Data partitioning spark _al](https://medium.com/@dipayandev/everything-you-need-to-understand-data-partitioning-in-spark-487d4be63b9c), [Spark repartition vs coalesce _al](https://stackoverflow.com/questions/31610971/spark-repartition-vs-coalesce)
 
-
 Now, when you have a small dataset, then to run spark jobs for testing on them, in short you could use: [Spark Jobs on Small Test Datasets _al](https://luminousmen.com/post/how-to-speed-up-spark-jobs-on-small-test-datasets)
 
 ```
@@ -87,6 +86,8 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
 
 - **Salting** is a technique used in Apache Spark to evenly distribute data across partitions. It involves adding a random or unique identifier (called a "salt") to each record before performing operations like grouping or joining. This helps avoid data skew and improves parallelism in data processing.
 
+- How to handle skewed data in Spark: Data skew occurs when some partitions have significantly more data than others, leading to performance bottlenecks. Strategies to handle skewed data include - Salting, Repartitioning, Broadcast Variables.
+
 - Spark uses two engines to optimize and run the queries - Catalyst and Tungsten, in that order. Catalyst basically generates an optimized physical query plan from the logical query plan by applying a series of transformations like predicate pushdown, column pruning, and constant folding on the logical plan. This optimized query plan is then used by Tungsten to generate optimized code, that resembles hand written code, by making use of Whole-stage Codegen functionality introduced in Spark 2.0. This functionality has improved Spark's efficiency by a huge margin from Spark 1.6, which used the traditional Volcano Iterator Model. [Spark engine _al](https://www.linkedin.com/pulse/catalyst-tungsten-apache-sparks-speeding-engine-deepak-rajak/)
 
 - In **PySpark** (PySpark is the Python API for Apache Spark. It enables you to perform real-time, large-scale data processing in a distributed environment using Python), Python and JVM codes live in separate OS processes. 
@@ -104,6 +105,7 @@ Now, when you have a small dataset, then to run spark jobs for testing on them, 
   - Spark uses its Catalyst Query Planner, which optimizes query execution plans, leading to better performance and more efficient resource utilization.
 - Spark does lazy evaluation. 
   - For transformations, Spark adds them to a DAG of computation and only when driver requests some data, does this DAG actually gets executed. One advantage of this is that Spark can make many optimization decisions after it had a chance to look at the DAG in entirety. This would not be possible if it executed everything as soon as it got it. For example -- if you executed every transformation eagerly, what does that mean? Well, it means you will have to materialize that many intermediate datasets in memory. This is evidently not efficient -- for one, it will increase your GC costs. (Because you're really not interested in those intermediate results as such. Those are just convenient abstractions for you while writing the program.) So, what you do instead is -- you tell Spark what is the eventual answer you're interested and it figures out best way to get there. [spark lazy evaluation _al](https://stackoverflow.com/questions/38027877/spark-transformation-why-is-it-lazy-and-what-is-the-advantage)
+  - In other words: Lazy evaluation allows Spark to optimize the entire data processing workflow before executing it, combining operations to minimize data shuffling and reduces the number of passes through the data, improving performance.
   - [Lazy vs Eager Evaluation _al](https://stackoverflow.com/questions/75680491/what-is-the-trade-off-between-lazy-and-strict-eager-evaluation): 
     - Lazy: It is an evaluation strategy which holds the evaluation of an expression until its value is needed. It avoids repeated evaluation. 
     - Eager: Eager Evaluation is a programming concept where an expression is evaluated as soon as it is defined. This approach is in contrast to Lazy Evaluation, where the calculation is deferred until it is needed.
@@ -208,7 +210,6 @@ myF_udf =  F.udf(myF, StringType())
   - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. These subqueries can be more efficient, especially when dealing with extensive subquery results.
   - Regularly maintain your database to ensure optimal performance: Rebuild indexes periodically to maintain their efficiency; Use VACUUM and ANALYZE commands to manage table data and update query planner statistics; 
   - Common Table Expressions (CTEs) provide a way to create temporary result sets within a query. They can enhance the readability and maintainability of complex queries. While not always an optimisation technique, CTEs can help organise your query for better performance analysis and troubleshooting. CTE is a named temporary result set that can be referenced within a SELECT, INSERT, UPDATE, or DELETE statement. It is defined using the WITH keyword and is useful for recursive queries, subquery replacement, and code reusability.
-  - Instead of using IN or NOT IN, prefer EXISTS or NOT EXISTS. 
   - For applications making frequent database connections, use connection pooling to minimise the overhead of establishing and closing connections.
   - Partitioning can significantly improve query performance by limiting the amount of data that needs to be scanned.
   - Using SELECT DISTINCT to remove duplicates from query results can be resource-intensive. If possible, design your data model to prevent duplicates, or use GROUP BY when you genuinely need to aggregate data.
@@ -313,7 +314,7 @@ myF_udf =  F.udf(myF, StringType())
   - Resources: [spark-tune-executor _al](https://sparkbyexamples.com/spark/spark-tune-executor-number-cores-and-memory/), [Spark Executor Core & Memory Explained _vl](https://www.youtube.com/watch?v=PP7r_L-HB50), [Distribution of Executors, Cores and Memory for a Spark Application _al](https://spoddutur.github.io/spark-notes/distribution_of_executors_cores_and_memory_for_spark_application.html)
 
 - PySpark Window function performs statistical operations such as rank, row number, etc. on a group, frame, or collection of rows and returns results for each row individually.
-- If you do a union in pyspark: Spark will simply append the dataframes, it will not append by using columns names.If you are using union then you should make sure the columns in the dataframe appear in same order because the appending appears to be happening in the order they appear.
+- If you do a union in pyspark: Spark will simply append the dataframes, it will not append by using columns names. If you are using union then you should make sure the columns in the dataframe appear in same order because the appending appears to be happening in the order they appear.
 
 ```
 df_schema = StructType([StructField('a', StringType(), True),])
@@ -326,7 +327,12 @@ result = result.union(df)
 ## above code works even though the schema field is different
 ```
 
+- [Difference between Hive internal tables and external tables? _al](https://stackoverflow.com/questions/17038414/difference-between-hive-internal-tables-and-external-tables):
+  - Hive has a relational database on the master node it uses to keep track of state. For instance, when you CREATE TABLE FOO(foo string) LOCATION 'hdfs://tmp/';, this table schema is stored in the database.
+  - If you have a partitioned table, the partitions are stored in the database(this allows hive to use lists of partitions without going to the file-system and finding them, etc). These sorts of things are the 'metadata'. When you drop an internal table, it drops the data, and it also drops the metadata.
+  - When you drop an external table (create it like CREATE EXTERNAL TABLE FOO(foo string) LOCATION 'hdfs://tmp/';), it only drops the meta data. That means hive is ignorant of that data now. It does not touch the data itself.
 - 
+
 
 ----------------------------------------------------------------------
 
