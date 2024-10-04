@@ -304,6 +304,11 @@ Output:
 +----------+
 Explanation: Joe is the only employee who earns more than his manager.
 SELECT e2.name as Employee FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerID WHERE e1.salary < e2.salary
+Note that if we do this: SELECT * FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerId; then our output would be like (take it as reference, and then we can understand how above query worked): 
+| e1.id | e1.name | e1.salary | e1.managerId | e2.id | e2.name | e2.salary | e2.managerId |
+|-------|---------|-----------|--------------|-------|---------|-----------|---------------|
+| 3     | Sam     | 60000     | NULL         | 1     | Joe     | 70000     | 3             |
+| 4     | Max     | 90000     | NULL         | 2     | Henry   | 80000     | 4             |
 
 Write a solution to find the second highest salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
 Input: 
