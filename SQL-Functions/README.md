@@ -115,7 +115,7 @@ For: `SELECT emp_name, department, RANK() OVER (ORDER BY department) AS dept_ran
 `RANK()`: RANK() is a window function that assigns a unique rank to each row within the partition of a result set. It assigns the same rank to rows with the same values and leaves gaps between ranks when there are ties.
 Output: 
 
-| emp_id  | emp_name  | dept_rank |
+| emp_name  | department  | dept_rank |
 | :-----: | :-------: | :-------: |
 |  Alice  |    HR     |     1     |
 |   Bob   |    HR     |     1     |
@@ -127,7 +127,7 @@ For: `SELECT emp_name, department, DENSE_RANK() OVER (ORDER BY department) AS de
 `DENSE_RANK()`: DENSE_RANK() is similar to RANK() but it doesn't leave gaps between ranks when there are ties. It assigns consecutive ranks to rows with the same values, so there are no gaps in the ranking sequence.
 Output: 
 
-| emp_id  | emp_name  | dept_dense_rank |
+| emp_name  | department  | dept_dense_rank |
 | :-----: | :-------: | :-------------: |
 |  Alice  |    HR     |        1        |
 |   Bob   |    HR     |        1        |
@@ -139,7 +139,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (ORDER BY emp_name) AS row_
 `ROW_NUMBER()`: ROW_NUMBER() is a window function that assigns a unique sequential integer to each row within the partition of a result set. It does not handle ties; each row receives a distinct number, starting from 1 and incrementing by 1 for each row.
 Output: 
 
-| emp_id  | emp_name  | row_num |
+| emp_name  | department  | row_num |
 | :-----: | :-------: | :-----: |
 |  Alice  |    HR     |    1    |
 |   Bob   |    HR     |    2    |
@@ -151,7 +151,7 @@ For: `SELECT emp_name, department, RANK() OVER () AS rank_all FROM employees;`
 `OVER()`: OVER() is a clause used with window functions to define the window or set of rows that the function operates on. It specifies the partitioning and ordering of the rows in the result set for the window function to process. If used without any specific partitioning or ordering, it considers the entire result set as a single partition.
 Output: 
 
-| emp_id  | emp_name  | rank_all |
+| emp_name  | department  | rank_all |
 | :-----: | :-------: | :------: |
 |  Alice  |    HR     |    1     |
 |   Bob   |    HR     |    1     |
@@ -163,7 +163,7 @@ For: `SELECT emp_name, department, RANK() OVER (PARTITION BY department ORDER BY
 `OVER() PARTITION BY`: OVER() PARTITION BY is used to partition the result set into distinct subsets (partitions) based on the values of one or more columns. It divides the result set into groups, and the window function is applied separately to each group. Within each partition, the window function operates on the rows based on the specified ordering (or the default ordering if not specified).
 Output: 
 
-| emp_id  | emp_name  | dept_rank |
+| emp_name  | department  | dept_rank |
 | :-----: | :-------: | :-------: |
 |  Alice  |    HR     |     1     |
 |   Bob   |    HR     |     2     |
@@ -175,7 +175,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department OR
 `ROW_NUMBER() OVER() PARTITION BY`: ROW_NUMBER() OVER() PARTITION BY combines the functionality of ROW_NUMBER() and OVER() PARTITION BY. It assigns a unique sequential integer to each row within each partition of the result set. The numbering starts from 1 for each partition, and rows are ordered within each partition as specified.
 Output: 
 
-| emp_id  | emp_name  | dept_row_num |
+| emp_name  | department  | dept_row_num |
 | :-----: | :-------: | :----------: |
 |  Alice  |    HR     |      1       |
 |   Bob   |    HR     |      2       |
@@ -187,7 +187,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department OR
 `ROW_NUMBER() OVER PARTITION BY ORDER BY`: Similar to ROW_NUMBER() OVER() PARTITION BY, but with an added ORDER BY clause. It assigns a unique sequential integer to each row within each partition, ordered by the specified column(s). The numbering starts from 1 for each partition, and rows are ordered within each partition according to the specified ordering.
 Output: 
 
-| emp_id  | emp_name  | dept_row_num |
+| emp_name  | department  | dept_row_num |
 | :-----: | :-------: | :----------: |
 |  Alice  |    HR     |      1       |
 |   Bob   |    HR     |      2       |
