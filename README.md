@@ -44,6 +44,7 @@ Table of contents (rough overview):
     - [Info\_Miscellaneous](https://github.com/Surajv311/mDumpSWE/tree/main/Info-Miscellaneous)
     - [Books_ResearchPapers_read](https://github.com/Surajv311/mDumpSWE/tree/main/Books_ResearchPapers_read)
     - [videosInsightful](https://github.com/Surajv311/mDumpSWE/tree/main/videosInsightful)
+      - (Directory currently removed as it increased repo size, though videos list can be seen in this [git commit history](https://github.com/Surajv311/mDumpSWE/commit/0c53778cf0f171b8d5d3249203a08f365f4fc9e2))  
     - [Ci-Cd-Deployments](https://github.com/Surajv311/mDumpSWE/tree/main/Ci-Cd-Deployments)
     - [Flink](https://github.com/Surajv311/mDumpSWE/tree/main/Flink)
 
