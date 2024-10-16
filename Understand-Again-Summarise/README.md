@@ -45,6 +45,8 @@ https://www.youtube.com/watch?v=d86ws7mQYIg
 https://www.linkedin.com/pulse/builder-design-pattern-prateek-mishra
 Youtube/Linkedin/Twitter articles: Alex Xu, Arpit Bhayani, Hussaein Nasser - to watch/update
 Substack/email articles
+https://www.reddit.com/r/docker/comments/1f1wqnb/how_i_reduced_docker_image_size_from_588_mb_to/
+
 
 ----------------------------------------------------------------------
 
