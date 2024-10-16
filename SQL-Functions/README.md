@@ -310,6 +310,81 @@ Note that if we do this: SELECT * FROM employee e1 INNER JOIN employee e2 ON e1.
 | 3     | Sam     | 60000     | NULL         | 1     | Joe     | 70000     | 3             |
 | 4     | Max     | 90000     | NULL         | 2     | Henry   | 80000     | 4             |
 
+Also, to explain with example how other joins would work for reference: 
+
+Case 1: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+| user_id | phone_number |
+|---------|--------------|
+| 2       | 123-4567     |
+| 3       | 987-6543     |
+
+Result: 
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 1       | Alice   | NULL         |
+| 2       | Bob     | 123-4567     |
+| 3       | Charlie | 987-6543     |
+| 4       | David   | NULL         |
+
+Case 2: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+| user_id | phone_number |
+|---------|--------------|
+| 100       | 123-4567     |
+| 101       | 987-6543     |
+
+Result: 
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 1       | Alice   | NULL         |
+| 2       | Bob     | NULL         |
+| 3       | Charlie | NULL         |
+| 4       | David   | NULL         |
+
+Case 3: SELECT u.user_id, u.name AS user_name, p.name AS phone_name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 2       | Robert  | 123-4567     |
+| 3       | Charles | 987-6543     |
+
+Result: 
+| user_id | user_name | phone_name | phone_number |
+|---------|-----------|------------|--------------|
+| 1       | Alice     | NULL       | NULL         |
+| 2       | Bob       | Robert     | 123-4567     |
+| 3       | Charlie   | Charles    | 987-6543     |
+| 4       | David     | NULL       | NULL         |
+
+
 Write a solution to find the second highest salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
 Input: 
 Employee table:
