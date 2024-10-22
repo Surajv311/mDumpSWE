@@ -315,6 +315,7 @@ Also, to explain with example how other joins would work for reference:
 Case 1: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
 
 Assume table 1: 
+
 | user_id | name    |
 |---------|---------|
 | 1       | Alice   |
@@ -323,12 +324,14 @@ Assume table 1:
 | 4       | David   |
 
 And table 2: 
+
 | user_id | phone_number |
 |---------|--------------|
 | 2       | 123-4567     |
 | 3       | 987-6543     |
 
 Result: 
+
 | user_id | name    | phone_number |
 |---------|---------|--------------|
 | 1       | Alice   | NULL         |
@@ -339,6 +342,7 @@ Result:
 Case 2: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
 
 Assume table 1: 
+
 | user_id | name    |
 |---------|---------|
 | 1       | Alice   |
@@ -347,12 +351,14 @@ Assume table 1:
 | 4       | David   |
 
 And table 2: 
+
 | user_id | phone_number |
 |---------|--------------|
 | 100       | 123-4567     |
 | 101       | 987-6543     |
 
 Result: 
+
 | user_id | name    | phone_number |
 |---------|---------|--------------|
 | 1       | Alice   | NULL         |
@@ -363,6 +369,7 @@ Result:
 Case 3: SELECT u.user_id, u.name AS user_name, p.name AS phone_name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
 
 Assume table 1: 
+
 | user_id | name    |
 |---------|---------|
 | 1       | Alice   |
@@ -371,12 +378,14 @@ Assume table 1:
 | 4       | David   |
 
 And table 2: 
+
 | user_id | name    | phone_number |
 |---------|---------|--------------|
 | 2       | Robert  | 123-4567     |
 | 3       | Charles | 987-6543     |
 
 Result: 
+
 | user_id | user_name | phone_name | phone_number |
 |---------|-----------|------------|--------------|
 | 1       | Alice     | NULL       | NULL         |
@@ -384,6 +393,39 @@ Result:
 | 3       | Charlie   | Charles    | 987-6543     |
 | 4       | David     | NULL       | NULL         |
 
+Also, another case to display a many-many join scenario: 
+
+Assume table A: 
+
+| id  | number |
+|-----|--------|
+| 1   | None   |
+| 1   | None   |
+| 1   | None   |
+
+Assume table B: 
+
+| id  | number |
+|-----|--------|
+| 1   | 93     |
+| 1   | 93     |
+| 1   | 93     |
+
+It will lead to a 3*3 = 9 rows if we do a left join like: `SELECT * FROM A LEFT JOIN B ON A.id = B.id;`
+
+| id  | A.number | id  | B.number |
+|-----|----------|-----|----------|
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+
+Even if we do inner join, result will be same. 
 
 Write a solution to find the second highest salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
 Input: 
