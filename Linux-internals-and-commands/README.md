@@ -137,6 +137,7 @@
 - Run gunzip zip/unzip command(s) and tar file commands: 
   - `gunzip originalGeoIP2-City.tar.gz` (unzip file) -> `tar -xvf originalGeoIP2-City.tar` (decompress tar file) -> `tar -cvf gunzipTarGeoIP2-City.tar GeoIP2-City_20230512/` (compress folder to tar file) -> `gzip gunzipTarGeoIP2-City.tar` (zip back)
 - `md5sum file.yml`: The MD5 sum of a file is a 32-character hexadecimal number that verifies a file's integrity. It's commonly used to check if a file has changed due to a disk error, faulty transfer, or other reasons.
+- `aws cloudwatch describe-alarms --query "MetricAlarms[].[AlarmName, AlarmActions]" | jq -r '.[] | select(.[1] != null) | "\(.[])"'`: The command you provided is a combination of AWS CLI and the jq tool, which is used for processing JSON data. The entire command retrieves a list of CloudWatch alarms, specifically their names and actions. It then filters this list to include only those alarms that have defined actions (i.e., their action field is not null) and outputs each alarm name and its associated actions as plain text strings. The pipe symbol takes the output from the previous command and feeds it into jq, just note. 
 
 Note:
 

@@ -45,6 +45,11 @@ https://www.youtube.com/watch?v=d86ws7mQYIg
 https://www.linkedin.com/pulse/builder-design-pattern-prateek-mishra
 Youtube/Linkedin/Twitter articles: Alex Xu, Arpit Bhayani, Hussaein Nasser - to watch/update
 Substack/email articles
+https://www.reddit.com/r/docker/comments/1f1wqnb/how_i_reduced_docker_image_size_from_588_mb_to/
+
+What is code coverage in test cases? 
+Code coverage is calculated by dividing the number of lines of code executed by a test suite by the total number of lines of code in an application, and then multiplying by 100:
+https://stackoverflow.com/questions/195008/what-is-code-coverage-and-how-do-you-measure-it
 
 ----------------------------------------------------------------------
 

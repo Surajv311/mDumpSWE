@@ -115,7 +115,7 @@ For: `SELECT emp_name, department, RANK() OVER (ORDER BY department) AS dept_ran
 `RANK()`: RANK() is a window function that assigns a unique rank to each row within the partition of a result set. It assigns the same rank to rows with the same values and leaves gaps between ranks when there are ties.
 Output: 
 
-| emp_id  | emp_name  | dept_rank |
+| emp_name  | department  | dept_rank |
 | :-----: | :-------: | :-------: |
 |  Alice  |    HR     |     1     |
 |   Bob   |    HR     |     1     |
@@ -127,7 +127,7 @@ For: `SELECT emp_name, department, DENSE_RANK() OVER (ORDER BY department) AS de
 `DENSE_RANK()`: DENSE_RANK() is similar to RANK() but it doesn't leave gaps between ranks when there are ties. It assigns consecutive ranks to rows with the same values, so there are no gaps in the ranking sequence.
 Output: 
 
-| emp_id  | emp_name  | dept_dense_rank |
+| emp_name  | department  | dept_dense_rank |
 | :-----: | :-------: | :-------------: |
 |  Alice  |    HR     |        1        |
 |   Bob   |    HR     |        1        |
@@ -139,7 +139,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (ORDER BY emp_name) AS row_
 `ROW_NUMBER()`: ROW_NUMBER() is a window function that assigns a unique sequential integer to each row within the partition of a result set. It does not handle ties; each row receives a distinct number, starting from 1 and incrementing by 1 for each row.
 Output: 
 
-| emp_id  | emp_name  | row_num |
+| emp_name  | department  | row_num |
 | :-----: | :-------: | :-----: |
 |  Alice  |    HR     |    1    |
 |   Bob   |    HR     |    2    |
@@ -151,7 +151,7 @@ For: `SELECT emp_name, department, RANK() OVER () AS rank_all FROM employees;`
 `OVER()`: OVER() is a clause used with window functions to define the window or set of rows that the function operates on. It specifies the partitioning and ordering of the rows in the result set for the window function to process. If used without any specific partitioning or ordering, it considers the entire result set as a single partition.
 Output: 
 
-| emp_id  | emp_name  | rank_all |
+| emp_name  | department  | rank_all |
 | :-----: | :-------: | :------: |
 |  Alice  |    HR     |    1     |
 |   Bob   |    HR     |    1     |
@@ -163,7 +163,7 @@ For: `SELECT emp_name, department, RANK() OVER (PARTITION BY department ORDER BY
 `OVER() PARTITION BY`: OVER() PARTITION BY is used to partition the result set into distinct subsets (partitions) based on the values of one or more columns. It divides the result set into groups, and the window function is applied separately to each group. Within each partition, the window function operates on the rows based on the specified ordering (or the default ordering if not specified).
 Output: 
 
-| emp_id  | emp_name  | dept_rank |
+| emp_name  | department  | dept_rank |
 | :-----: | :-------: | :-------: |
 |  Alice  |    HR     |     1     |
 |   Bob   |    HR     |     2     |
@@ -175,7 +175,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department OR
 `ROW_NUMBER() OVER() PARTITION BY`: ROW_NUMBER() OVER() PARTITION BY combines the functionality of ROW_NUMBER() and OVER() PARTITION BY. It assigns a unique sequential integer to each row within each partition of the result set. The numbering starts from 1 for each partition, and rows are ordered within each partition as specified.
 Output: 
 
-| emp_id  | emp_name  | dept_row_num |
+| emp_name  | department  | dept_row_num |
 | :-----: | :-------: | :----------: |
 |  Alice  |    HR     |      1       |
 |   Bob   |    HR     |      2       |
@@ -187,7 +187,7 @@ For: `SELECT emp_name, department, ROW_NUMBER() OVER (PARTITION BY department OR
 `ROW_NUMBER() OVER PARTITION BY ORDER BY`: Similar to ROW_NUMBER() OVER() PARTITION BY, but with an added ORDER BY clause. It assigns a unique sequential integer to each row within each partition, ordered by the specified column(s). The numbering starts from 1 for each partition, and rows are ordered within each partition according to the specified ordering.
 Output: 
 
-| emp_id  | emp_name  | dept_row_num |
+| emp_name  | department  | dept_row_num |
 | :-----: | :-------: | :----------: |
 |  Alice  |    HR     |      1       |
 |   Bob   |    HR     |      2       |
@@ -304,6 +304,128 @@ Output:
 +----------+
 Explanation: Joe is the only employee who earns more than his manager.
 SELECT e2.name as Employee FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerID WHERE e1.salary < e2.salary
+Note that if we do this: SELECT * FROM employee e1 INNER JOIN employee e2 ON e1.id = e2.managerId; then our output would be like (take it as reference, and then we can understand how above query worked): 
+| e1.id | e1.name | e1.salary | e1.managerId | e2.id | e2.name | e2.salary | e2.managerId |
+|-------|---------|-----------|--------------|-------|---------|-----------|---------------|
+| 3     | Sam     | 60000     | NULL         | 1     | Joe     | 70000     | 3             |
+| 4     | Max     | 90000     | NULL         | 2     | Henry   | 80000     | 4             |
+
+Also, to explain with example how other joins would work for reference: 
+
+Case 1: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+
+| user_id | phone_number |
+|---------|--------------|
+| 2       | 123-4567     |
+| 3       | 987-6543     |
+
+Result: 
+
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 1       | Alice   | NULL         |
+| 2       | Bob     | 123-4567     |
+| 3       | Charlie | 987-6543     |
+| 4       | David   | NULL         |
+
+Case 2: SELECT u.user_id, u.name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+
+| user_id | phone_number |
+|---------|--------------|
+| 100       | 123-4567     |
+| 101       | 987-6543     |
+
+Result: 
+
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 1       | Alice   | NULL         |
+| 2       | Bob     | NULL         |
+| 3       | Charlie | NULL         |
+| 4       | David   | NULL         |
+
+Case 3: SELECT u.user_id, u.name AS user_name, p.name AS phone_name, p.phone_number FROM users u LEFT JOIN phone_numbers p ON u.user_id = p.user_id;
+
+Assume table 1: 
+
+| user_id | name    |
+|---------|---------|
+| 1       | Alice   |
+| 2       | Bob     |
+| 3       | Charlie |
+| 4       | David   |
+
+And table 2: 
+
+| user_id | name    | phone_number |
+|---------|---------|--------------|
+| 2       | Robert  | 123-4567     |
+| 3       | Charles | 987-6543     |
+
+Result: 
+
+| user_id | user_name | phone_name | phone_number |
+|---------|-----------|------------|--------------|
+| 1       | Alice     | NULL       | NULL         |
+| 2       | Bob       | Robert     | 123-4567     |
+| 3       | Charlie   | Charles    | 987-6543     |
+| 4       | David     | NULL       | NULL         |
+
+Also, another case to display a many-many join scenario: 
+
+Assume table A: 
+
+| id  | number |
+|-----|--------|
+| 1   | None   |
+| 1   | None   |
+| 1   | None   |
+
+Assume table B: 
+
+| id  | number |
+|-----|--------|
+| 1   | 93     |
+| 1   | 93     |
+| 1   | 93     |
+
+It will lead to a 3*3 = 9 rows if we do a left join like: `SELECT * FROM A LEFT JOIN B ON A.id = B.id;`
+
+| id  | A.number | id  | B.number |
+|-----|----------|-----|----------|
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+| 1   | None     | 1   | 93       |
+
+Even if we do inner join, result will be same. 
 
 Write a solution to find the second highest salary from the Employee table. If there is no second highest salary, return null (return None in Pandas).
 Input: 
