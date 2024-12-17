@@ -10,11 +10,58 @@ Apache Spark is a data processing framework that can quickly perform processing 
 Concept of application, job, stage and task in Spark:
 - **Application** - A user program built on Spark using its APIs. It consists of a driver program and executors on the cluster.
 - **Job** - A parallel computation consisting of multiple tasks that gets spawned in response to a Spark action (e.g., save(), collect()). During interactive sessions with Spark shells, the driver converts your Spark application into one or more Spark jobs. It then transforms each job into a DAG. This, in essence, is Spark’s execution plan, where each node within a DAG could be a single or multiple Spark stages.
+  - A job in Spark refers to a sequence of transformations on data. Whenever an action like count(), first(), collect(), and save() is called on RDD (Resilient Distributed Datasets), a job is created. A job could be thought of as the total work that your Spark application needs to perform, broken down into a series of steps. 
+  - Consider a scenario where you’re executing a Spark program, and you call the action count() to get the number of elements. This will create a Spark job. If further in your program, you call collect(), another job will be created. So, a Spark application could have multiple jobs, depending upon the number of actions. [Job, Stage, Task in Spark _al](https://medium.com/@diehardankush/what-are-job-stage-and-task-in-apache-spark-2fc0d326c15f)
 - **Stage** - Each job gets divided into smaller sets of tasks called stages that depend on each other. As part of the DAG nodes, stages are created based on what operations can be performed serially or in parallel. Not all Spark operations can happen in a single stage, so they may be divided into multiple stages. Often stages are delineated on the operator’s computation boundaries, where they dictate data transfer among Spark executors.
+  - A stage in Spark represents a sequence of transformations that can be executed in a single pass, i.e., without any shuffling of data. When a job is divided, it is split into stages. Each stage comprises tasks, and all the tasks within a stage perform the same computation.
+  - The boundary between two stages is drawn when transformations cause data shuffling across partitions. Transformations in Spark are categorized into two types: narrow and wide. Narrow transformations, like map(), filter(), and union(), can be done within a single partition. But for wide transformations like groupByKey(), reduceByKey(), or join(), data from all partitions may need to be combined, thus necessitating shuffling and marking the start of a new stage.
 - **Task** - A single unit of work or execution that will be sent to a Spark executor. Each stage is comprised of Spark tasks (a unit of execution), which are then federated across each Spark executor; each task maps to a single core and works on a single partition of data. As such, an executor with 16 cores can have 16 or more tasks working on 16 or more partitions in parallel, making the execution of Spark’s tasks exceedingly parallel. 
+  - A task in Spark is the smallest unit of work that can be scheduled. Each stage is divided into tasks. A task is a unit of execution that runs on a single machine. When a stage comprises transformations on an RDD, those transformations are packaged into a task to be executed on a single executor.
+  - For example, if you have a Spark job that is divided into two stages and you’re running it on a cluster with two executors, each stage could be divided into two tasks. Each executor would then run a task in parallel, performing the transformations defined in that task on its subset of the data.
+  - In summary, a Spark job is split into multiple stages at the points where data shuffling is needed, and each stage is split into tasks that run the same code on different data partitions.
+- Example: [Number of spark jobs and stages _al](https://stackoverflow.com/questions/75930351/number-of-spark-jobs-and-stages)
+  ```
+  Example 1: 
+  Consider a spark job, which reads two csv files with header=True (no infer_schema). Then joins these 2 dataframes, performs group by and finally write as csv.
+  Steps:
+    Read csv file1 with header=True (no infer_schema)
+    Read csv file2 with header=True (no infer_schema)
+    Join file1 and file2 (not a broadcast)
+    Perform group by
+    write grouped data as results in csv format
+  So, 
+  The number of jobs corresponds to the number of actions
+  No of jobs = No of actions. The number of stages aligns with the count of wide transformations.
+  No of Stage = No of wide transformation. In this scenario, you will have three jobs reflecting the three actions, and two stages due to the inclusion of wide transformations, such as group by and join operations.
+  Tasks depends on the number of data partitions. 
+  
+  Example 2: 
+  Let’s take an example where we read a CSV file, perform some transformations on the data, and then run an action to demonstrate the concepts of job, stage, and task in Spark with Scala.
+  Code: 
+  import org.apache.spark.sql.SparkSession
+  val spark = SparkSession.builder.appName("Spark Job Stage Task Example").getOrCreate() // Create a Spark Session
+  val data = spark.read.option("header", "true").csv("path/to/your/file.csv") // Read a CSV file - this is a transformation and doesn't trigger a job
+  val transformedData = data.withColumn("new_column", data("existing_column") * 2) // Perform a transformation to create a new DataFrame with an added column. This also doesn't trigger a job, as it's a transformation (not an action)
+  val result = transformedData.count() // Now, call an action - this triggers a Spark job
+  println(result)
+  spark.stop()
+  In the above code:
+    A Job is triggered when we call the action count(). This is where Spark schedules tasks to be run.
+    Stages are created based on transformations. In this example, we have two transformations (read.csv and withColumn). However, these two transformations belong to the same stage since there's no data shuffling between them.
+    Tasks are the smallest unit of work, sent to one executor. The number of tasks depends on the number of data partitions. Each task performs transformations on a chunk of data.
+  ```
+
 Spark processes queries by distributing data over multiple nodes and calculating the values separately on every node. However, occasionally, the nodes need to exchange the data. After all, that’s the purpose of Spark - processing data that doesn’t fit on a single machine. [Application, Job, Stage in Spark _al](https://stackoverflow.com/questions/42263270/what-is-the-concept-of-application-job-stage-and-task-in-spark)
 
-By default, Spark/Pyspark creates **partitions** that are equal to the number of CPU cores in the machine. Data of each partition resides in a single machine. Spark/Pyspark creates a task for each partition. Spark shuffle operations move the data from one partition to other partitions. Partitioning is an expensive operation as it creates a data shuffle (Data could move between the nodes). Partition is a logical division of the data , this idea is derived from Map Reduce (split). Logical data is specifically derived to process the data. Small chunks of data also it can support scalability and speed up the process. Input data, intermediate data, and output data everything is partitioned RDD. Spark uses the map-reduce API to do the partition the data. Do not partition by columns having high cardinality. For example, don’t use your partition key such as roll no, employee id etc , Instead your state code, country code etc. Partition data by specific columns that will be mostly used during filter and group by operations. [Spark Partition _al](https://statusneo.com/everything-you-need-to-understand-data-partitioning-in-spark/)
+The Catalyst Optimizer is a component of Spark SQL that performs optimization on a query through 4 stages: analysis, logical optimization, physical planning, code generation. Catalyst Optimizer is a rule based engine that takes the Logical Plan and rewrites it as an optimized Physical Plan. The Physical Plan is developed BEFORE a query is executed.
+To view the Catalyst Optimizier in action, use df.explain(True) to view the Logical and Physical Execution plans of a query.
+In Spark 3.0, Adaptive Query Execution (AQE) was introduced. One difference between AQE and Catalyst Optimizer is that AQE modifies the Physical Plan based on Runtime Statistics, so AQE can tune your queries further on the flight. So you may think that AQE is complimentary to Catalyst Optimizer.
+For example, during runtime, based on the new information that is previously not available during planning, AQE can decide to change your join strategy to Broadcast Hash Join from Sort Merge Join to reduce data shuffle. Or AQE can coalesce your partitions to optimal size during shuffling stage, or help improve Skew Join.
+This option is not turned on by default in Spark, you can enable by setting spark config: spark.conf.set(spark.sql.adaptive.enabled, True) , and it’s recommended to turn this on. However, If you run Spark on later version of Databricks Runtime, AQE is enabled by default. [Tune spark _al](https://anhcodes.dev/blog/tune-spark/)
+
+When Spark reads a file from HDFS (File-based RDD), S3, or any distributed file system, it follows the file system's block size (typically 128 MB). Each block is mapped to a single partition. Example: If you have a 1 GB file in HDFS with a block size of 128 MB, you will have 8 partitions by default. If you want more partitions, you can increase the minPartitions parameter when reading the file.
+When you use spark for parallel processing (In-memory RDD), it creates partitions that are equal to the number of CPU cores in the machine; Say: When you create an RDD using sc.parallelize(), Spark uses the number of available CPU cores on the driver or cluster to determine the number of partitions.
+- Data of each partition resides in a single machine. Spark/Pyspark creates a task for each partition. Spark shuffle operations move the data from one partition to other partitions. Partitioning is an expensive operation as it creates a data shuffle (Data could move between the nodes). Partition is a logical division of the data , this idea is derived from Map Reduce (split). Logical data is specifically derived to process the data. Small chunks of data also it can support scalability and speed up the process. Input data, intermediate data, and output data everything is partitioned RDD. Spark uses the map-reduce API to do the partition the data. Do not partition by columns having high cardinality. For example, don’t use your partition key such as roll no, employee id etc , Instead your state code, country code etc. Partition data by specific columns that will be mostly used during filter and group by operations. [Spark Partition _al](https://statusneo.com/everything-you-need-to-understand-data-partitioning-in-spark/)
 
 **Shuffling** is the process of exchanging data between partitions as seen earlier. As a result, data rows can move between worker nodes when their source partition and the target partition reside on a different machine. Spark doesn’t move data between nodes randomly. Shuffling is a time-consuming operation, so it happens only when there is no other option. Spark nodes read chunks of the data (data partitions), but they don’t send the data between each other unless they need to. When do they do it? When you explicitly request data repartitioning (using the repartition functions), when you join DataFrames or group data by a column value. When we join the data in Spark, it needs to put the data in both DataFrames in buckets. Those buckets are calculated by hashing the partitioning key (the column(s) we use for joining) and splitting the data into a predefined number of buckets. We can control the number of buckets using the spark.sql.shuffle.partitions parameter. The same hashing and partitioning happen in both datasets we join. The corresponding partitions from both datasets are transferred to the same worker node. The goal is to have the data locally on the same worker before we start joining the values. Spark partitions the data also when we run a grouping operation and calculate an aggregate. This time we have only one dataset, but we still need the data that belongs to a single group on a single worker node. Otherwise, we couldn’t calculate the aggregations. Of course, some aggregations, like calculating the number of elements in a group or a sum of the parts, don’t require moving data to a single node. If we calculate the sum on every node separately and then move the results to a single node, we can calculate the final sum. 
 
@@ -331,8 +378,16 @@ result = result.union(df)
   - Hive has a relational database on the master node it uses to keep track of state. For instance, when you CREATE TABLE FOO(foo string) LOCATION 'hdfs://tmp/';, this table schema is stored in the database.
   - If you have a partitioned table, the partitions are stored in the database(this allows hive to use lists of partitions without going to the file-system and finding them, etc). These sorts of things are the 'metadata'. When you drop an internal table, it drops the data, and it also drops the metadata.
   - When you drop an external table (create it like CREATE EXTERNAL TABLE FOO(foo string) LOCATION 'hdfs://tmp/';), it only drops the meta data. That means hive is ignorant of that data now. It does not touch the data itself.
+- Caching in Spark: 
+  - By default, data in a DataFrame is only present in Spark cluster while bing processed during a query, it won’t be persisted on a cluster afterwards. However, you can explicitly request Spark to persist DataFrame on the cluster by invoking df.cache. Cache can store as many partitions of the dataframe as the cluster memory allows.
+  - Note that cache is another type of persist: df.cache is df.persist(StorageLevel.MEMORY_AND_DISK). This stores partitions in memory and spills excess to disk.
+  - Cache should be used with care because caching consumes cluster resources that could otherwise be used for other executions, and it can prevent Spark from performing query optimization. You should only used cache in below situations:
+    - DataFrames frequently used during Exploratory Data Analysis, iterative machine learning training in a Spark session
+    - DataFrames accessed commonly for doing frequent transformations during ETL or building data pipelines
+    - Don’t use when data is too big to fit in memory, or only need infrequent transformation
+  - When you use cache() or persist(), the DataFrame is not fully cached until you invoke an action that goes through every record (e.g., count()). If you use an action like take(1)w, only one partition will be cached because Catalyst realizes that you do not need to compute all the partitions just to retrieve one record.
+  - Don’t forget to cleanup with df.unpersist to evict the dataframe from cache when you no longer need it.
 - 
-
 
 ----------------------------------------------------------------------
 
