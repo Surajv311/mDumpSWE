@@ -256,7 +256,11 @@ Note:
   - /mnt – Mount directory: This is similar to the /media directory but instead of automatically mounting the removable media, mnt is used by system administrators to manually mount a filesystem.
   - /srv – Service data: The /srv directory contains data for services provided by the system. For example, if you run a HTTP server, it’s a good practice to store the website data in the /srv directory.
 
-- 
+- parquet-tools is a CLI tools of Apache Arrow. You can show parquet file content/schema on local disk or on Amazon S3. Some commands for ref: 
+  - `parquet-tools inspect /Users/suraj/Downloads/part-1-c000.snappy.parquet`
+  - `parquet-tools csv /Users/suraj/Downloads/part-1-c000.snappy.parquet | awk -F "," '{print $1,$4}' | sort | uniq | wc -l`
+  - `parquet-tools csv /Users/suraj/Downloads/part-1-c000.snappy.parquet | awk -F "," '{print $1,$4}' | sort | uniq`
+  - 
 
 - 
 
