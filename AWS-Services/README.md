@@ -38,7 +38,7 @@ Using Amazon Redshift Spectrum, you can efficiently query and retrieve structure
 Redshift Spectrum resides on dedicated Amazon Redshift servers that are independent of your cluster. Based on the demands of your queries, Redshift Spectrum can potentially use thousands of instances to take advantage of massively parallel processing. 
 You create Redshift Spectrum tables by defining the structure for your files and registering them as tables in an external data catalog. The external data catalog can be AWS Glue, the data catalog that comes with Amazon Athena, or your own Apache Hive metastore. You can create and manage external tables either from Amazon Redshift using data definition language (DDL) commands or using any other tool that connects to the external data catalog. Changes to the external data catalog are immediately available to any of your Amazon Redshift clusters.
 
-Spectrum (Redshift) tables access data from S3 and uses almost infinite resources to read data. Cost of querying depends on size of data being read. Hence they are costly. 
+Spectrum (Redshift) tables access data from S3 and uses almost infinite resources to read data. Cost of querying depends on size of data being read. Hence they are costly. [Few more details on Spectrum _al](https://stackoverflow.com/questions/73994206/when-to-use-redshift-spectrum-for-your-redshift-data-warehouse)
 
 #### AWS Glue Catalogue
 

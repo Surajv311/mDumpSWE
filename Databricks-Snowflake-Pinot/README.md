@@ -10,6 +10,17 @@
   - Databricks runs one executor per worker node. Therefore, the terms executor and worker are used interchangeably in the context of the Databricks architecture.
   - **Query Federation in Databricks**: Query federation allows Databricks to execute queries against data served by other Databricks metastores as well as many third-party database management systems (DBMS) such as PostgreSQL, mySQL, AWS Redshift and Snowflake. To query data from another system you must: Create a foreign connection., etc. Simply put, from databricks UI itself you can run queries over external/third-party db post necessary connections are set up. 
   - Databricks Utilities (dbutils), a module for basic data file handling and data manipulation within Databricks Notebooks/ ecosystem.
+  - A Delta Table is an advanced table format used in Databricks that enhances the capabilities of traditional data tables. It is essentially a collection of Parquet files stored in a data lake, accompanied by a transaction log that tracks all changes made to the data. This setup allows for several powerful features:
+    - ACID Transactions: Ensures that all operations on the table are atomic, consistent, isolated, and durable, which prevents issues like partial updates.
+    - Data Versioning: Users can perform "time travel," allowing them to query historical versions of the data.
+    - Schema Enforcement: Ensures that only data conforming to the defined schema can be written to the table, maintaining data integrity.
+    - Performance Optimizations: Techniques such as data skipping, caching, and compaction enhance query performance and reduce storage costs
+  - Delta Lake manages its data like this:
+    - Base Data: This is the initial dataset stored in Delta Tables.
+    - Layering Changes: As new updates or changes occur (like inserts, updates, or deletes), these are recorded in the transaction log without modifying the original base data directly. Instead, they create new versions of the dataset.
+    - Compression Over Time: Over time, these changes can be compacted into fewer files using operations like OPTIMIZE, which enhances performance by reducing small file overhead and improving query execution times
+  - Delta Lake is the optimized storage layer that provides the foundation for tables in a lakehouse on Databricks. Delta Lake is open source software that extends Parquet data files with a file-based transaction log for ACID transactions and scalable metadata handling. Delta Lake runs on top of your existing data lake and is fully compatible with Apache Spark APIs.
+    - Vacuum table snapshots is a command that removes old snapshots and other files from a table to free up storage space and improve system performance. We can also vacuum a delta table. 
 
 - Snowflake is a cloud data warehouse that can store and analyze all your data records in one place. It can automatically scale up/down its compute resources to load, integrate, and analyze data. Snowflake supports both transformation during (ETL) or after loading (ELT). Snowflake uses OLAP (Online Analytical Processing) as a foundational part of its database schema and acts as a single, governed, and immediately queryable source for your data.
   - **Star vs Snowflake vs OBT Schema**:
