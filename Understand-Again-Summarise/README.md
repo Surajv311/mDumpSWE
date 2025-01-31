@@ -42,6 +42,7 @@ List of some random notes, links, videos which can be directly visited and read 
   - Youtube/Linkedin/Twitter articles: Alex Xu, Arpit Bhayani, Hussaein Nasser - to watch/update
   - Code coverage is calculated by dividing the number of lines of code executed by a test suite by the total number of lines of code in an application, and then multiplying by 100: https://stackoverflow.com/questions/195008/what-is-code-coverage-and-how-do-you-measure-it
   - About Pool Sizing: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
+  - FSImage in Hadoop?
 - Short notes from any book/research paper I'm reading: (To be updated in repo)
   - Dynamodb...
   - 
