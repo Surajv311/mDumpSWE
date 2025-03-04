@@ -55,7 +55,62 @@
       - Diminishing Returns: Adding workers beyond the number of available CPU cores generally doesn't improve performance
     - Here's how you'd typically run a FastAPI application with Gunicorn and Uvicorn workers: `gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000`
     - Each worker is an independent Uvicorn process with its own event loop, managing its set of client connections and running the FastAPI application.
-    - 
+    - When you set workers=4 in Gunicorn: 
+      - Gunicorn creates 4 separate processes (not threads)
+      - Each worker process is a completely independent Uvicorn instance
+      - Each Uvicorn instance runs your FastAPI application in its own process space
+    - This is different from threads in several important ways:
+      - Process vs Thread: Each worker is a full OS process with its own memory space, not a thread within a shared memory space
+      - Resource Isolation: Workers don't share Python objects in memory - they're completely separate instances of your application
+      - CPU Utilization: Each worker process can run on a separate CPU core, utilizing multiple cores effectively
+    - Within each Uvicorn worker process:
+      - A single event loop (typically using uvloop) manages concurrency
+      - Your FastAPI application runs asynchronously, handling multiple requests concurrently
+      - Asynchronous operations (like database queries with async ORM) run concurrently within the same process
+    - [Event loop ref in JS _vl](https://www.youtube.com/watch?v=eiC58R16hb8)
+    - Here's the key mental model:
+      - Between Workers: Parallelism through multiple processes
+      - Within Each Worker: Concurrency through asynchronous I/O
+    - In a thread-per-core model:
+      - Single process contains multiple threads, with one thread assigned to each CPU core
+      - Shared address space means all threads can access the same memory
+      - Lightweight synchronization through mutexes, semaphores, etc.
+      - Good for: I/O-bound workloads with shared state, Applications where memory efficiency is critical, Languages with efficient threading models (Java, C++)
+    - In a process-per-core model:
+      - Multiple independent processes, with one process assigned to each CPU core
+      - Separate memory spaces with no direct access between processes
+      - More robust isolation prevents cascading failures
+      - Good for: CPU-bound workloads, Languages with threading limitations (Python with GIL), Applications requiring strong fault isolation, Avoiding complex thread synchronization issues
+    - Real-World Examples Nginx: Uses process-per-core model for worker processes Node.js Cluster; Uses process-per-core for scaling across multiple cores Java application servers; Often use thread-per-request within a single process Python's multiprocessing; Uses process-per-core to bypass GIL limitations;
+      - As a sidenote: Python's multiprocessing bypasses the GIL limitation by creating entirely separate Python interpreter processes, each with its own GIL. Here's how it works: 
+      - Each Process Has Its Own Python Interpreter:
+        - When you use multiprocessing, Python spawns completely separate processes
+        - Each process has its own independent Python interpreter
+        - Each interpreter has its own memory space and its own GIL
+      - Independent GILs Don't Compete:
+        - The GIL in Process A doesn't affect the GIL in Process B
+        - Each process can fully utilize one CPU core without being blocked by other processes
+        - This effectively allows Python to achieve true parallelism
+      - Within Each Process:
+        - The GIL still exists
+        - If a single process creates multiple threads, those threads will still be limited by that process's GIL
+        - Only one thread per process can execute Python bytecode at a time
+      - This is why CPU-bound Python code is typically parallelized using processes rather than threads. If you have 4 CPU cores and create 4 processes, each process can run at full speed on its own core, with its own Python interpreter, operating independently of the others.
+      - The trade-off is that processes:
+        - Use more memory (each needs its own copy of code, data, etc.)
+        - Have higher startup costs
+        - Require more complex mechanisms for sharing data (like pipes, queues, or shared memory)
+      - So when people say multiprocessing "bypasses the GIL," they mean it sidesteps the limitation by creating multiple isolated Python environments rather than trying to share a single interpreter across multiple threads.
+    - In a "process per core" model, each CPU core is primarily assigned one process, but this doesn't mean that only one thread runs on that core. The reality is more complex:
+      - Operating System Scheduling: The OS scheduler ultimately controls which threads and processes run on which cores. Even in a "process per core" design: Multiple threads from the designated process can run on that core; Threads from other processes can occasionally be scheduled on that core; Context switching still happens regularly
+      - Threads Within Each Process: Each process typically has multiple threads: The main application thread, Background threads (GC, monitoring, etc.), Thread pools for specific tasks; These threads compete for time on the assigned core
+      - Time-Sharing: Modern operating systems use preemptive multitasking: The core rapidly switches between different threads; Even on a core "dedicated" to one process, threads get small time slices; Thousands of context switches can happen per second
+    - Oversubscription: When there are more threads than cores (which is common): Multiple threads must share each core; Performance can degrade if there's excessive context switching
+    - In a system like Nginx or Gunicorn with a process per core, each worker process might be primarily assigned to one core, but the OS is still free to schedule other processes' threads on that core when needed, especially during I/O waits or when the worker process isn't fully utilizing the CPU.
+
+
+
+
 
 - Celery 
   - Celery is a robust, distributed task queue written in Python that enables developers to execute tasks outside the main application flow.
