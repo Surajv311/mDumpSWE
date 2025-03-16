@@ -107,10 +107,25 @@
       - Time-Sharing: Modern operating systems use preemptive multitasking: The core rapidly switches between different threads; Even on a core "dedicated" to one process, threads get small time slices; Thousands of context switches can happen per second
     - Oversubscription: When there are more threads than cores (which is common): Multiple threads must share each core; Performance can degrade if there's excessive context switching
     - In a system like Nginx or Gunicorn with a process per core, each worker process might be primarily assigned to one core, but the OS is still free to schedule other processes' threads on that core when needed, especially during I/O waits or when the worker process isn't fully utilizing the CPU.
-
-
-
-
+    - As a note: Python's multiprocessing bypasses the GIL limitation by creating entirely separate Python interpreter processes, each with its own GIL: 
+      - Each Process Has Its Own Python Interpreter:
+        - When you use multiprocessing, Python spawns completely separate processes 
+        - Each process has its own independent Python interpreter
+        - Each interpreter has its own memory space and its own GIL
+      - Independent GILs Don't Compete:
+        - The GIL in Process A doesn't affect the GIL in Process B
+        - Each process can fully utilize one CPU core without being blocked by other processes
+        - This effectively allows Python to achieve true parallelism
+      - Within Each Process:
+        - The GIL still exists
+        - If a single process creates multiple threads, those threads will still be limited by that process's GIL
+        - Only one thread per process can execute Python bytecode at a time
+        - This is why CPU-bound Python code is typically parallelized using processes rather than threads. If you have 4 CPU cores and create 4 processes, each process can run at full speed on its own core, with its own Python interpreter, operating independently of the others.
+      - The trade-off is that processes:
+        - Use more memory (each needs its own copy of code, data, etc.)
+        - Have higher startup costs
+        - Require more complex mechanisms for sharing data (like pipes, queues, or shared memory)
+        - So when people say multiprocessing "bypasses the GIL," they mean it sidesteps the limitation by creating multiple isolated Python environments rather than trying to share a single interpreter across multiple threads.
 
 - Celery 
   - Celery is a robust, distributed task queue written in Python that enables developers to execute tasks outside the main application flow.
@@ -121,12 +136,5 @@
     - Broker: Message system (like RabbitMQ, Redis) that passes tasks from applications to workers
     - Backend: Optional storage system to track results and task states
   - [All about Celery _al](https://priyanshuguptaofficial.medium.com/everything-about-celery-b932c4c533af)
-
-
-
-
-
-
-
 
 ---------------------------
