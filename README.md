@@ -47,6 +47,7 @@ Table of contents (rough overview):
       - (Directory currently removed as it increased repo size, though videos list can be seen in this [git commit history](https://github.com/Surajv311/mDumpSWE/commit/0c53778cf0f171b8d5d3249203a08f365f4fc9e2))  
     - [Ci-Cd-Deployments](https://github.com/Surajv311/mDumpSWE/tree/main/Ci-Cd-Deployments)
     - [Flink](https://github.com/Surajv311/mDumpSWE/tree/main/Flink)
+    - [FastApi-Celery](https://github.com/Surajv311/mDumpSWE/tree/main/FastApi-Celery)
 
  
 ------------------------

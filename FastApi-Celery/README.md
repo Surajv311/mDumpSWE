@@ -1,0 +1,140 @@
+
+# FastApi_Celery 
+
+- FastApi
+  - FastAPI is a modern, fast (high-performance), web framework for building APIs with Python based on standard Python type hints.
+  - FastAPI applications use Uvicorn because it's an ASGI server that enables asynchronous processing, which is essential for FastAPI's high performance. 
+  - When an API request is made from a browser to a FastAPI application, it passes through several layers: 
+    - Browser makes an HTTP request (e.g., clicking a button, form submission, AJAX call)
+    - DNS Resolution translates domain name to IP address
+    - Network Infrastructure (routers, switches, load balancers) routes the request to server
+    - Web Server (Nginx/Apache) receives the initial HTTP request
+      - Handles SSL termination
+      - May perform initial authentication/authorization
+      - Often serves static files directly
+      - Acts as a reverse proxy for dynamic content
+    - Process Manager / WSGI/ASGI Server (Gunicorn)
+      - Master process receives the proxied request
+      - Delegates to one of its worker processes
+    - Worker Process (Uvicorn worker inside Gunicorn)
+      - Converts HTTP to ASGI event format
+      - Manages the asynchronous event loop
+    - ASGI Application (FastAPI)
+      - Middleware processes request
+      - Router matches URL to endpoint
+      - Dependency injection runs 
+      - Request validation occurs
+      - Endpoint handler executes business logic
+      - Response is generated and serialized
+    - The response travels back through the same layers in reverse
+  - WSGI was the original standard interface between web servers and Python web applications. It was designed to solve a major problem: before WSGI, each Python web framework required its own custom server implementation. WSGI's key limitation is that it's synchronous - each request must fully complete before the next one can be processed, which becomes inefficient for I/O-bound operations.
+  - ASGI evolved from WSGI to solve the synchronous limitation by: Supporting asynchronous request handling, Enabling WebSockets and other protocols beyond HTTP, Allowing long-lived connections, Supporting concurrent request processing.
+  - FastAPI uses Uvicorn as it is a lightning-fast ASGI server implementation. 
+  - Uvicorn/Gunicorn workers: 
+    - Uvicorn Architecture: 
+      - Single Process Model: By default, Uvicorn runs as a single process with a single thread that manages an event loop
+      - Event Loop: Uses uvloop (a fast drop-in replacement for asyncio) to handle concurrent connections
+      - HTTP Protocol Server: Implements HTTP/1.1 and HTTP/2 protocols
+      - Lifespan Protocol: Manages application startup/shutdown events
+      - Uvicorn alone doesn't have a built-in worker model - it's a single-process server that leverages async I/O for concurrency, not multiple processes.
+    - Gunicorn Architecture:
+      - Gunicorn (often paired with Uvicorn) provides the multi-process architecture. 
+      - Master Process: Coordinates and manages worker processes
+      - Worker Processes: Handle actual requests (when using with FastAPI, these are typically Uvicorn workers)
+      - Worker Class: Determines how each worker handles connections (sync, async, etc.)
+    - When you increase the number of workers in a Gunicorn/Uvicorn setup for your FastAPI application:
+    - Positive Effects:
+      - Increased CPU Utilization: Each worker can utilize a separate CPU core, increasing overall throughput for CPU-bound tasks
+      - Higher Concurrent Request Handling: More workers can handle more simultaneous requests
+      - Fault Isolation: If one worker crashes, others can continue serving requests
+      - Minimized Impact of Blocking Operations: If one worker gets blocked, others can still process requests
+    - Potential Drawbacks:
+      - Increased Memory Usage: Each worker is a separate process with its own memory space, increasing the overall memory footprint
+      - Connection Pool Contention: Workers might compete for database connections if not properly configured
+      - Shared State Complexity: Data that needs to be shared between workers must be stored externally (Redis, database, etc.)
+      - Diminishing Returns: Adding workers beyond the number of available CPU cores generally doesn't improve performance
+    - Here's how you'd typically run a FastAPI application with Gunicorn and Uvicorn workers: `gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000`
+    - Each worker is an independent Uvicorn process with its own event loop, managing its set of client connections and running the FastAPI application.
+    - When you set workers=4 in Gunicorn: 
+      - Gunicorn creates 4 separate processes (not threads)
+      - Each worker process is a completely independent Uvicorn instance
+      - Each Uvicorn instance runs your FastAPI application in its own process space
+    - This is different from threads in several important ways:
+      - Process vs Thread: Each worker is a full OS process with its own memory space, not a thread within a shared memory space
+      - Resource Isolation: Workers don't share Python objects in memory - they're completely separate instances of your application
+      - CPU Utilization: Each worker process can run on a separate CPU core, utilizing multiple cores effectively
+    - Within each Uvicorn worker process:
+      - A single event loop (typically using uvloop) manages concurrency
+      - Your FastAPI application runs asynchronously, handling multiple requests concurrently
+      - Asynchronous operations (like database queries with async ORM) run concurrently within the same process
+    - [Event loop ref in JS _vl](https://www.youtube.com/watch?v=eiC58R16hb8)
+    - Here's the key mental model:
+      - Between Workers: Parallelism through multiple processes
+      - Within Each Worker: Concurrency through asynchronous I/O
+    - In a thread-per-core model:
+      - Single process contains multiple threads, with one thread assigned to each CPU core
+      - Shared address space means all threads can access the same memory
+      - Lightweight synchronization through mutexes, semaphores, etc.
+      - Good for: I/O-bound workloads with shared state, Applications where memory efficiency is critical, Languages with efficient threading models (Java, C++)
+    - In a process-per-core model:
+      - Multiple independent processes, with one process assigned to each CPU core
+      - Separate memory spaces with no direct access between processes
+      - More robust isolation prevents cascading failures
+      - Good for: CPU-bound workloads, Languages with threading limitations (Python with GIL), Applications requiring strong fault isolation, Avoiding complex thread synchronization issues
+    - Real-World Examples Nginx: Uses process-per-core model for worker processes Node.js Cluster; Uses process-per-core for scaling across multiple cores Java application servers; Often use thread-per-request within a single process Python's multiprocessing; Uses process-per-core to bypass GIL limitations;
+      - As a sidenote: Python's multiprocessing bypasses the GIL limitation by creating entirely separate Python interpreter processes, each with its own GIL. Here's how it works: 
+      - Each Process Has Its Own Python Interpreter:
+        - When you use multiprocessing, Python spawns completely separate processes
+        - Each process has its own independent Python interpreter
+        - Each interpreter has its own memory space and its own GIL
+      - Independent GILs Don't Compete:
+        - The GIL in Process A doesn't affect the GIL in Process B
+        - Each process can fully utilize one CPU core without being blocked by other processes
+        - This effectively allows Python to achieve true parallelism
+      - Within Each Process:
+        - The GIL still exists
+        - If a single process creates multiple threads, those threads will still be limited by that process's GIL
+        - Only one thread per process can execute Python bytecode at a time
+      - This is why CPU-bound Python code is typically parallelized using processes rather than threads. If you have 4 CPU cores and create 4 processes, each process can run at full speed on its own core, with its own Python interpreter, operating independently of the others.
+      - The trade-off is that processes:
+        - Use more memory (each needs its own copy of code, data, etc.)
+        - Have higher startup costs
+        - Require more complex mechanisms for sharing data (like pipes, queues, or shared memory)
+      - So when people say multiprocessing "bypasses the GIL," they mean it sidesteps the limitation by creating multiple isolated Python environments rather than trying to share a single interpreter across multiple threads.
+    - In a "process per core" model, each CPU core is primarily assigned one process, but this doesn't mean that only one thread runs on that core. The reality is more complex:
+      - Operating System Scheduling: The OS scheduler ultimately controls which threads and processes run on which cores. Even in a "process per core" design: Multiple threads from the designated process can run on that core; Threads from other processes can occasionally be scheduled on that core; Context switching still happens regularly
+      - Threads Within Each Process: Each process typically has multiple threads: The main application thread, Background threads (GC, monitoring, etc.), Thread pools for specific tasks; These threads compete for time on the assigned core
+      - Time-Sharing: Modern operating systems use preemptive multitasking: The core rapidly switches between different threads; Even on a core "dedicated" to one process, threads get small time slices; Thousands of context switches can happen per second
+    - Oversubscription: When there are more threads than cores (which is common): Multiple threads must share each core; Performance can degrade if there's excessive context switching
+    - In a system like Nginx or Gunicorn with a process per core, each worker process might be primarily assigned to one core, but the OS is still free to schedule other processes' threads on that core when needed, especially during I/O waits or when the worker process isn't fully utilizing the CPU.
+    - As a note: Python's multiprocessing bypasses the GIL limitation by creating entirely separate Python interpreter processes, each with its own GIL: 
+      - Each Process Has Its Own Python Interpreter:
+        - When you use multiprocessing, Python spawns completely separate processes 
+        - Each process has its own independent Python interpreter
+        - Each interpreter has its own memory space and its own GIL
+      - Independent GILs Don't Compete:
+        - The GIL in Process A doesn't affect the GIL in Process B
+        - Each process can fully utilize one CPU core without being blocked by other processes
+        - This effectively allows Python to achieve true parallelism
+      - Within Each Process:
+        - The GIL still exists
+        - If a single process creates multiple threads, those threads will still be limited by that process's GIL
+        - Only one thread per process can execute Python bytecode at a time
+        - This is why CPU-bound Python code is typically parallelized using processes rather than threads. If you have 4 CPU cores and create 4 processes, each process can run at full speed on its own core, with its own Python interpreter, operating independently of the others.
+      - The trade-off is that processes:
+        - Use more memory (each needs its own copy of code, data, etc.)
+        - Have higher startup costs
+        - Require more complex mechanisms for sharing data (like pipes, queues, or shared memory)
+        - So when people say multiprocessing "bypasses the GIL," they mean it sidesteps the limitation by creating multiple isolated Python environments rather than trying to share a single interpreter across multiple threads.
+
+- Celery 
+  - Celery is a robust, distributed task queue written in Python that enables developers to execute tasks outside the main application flow.
+  - Celery is an open-source task queue system that allows you to execute work outside the Python web application’s HTTP request-response cycle. A task queue’s input is a unit of work called a task. Dedicated worker processes constantly monitor task queues for new work to perform.
+  - Architecture on a top level: 
+    - Task Queue: Celery implements a distributed task queue to handle work outside the request-response cycle
+    - Workers: Separate processes that consume tasks from queues and execute them asynchronously
+    - Broker: Message system (like RabbitMQ, Redis) that passes tasks from applications to workers
+    - Backend: Optional storage system to track results and task states
+  - [All about Celery _al](https://priyanshuguptaofficial.medium.com/everything-about-celery-b932c4c533af)
+
+---------------------------

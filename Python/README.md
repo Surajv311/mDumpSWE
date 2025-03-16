@@ -425,6 +425,15 @@ Python caches integers in the range [-5, 256], so integers in that range are usu
 
 - Scope of variable in if/while in Python: Python variables are scoped to the innermost function, class, or module in which they're assigned. Control blocks like `if` and `while` blocks don't count, so a variable assigned inside an if is still scoped to a function, class, or module.
 
+- Why is __init__() always called after __new__() in Py?:
+  - Use __new__ when you need to control the creation of a new instance.
+  - Use __init__ when you need to control initialization of a new instance.
+  - __new__ is the first step of instance creation. It's called first, and is responsible for returning a new instance of your class.
+  - In contrast, __init__ doesn't return anything; it's only responsible for initializing the instance after it's been created.
+  - [__init__, __new__ _al](https://stackoverflow.com/questions/674304/why-is-init-always-called-after-new)
+- In the String module, Template Class allows us to create simplified syntax for output specification. The format uses placeholder names formed by $ with valid Python identifiers (alphanumeric characters and underscores).
+  - Eg: `t = Template('x is $x'), then say t.substitute({'x' : 1})`
+- pyproject.toml is the specified file format of PEP 518 which contains the build system requirements of Python projects. This solves the build-tool dependency chicken and egg problem, i.e. pip can read pyproject.toml and what version of setuptools or wheel one may need.
 
 ----------------------------------------------------------------------
 
