@@ -39,6 +39,7 @@ List of some random notes, links, videos which can be directly visited and read 
   - https://www.youtube.com/watch?v=d86ws7mQYIg
   - https://www.linkedin.com/pulse/builder-design-pattern-prateek-mishra
   - https://www.reddit.com/r/docker/comments/1f1wqnb/how_i_reduced_docker_image_size_from_588_mb_to/
+  - https://anyesh.medium.com/be-careful-while-using-lru-cache-on-the-method-a3dc2053748b
   - Youtube/Linkedin/Twitter articles: Alex Xu, Arpit Bhayani, Hussaein Nasser - to watch/update
   - Code coverage is calculated by dividing the number of lines of code executed by a test suite by the total number of lines of code in an application, and then multiplying by 100: https://stackoverflow.com/questions/195008/what-is-code-coverage-and-how-do-you-measure-it
   - About Pool Sizing: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
