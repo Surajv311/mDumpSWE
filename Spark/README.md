@@ -387,6 +387,7 @@ result = result.union(df)
     - Don’t use when data is too big to fit in memory, or only need infrequent transformation
   - When you use cache() or persist(), the DataFrame is not fully cached until you invoke an action that goes through every record (e.g., count()). If you use an action like take(1)w, only one partition will be cached because Catalyst realizes that you do not need to compute all the partitions just to retrieve one record.
   - Don’t forget to cleanup with df.unpersist to evict the dataframe from cache when you no longer need it.
+- In Apache Spark, the default memory configuration divides the JVM heap space, with 60% (0.6) allocated for unified memory (execution and storage) and 40% (0.4) reserved for user data structures and internal metadata. There are nitty gritties to it. 
 - 
 
 ----------------------------------------------------------------------
