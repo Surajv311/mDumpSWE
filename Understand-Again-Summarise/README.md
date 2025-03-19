@@ -47,7 +47,7 @@ List of some random notes, links, videos which can be directly visited and read 
 - Short notes from any book/research paper I'm reading: (To be updated in repo)
   - Dynamodb...
   - 
-
+ 
 
 ----------------------------------------------------------------------
 
